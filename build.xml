@@ -80,6 +80,21 @@
 		</javadoc>
 	</target>
 
+	<target name="javadoc-lint" >
+		<mkdir dir="${documentation}" />
+
+		<javadoc
+			sourcepath="${sources}"
+			destdir="${documentation}"
+            doclet="com.jollem.doclint.DocLint"
+            docletPath="lib/doclint.jar"
+			packagenames="jcavern.*, jcaverntest.*" >
+
+			<classpath refid="buildpath" />
+
+		</javadoc>
+	</target>
+
 	<!-- targets for doing unit testing -->
 	
 	<target name="junit" depends="compile" >
