@@ -75,7 +75,7 @@ public class LogView extends JCavernView
 					addLine(anEvent.toString());
 					break;
 				case WorldEvent.TURN_START:
-					addLine("--------------------");
+					addLine("--");
 					break;
 				default:
 					//System.out.println("rejected " + anEvent);
