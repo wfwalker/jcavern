@@ -124,7 +124,7 @@ public class Player extends Combatant
 		Sword aSword = new Sword("Sword", 1);
 		receiveItem(aSword);
 		startUsing(aSword);
-		receiveItem(new MagicItem("Pants", 3));
+		receiveItem(new MagicItem("Unum", 1));
 		receiveItem(new MagicItem("Shoes", 4));
 		mArrows = 20;
 	}
@@ -160,7 +160,6 @@ public class Player extends Combatant
 	
 	public void setMission(Mission aMission)
 	{
-		JCavernApplet.log(getName()+ "'s mission is " + aMission);
 		mMission = aMission;
 	}
 	
@@ -192,6 +191,11 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
+	protected String getArticle()
+	{
+		return "";
+	}
+
 	public int getWorth()
 	{
 		return 0;
