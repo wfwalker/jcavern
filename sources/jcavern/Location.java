@@ -41,6 +41,16 @@ public class Location
 		return bounds.contains(mX, mY);
 	}
 	
+	public int getX()
+	{
+		return mX;
+	}
+	
+	public int getY()
+	{
+		return mY;
+	}
+	
 	public String toString()
 	{
 		return "[" + mX + ", " + mY + "]";
@@ -69,16 +79,43 @@ public class Location
 		
 		switch (direction)
 		{
-			case 8: newY--; break;
-			case 9: newX++; newY--; break;
-			case 6: newX++; break;
-			case 3: newX++; newY++; break;
-			case 2: newY++; break;
-			case 1: newX--; newY++; break;
-			case 4: newX--; break;
-			case 7: newX--; newY--; break;
+			case NORTH: newY--; break;
+			case NORTHEAST: newX++; newY--; break;
+			case EAST: newX++; break;
+			case SOUTHEAST: newX++; newY++; break;
+			case SOUTH: newY++; break;
+			case SOUTHWEST: newX--; newY++; break;
+			case WEST: newX--; break;
+			case NORTHWEST: newX--; newY--; break;
 		}
 		
 		return new Location(newX, newY);
+	}
+
+	public Location getNeighborToward(Location anotherLocation)
+	{
+		double	deltaX = anotherLocation.getX() - mX;
+		double	deltaY = anotherLocation.getY() - mY;
+		double	degrees = (360.0 / (2 * Math.PI)) * Math.atan(deltaY / deltaX);
+		
+		if (Math.abs(degrees) > 67.5) // either north or south
+		{
+			return getNeighbor(deltaY > 0 ? SOUTH : NORTH);
+		}
+		else if (Math.abs(degrees) > 22.5) // one of the four diagonals
+		{
+			if (deltaY < 0)
+			{
+				return getNeighbor(deltaX > 0 ? NORTHEAST : NORTHWEST);
+			}
+			else
+			{
+				return getNeighbor(deltaX > 0 ? SOUTHEAST : SOUTHWEST);
+			}
+		}
+		else // either east or west
+		{
+			return getNeighbor(deltaX > 0 ? EAST : WEST);
+		}
 	}
 }
