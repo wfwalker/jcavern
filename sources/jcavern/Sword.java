@@ -23,11 +23,15 @@ public class Sword extends Treasure
 	
 	public Sword(String aName, int strength)
 	{
+		/* charges := charges + Random(10) + 2; */
+		this(aName, strength, (int) (Math.random() * 10 + 2));
+	}
+	
+	public Sword(String aName, int strength, int charges)
+	{
 		super(aName);
 		mStrength = strength;
-		
-		/* charges := charges + Random(10) + 2; */
-		mCharges = (int) (Math.random() * 10 + 2);
+		mCharges = charges;
 	}
 	
 	public void decrementCharges()
