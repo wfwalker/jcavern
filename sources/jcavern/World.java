@@ -84,13 +84,15 @@ public class World extends Observable
 			placeRandom(aPlayer.getMission().getTarget(), quota);
 			placeWorthyOpponents(aPlayer, desiredPopulation - quota);
 		
+			// Mark the beginning of the mission
+			eventHappened(new WorldEvent(aPlayer, WorldEvent.TURN_START, "Begin mission"));
+
 			// Put the player in the world
 			place(getRandomEmptyLocation(), aPlayer);
-			
+
+			// Display the opening info messages			
 			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + "'s mission is " + aPlayer.getMission()));
 			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + " can seek safety in " + castles + " magic castles"));
-
-			eventHappened(new WorldEvent(aPlayer, WorldEvent.TURN_START, "Begin mission"));
 		}
 		catch (ThingCollisionException tce)
 		{
