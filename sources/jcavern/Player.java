@@ -22,8 +22,10 @@ public class Player extends Combatant
 	/** * How many gold pieces does this player have. */
 	private int			mGold;
 
+	/** * Which items the player is currently using. */
 	private Vector		mInUseItems;
 	
+	/** * Which items the player owns, but is not currently using. */
 	private Vector		mUnusedItems;
 
 	/** * How many arrows does this player have. */
@@ -35,19 +37,47 @@ public class Player extends Combatant
 	/** * Whether this player is currently inside a castle. */	
 	private	Castle		mCastle;
 	
-	
+	/**
+	 * Moves an item from the unused list to the in use list.
+	 */
 	public void startUsing(Treasure anItem)
 	{
 		mUnusedItems.removeElement(anItem);
 		mInUseItems.addElement(anItem);
+		
+		setChanged();
+		notifyObservers();
+	}
+	
+	public Treasure getUnusedTreasureAt(int unusedIndex)
+	{
+		if ((unusedIndex < 0) || (unusedIndex >= mUnusedItems.size()))
+		{
+			throw new IllegalArgumentException("No such item to start using");
+		}
+		
+		return (Treasure) mUnusedItems.elementAt(unusedIndex);
 	}
 	
 	public void stopUsing(Treasure anItem)
 	{
 		mInUseItems.removeElement(anItem);
 		mUnusedItems.addElement(anItem);
+		
+		setChanged();
+		notifyObservers();
 	}
 	
+	public Treasure getInUseTreasureAt(int inUseIndex)
+	{
+		if ((inUseIndex < 0) || (inUseIndex >= mInUseItems.size()))
+		{
+			throw new IllegalArgumentException("No such item to stop using");
+		}
+		
+		return (Treasure) mInUseItems.elementAt(inUseIndex);
+	}
+
 	public Vector getInUseItems()
 	{
 		return mInUseItems;
@@ -80,6 +110,7 @@ public class Player extends Combatant
 		receiveItem(aSword);
 		startUsing(aSword);
 		receiveItem(new Armour("Armour", 5));
+		receiveItem(new MagicItem("Amulet", 2));
 		mArrows = 20;
 	}
 	
@@ -114,7 +145,7 @@ public class Player extends Combatant
 	
 	public void setMission(Mission aMission)
 	{
-		JCavernApplet.log(getName()+ "'s mission is " + aMission);
+		JCavernApplet.current().log(getName()+ "'s mission is " + aMission);
 		mMission = aMission;
 	}
 	
@@ -133,9 +164,9 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
-	public void gainExperience(Combatant theVictim)
+	public void gainPoints(Combatant theVictim)
 	{
-		super.gainExperience(theVictim);
+		super.gainPoints(theVictim);
 		
 		if (mMission != null)
 		{
@@ -225,7 +256,10 @@ public class Player extends Combatant
 		return mGold;
 	}
 	
-	public void incrementGold(int delta)
+	/**
+	 * Increments this player's gold account by the given amount.
+	 */
+	public void receiveGold(int delta)
 	{
 		mGold += delta;
 
@@ -280,16 +314,29 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
+	/**
+	 * Returns this player's current Mission.
+	 */
 	public Mission getMission()
 	{
 		return mMission;
 	}
 	
+	/**
+	 * Returns the castle currently occupied by the player, if any.
+	 *
+	 * @return	a Castle, or <CODE>null</CODE> if none.
+	 */
 	public Castle getCastle()
 	{
 		return mCastle;
 	}
 	
+	/**
+	 * Sets the castle currently occupied by the player, if any.
+	 *
+	 * @return	aCastle		a Castle to occupy, or <CODE>null</CODE> if none.
+	 */
 	public void setCastle(Castle aCastle)
 	{
 		mCastle = aCastle;
