@@ -52,7 +52,7 @@ public class MissionCard extends AppletCard implements Observer
 
 		if (anEvent.getEventCode() == WorldEvent.MISSION_END)
 		{
-			AppletCard anAlert = new NewEndMissionCard(mApplet, anEvent, mWorld);
+			AppletCard anAlert = new EndMissionCard(mApplet, anEvent, mWorld);
 			anAlert.show();
 		}
 	}
