@@ -21,7 +21,7 @@ import java.io.*;
  */
 public class MonsterFactory
 {
-	private static final String		gImageNames[] = { "monster", "eyeball", "darklord", "chavin", "wahoo", "gobbler", "jackolantern", "snake" };
+	private static final String		gImageNames[] = { "monster", "wraith", "rajah", "eyeball", "darklord", "chavin", "wahoo", "gobbler", "jackolantern", "snake" };
 	
 	/** * A list of Monsters stored in the order they were read from monsters.dat. */
 	public static Vector			gMonsters;
