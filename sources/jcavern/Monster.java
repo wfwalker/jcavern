@@ -30,7 +30,8 @@ public class Monster extends Combatant implements Cloneable
 	private boolean			mInvisible;
 	
 	/** * Likelihood that this monster wants to move on a given turn */
-	private static double	kMoveFraction = 0.7;
+	//private static double	kMoveFraction = 0.7;
+	private static int		kMoveRadius = 4;
 	
 	/**
 	 * Creates a new monster with the given parameters.
@@ -58,7 +59,11 @@ public class Monster extends Combatant implements Cloneable
 			return;
 		}
 		
-		int		aDirection = aWorld.directionToward(this, aWorld.getPlayer());
+		int		aDirection = aWorld.getDirectionToward(this, aPlayer);
+		int		aDistance = aWorld.getDistanceBetween(aPlayer, this);
+		
+		//System.out.println(getName() + " at " + aWorld.getLocation(this) + " " +
+		//						aDistance + " away, " + Location.directionToString(aDirection));
 
 		/*		
 		{see if each monster wants to move. If so, update both the
@@ -66,7 +71,9 @@ public class Monster extends Combatant implements Cloneable
 		if Random(10)>3 then begin
 		*/
 		
-		if (Math.random() < kMoveFraction)
+		// New scheme -- if the monster is within a certain distance of the player, it moves.
+		
+		if (aDistance < kMoveRadius)
 		{
 			try
 			{
