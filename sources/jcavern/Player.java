@@ -13,19 +13,18 @@ import java.awt.*;
 
 /**
  * The Player class represents the current state of the player.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
  */
 public class Player extends Combatant
 {
 	/** * How many gold pieces does this player have. */
 	private int			mGold;
 
-	/** * What kind of sword does this player have. */
-	private Sword		mSword;
+	private Vector		mInUseItems;
 	
-	/** * What kind of armour this player is using. */
-	private Armour		mArmour;
-	
-	private Vector		mItems;
+	private Vector		mUnusedItems;
 
 	/** * How many arrows does this player have. */
 	private int			mArrows;
@@ -35,6 +34,29 @@ public class Player extends Combatant
 
 	/** * Whether this player is currently inside a castle. */	
 	private	Castle		mCastle;
+	
+	
+	public void startUsing(Treasure anItem)
+	{
+		mUnusedItems.removeElement(anItem);
+		mInUseItems.addElement(anItem);
+	}
+	
+	public void stopUsing(Treasure anItem)
+	{
+		mInUseItems.removeElement(anItem);
+		mUnusedItems.addElement(anItem);
+	}
+	
+	public Vector getInUseItems()
+	{
+		return mInUseItems;
+	}
+	
+	public Vector getUnusedItems()
+	{
+		return mUnusedItems;
+	}
 	
 	/**
 	 * Creates a beginning player with the default initial statistics.
@@ -47,12 +69,16 @@ public class Player extends Combatant
 		exp := 24.0; arrows := 20; gold := 10; which_swd := 0;
 		*/
 
-		super(name, 24);
+		super(name, "player", 24);
 		
-		mItems = new Vector();
+		mInUseItems = new Vector();
+		mUnusedItems = new Vector();
 
 		mGold = 10;
-		receiveItem(new Sword("Sword", 1));
+		
+		Sword aSword = new Sword("Sword", 1);
+		receiveItem(aSword);
+		startUsing(aSword);
 		receiveItem(new Armour("Armour", 5));
 		mArrows = 20;
 	}
@@ -67,13 +93,13 @@ public class Player extends Combatant
 	 * @param	points		how many points does this player have
 	 * @param	mission		a non-null Mission this player must complete
 	 */
-	public Player(String name, int gold, Sword sword, Armour armour, int arrows, int points, Mission mission)
+	public Player(String name, int gold, Vector inUseItems, Vector unusedItems, int arrows, int points, Mission mission)
 	{
-		super(name, points);
+		super(name, "player", points);
 		
 		mGold = gold;
-		mSword = sword;
-		mArmour = armour;
+		mInUseItems = inUseItems;
+		mUnusedItems = unusedItems;
 		mArrows = arrows;
 		mMission = mission;
 	}
@@ -83,7 +109,7 @@ public class Player extends Combatant
 	 */
 	public Object clone()
 	{
-		return new Player(getName(), mGold, (Sword) mSword.clone(), (Armour) mArmour.clone(), mArrows, getPoints(), mMission);
+		return new Player(getName(), mGold, (Vector) mInUseItems.clone(), (Vector) mUnusedItems.clone(), mArrows, getPoints(), mMission);
 	}
 	
 	public void setMission(Mission aMission)
@@ -209,9 +235,9 @@ public class Player extends Combatant
 	
 	public Sword getSword()
 	{
-		for (int index = 0; index < mItems.size(); index++)
+		for (int index = 0; index < mInUseItems.size(); index++)
 		{
-			Treasure aTreasure = (Treasure) mItems.elementAt(index);
+			Treasure aTreasure = (Treasure) mInUseItems.elementAt(index);
 			
 			if (aTreasure instanceof Sword)
 			{
@@ -222,18 +248,13 @@ public class Player extends Combatant
 		return null;
 	}
 	
-	public Vector getItems()
-	{
-		return mItems;
-	}
-	
 	private int getArmourPoints()
 	{
 		int armourPoints = 0;
 		
-		for (int index = 0; index < mItems.size(); index++)
+		for (int index = 0; index < mInUseItems.size(); index++)
 		{
-			Treasure aTreasure = (Treasure) mItems.elementAt(index);
+			Treasure aTreasure = (Treasure) mInUseItems.elementAt(index);
 			
 			if (aTreasure instanceof Armour)
 			{
@@ -253,7 +274,7 @@ public class Player extends Combatant
 	{
 		System.out.println(getName() + " received " + anItem);
 		
-		mItems.addElement(anItem);
+		mUnusedItems.addElement(anItem);
 		
 		setChanged();
 		notifyObservers();
