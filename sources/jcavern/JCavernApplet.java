@@ -18,6 +18,7 @@ import java.applet.*;
  * JCavernApplet is the launcher for the java version of cavern and glen.
  *
  * @author	Bill Walker
+ * @version	$Id$
  */
 public class JCavernApplet extends Applet
 {
@@ -107,6 +108,12 @@ public class JCavernApplet extends Applet
 			gImages.put("tree", getImage(new URL(getDocumentBase(), "bin/images/tree.gif")));
 			gImages.put("tree2", getImage(new URL(getDocumentBase(), "bin/images/tree2.gif")));
 			gImages.put("eyeball", getImage(new URL(getDocumentBase(), "bin/images/eyeball.gif")));
+			gImages.put("chest", getImage(new URL(getDocumentBase(), "bin/images/chest.gif")));
+			gImages.put("chavin", getImage(new URL(getDocumentBase(), "bin/images/chavin.gif")));
+			gImages.put("darklord", getImage(new URL(getDocumentBase(), "bin/images/darklord.gif")));
+			gImages.put("gobbler", getImage(new URL(getDocumentBase(), "bin/images/gobbler.gif")));
+			gImages.put("jackolantern", getImage(new URL(getDocumentBase(), "bin/images/jackolantern.gif")));
+			gImages.put("wahoo", getImage(new URL(getDocumentBase(), "bin/images/wahoo.gif")));
 
 			MonsterFactory.loadPrototypes(new URL(getDocumentBase(), "bin/monster.dat"));
 			Treasure.loadPrototypes(new URL(getDocumentBase(), "bin/treasure.dat"));
@@ -126,11 +133,11 @@ public class JCavernApplet extends Applet
 			gLogView.setBackground(Color.black);
 			gLogView.setForeground(CavernOrange);
 			
-			mWorldView.setSize(500, 300);		
+			mWorldView.setSize(300, 300);		
 			add(mWorldView);
 			mWorld.addObserver(mWorldView);
 			
-			mPlayerView.setSize(500, 50);		
+			//mPlayerView.setSize(500, 50);		
 			add(mPlayerView);
 			mPlayer.addObserver(mPlayerView);
 			
