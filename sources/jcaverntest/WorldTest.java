@@ -101,6 +101,22 @@ public class WorldTest extends TestCase
 		}
 	}
 	
+	public void testBounds()
+	{
+		assert("5, -1 out", mWorld.inBounds(new Location(5, -1)) == false);
+		assert("-1, 5 out", mWorld.inBounds(new Location(-1, 5)) == false);
+		
+		assert("5, 0 in", mWorld.inBounds(new Location(5, 0)) == true);
+		assert("0, 5 in", mWorld.inBounds(new Location(0, 5)) == true);
+		
+		assert("5, 20 out", mWorld.inBounds(new Location(5, 20)) == false);
+		assert("20, 5 out", mWorld.inBounds(new Location(20, 5)) == false);
+		
+		assert("5, 19 in", mWorld.inBounds(new Location(5, 19)) == true);
+		assert("19, 5 in", mWorld.inBounds(new Location(19, 5)) == true);
+
+	}
+	
 	public void testGetThings()
 	{
 		assert("found something", mWorld.getThings().size() > 0);
