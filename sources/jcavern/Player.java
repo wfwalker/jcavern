@@ -13,7 +13,6 @@ public class Player extends Combatant
 	private int			mGold;
 	private Sword		mSword;
 	private int			mArrows;
-	private int			mExperience;
 	private Mission		mMission;
 	
 	public Player(String name)
@@ -22,12 +21,26 @@ public class Player extends Combatant
 		exp := 24.0; arrows := 20; gold := 10; which_swd := 0;
 		*/
 
-		super(name);
+		super(name, 24);
 		
 		mGold = 10;
 		mSword = new Sword(1);
 		mArrows = 20;
-		mExperience = 24;
+	}
+	
+	public Player(String name, int gold, Sword sword, int arrows, int points, Mission mission)
+	{
+		super(name, points);
+		
+		mGold = gold;
+		mSword = sword;
+		mArrows = arrows;
+		mMission = mission;
+	}
+	
+	public Object clone()
+	{
+		return new Player(getName(), mGold, mSword, mArrows, getPoints(), mMission);
 	}
 	
 	public void setMission(Mission aMission)
@@ -38,7 +51,7 @@ public class Player extends Combatant
 	
 	public void sufferDamage(int theDamage)
 	{
-		mExperience -= theDamage;
+		super.sufferDamage(theDamage);
 
 		setChanged();
 		notifyObservers();
@@ -46,17 +59,15 @@ public class Player extends Combatant
 	
 	public void gainExperience(Combatant theVictim)
 	{
-		mExperience += theVictim.getWorth();
+		super.gainExperience(theVictim);
 		
-		mMission.adjustQuota(theVictim);
-
+		if (mMission != null)
+		{
+			mMission.adjustQuota(theVictim);
+		}
+		
 		setChanged();
 		notifyObservers();
-	}
-	
-	public boolean isDead()
-	{
-		return mExperience < 0;
 	}
 	
 	public int getWorth()
@@ -64,7 +75,7 @@ public class Player extends Combatant
 		return 0;
 	}
 	
-	public int computeDamage()
+	public int computeDamage(Combatant opponent)
 	{
 	/*
 	     if exp>1.0 then
@@ -77,10 +88,10 @@ public class Player extends Combatant
 	     else
 	        Message('You hit the '+m.name+'.',FALSE);
 	*/
-		if (mExperience > 1)
+		if (getPoints() > 1)
 		{
 			double damage =
-					mSword.getStrength() * mExperience / (2 * Math.log(mExperience)) +
+					mSword.getStrength() * getPoints() / (2 * Math.log(getPoints())) +
 					(mSword.getStrength() + 3) * Math.random();
 					
 			return (int) damage;	
@@ -98,7 +109,7 @@ public class Player extends Combatant
 		notifyObservers();	
 	}
 	
-	public int computeRangedDamage()
+	public int computeRangedDamage(Combatant opponent)
 	{
 	/*
 		Message(' Arrow hit the '+Q[xx,yy].m.name,FALSE);
@@ -107,14 +118,14 @@ public class Player extends Combatant
 		if Q[xx,yy].m.points<0 then Monster_died(xx,yy);
 	*/
 
-		double damage = 4 + mExperience / 10.0;
-		
-		return (int) damage;
-	}
-	
-	public boolean isCombatant()
-	{
-		return false;
+		if (opponent instanceof Tree)
+		{
+			return 0;
+		}
+		else
+		{
+			return (int) (4 + getPoints() / 10.0);
+		}
 	}
 	
 	public String getAppearance()
@@ -137,16 +148,8 @@ public class Player extends Combatant
 		return mArrows;
 	}
 	
-	public int getExperience()
+	public Mission getMission()
 	{
-		return mExperience;
-	}
-
-	public void collideWithTree()
-	{
-		mExperience--;
-		
-		setChanged();
-		notifyObservers();
+		return mMission;
 	}
 }
