@@ -1,5 +1,5 @@
 /* 
-	JCavernApplet.java
+	MonsterFactory.java
 
 	Title:			JCavern And Glen
 	Author:			Bill Walker
@@ -29,9 +29,10 @@ public class MonsterFactory
 	 */	
 	public static Monster getWorthyOpponent(Player aPlayer)
 	{
-		int randomIndex = (int) (Math.random() * gMonsters.size());
+		int		randomIndex = (int) (Math.random() * gMonsters.size());
+		int		thresholdPoints = aPlayer.getPoints() / 2;
 		
-		while (((Monster) gMonsters.elementAt(randomIndex)).getPoints() > aPlayer.getPoints())
+		while (((Monster) gMonsters.elementAt(randomIndex)).getPoints() > thresholdPoints)
 		{
 			randomIndex = (int) (Math.random() * gMonsters.size());
 		}
@@ -44,9 +45,10 @@ public class MonsterFactory
 	 */	
 	public static Monster getMostWorthyOpponent(Player aPlayer)
 	{
-		int monsterIndex = 0;
+		int		monsterIndex = 0;
+		int		thresholdPoints = aPlayer.getPoints() / 2;
 		
-		while (((Monster) gMonsters.elementAt(monsterIndex)).getPoints() <= aPlayer.getPoints())
+		while (((Monster) gMonsters.elementAt(monsterIndex)).getPoints() <= thresholdPoints)
 		{
 			monsterIndex++;
 		}
