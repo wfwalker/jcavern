@@ -37,6 +37,25 @@ public class MonsterFactory
 		return (Monster) gMonsters[randomIndex].clone();
 	}
 	
+	public static Mission createMission(Player aPlayer)
+	{
+		System.out.println("Create Mission");
+		
+		/*
+		{setup the mission completion variables}
+		Mis_done := false; Mis_quota := round(ln(exp)) + Random(3);
+		
+		{scan through the monster list looking for an appropriate mission}
+		i := 1;
+		while (i<MaxMonster) and (exp>M_list[i].points) do i := i + 1;
+		Mis_target := i;
+		*/
+		
+		int quota = (int) (Math.log(aPlayer.getExperience()) + 3 * Math.random());
+		
+		return new Mission(getWorthyOpponent(aPlayer), quota);
+	}
+	
 	public static void loadPrototypes(URL aURL )
 	{
 		System.out.println("loadPrototypes(" + aURL + ")");
