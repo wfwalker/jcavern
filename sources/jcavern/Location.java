@@ -68,8 +68,8 @@ public class Location
 	public Location enforceMinimumInset(Rectangle bounds, int inset)
 	{
 		// make sure newX,Y are no larger than the largest acceptable value
-		int newX = Math.min(mX, bounds.x + bounds.width - inset);
-		int newY = Math.min(mY, bounds.y + bounds.height - inset);
+		int newX = Math.min(mX, (bounds.x + bounds.width - 1) - inset);
+		int newY = Math.min(mY, (bounds.y + bounds.height - 1) - inset);
 		
 		// make sure newX, Y are no smaller than the smallest acceptable value
 		newX = Math.max(newX, bounds.x + inset);
