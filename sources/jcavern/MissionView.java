@@ -47,7 +47,10 @@ public class MissionView extends Canvas implements Observer
 	
 	public void paint(Graphics g)
 	{
-		int				index;
+		System.out.println("MissionView.painr()");
+		
+		int	index;
+		int	height = getSize().height;
 		
 		//g.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		
@@ -55,11 +58,11 @@ public class MissionView extends Canvas implements Observer
 		{
 			if (index < mModel.getKills())
 			{
-				g.drawString("-", 20 + 40 * index, getHeight() / 2);
+				g.drawString("-", 20 + 40 * index, height / 2);
 			}
 			else
 			{
-				mModel.getTarget().paint(g, 20 + 40 * index, getHeight() / 2);
+				mModel.getTarget().paint(g, 20 + 40 * index, height / 2);
 			}
 		}
 	}
