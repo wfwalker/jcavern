@@ -22,4 +22,31 @@ public class Mission
 	
 	/** * How many of these monsters must be defeated? */
 	private int			mQuota;
+	
+	public void adjustQuota(Thing theVictim)
+	{
+		if (theVictim.getName().equals(mTarget.getName()))
+		{
+			mQuota--;
+			JCavernApplet.log("You mission is now " + this);			
+		}
+	}
+	
+	public String toString()
+	{
+		if (mQuota > 0)
+		{
+			return "to kill " + mQuota + " " + mTarget + "s";
+		}
+		else
+		{
+			return "completed";
+		}
+	}
+	
+	public Mission(Monster target, int quota)
+	{
+		mTarget = target;
+		mQuota = quota;
+	}
 }
