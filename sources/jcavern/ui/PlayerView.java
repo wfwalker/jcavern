@@ -46,7 +46,7 @@ public class PlayerView extends Canvas implements Observer
 		int y = g.getFontMetrics().getHeight();
 		int lineHeight = g.getFontMetrics().getHeight();
 
-		g.drawString(mModel.getName(), 1, y); y += lineHeight;
+		g.drawString("Name: " + mModel.getName(), 1, y); y += lineHeight;
 		
 		g.drawString("Points: " + mModel.getPoints() + "/" + mModel.getMaximumPoints(), 1, y); y += lineHeight;
 		g.drawString("Gold: " + mModel.getGold(), 1, y); y += lineHeight;
