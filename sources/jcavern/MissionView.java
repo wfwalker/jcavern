@@ -47,12 +47,19 @@ public class MissionView extends Canvas implements Observer
 	
 	public void paint(Graphics g)
 	{
-		System.out.println("MissionView.painr()");
-		
-		int	index;
-		int	height = getSize().height;
+		int		index;
+		int		height = getSize().height;
+		int		width = getSize().width;
+		double	done = 1.0 * mModel.getKills() / mModel.getQuota();
 		
 		//g.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		
+		mModel.getTarget().paint(g, 20, height / 2, false);
+
+		g.drawRect(40, 10, width - 51, 5);
+		g.fillRect(40, 10, (int) (done * (width - 51)), 5);
+		
+		g.drawString(mModel.getKills() + "/" + mModel.getQuota() + " " + mModel.getTarget().getName() + "s", 40, 30);
 		
 		for (index = 0; index < mModel.getQuota(); index++)
 		{
@@ -62,7 +69,6 @@ public class MissionView extends Canvas implements Observer
 			}
 			else
 			{
-				mModel.getTarget().paint(g, 20 + 40 * index, height / 2);
 			}
 		}
 	}
