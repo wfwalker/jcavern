@@ -1,5 +1,5 @@
 /* 
-	JCavernApplet.java
+	PlayerView.java
 
 	Title:			JCavern And Glen
 	Author:			Bill Walker
@@ -21,12 +21,21 @@ import java.util.*;
  * @author	Bill Walker
  * @version	$Id$
  */
-public class PlayerView extends Canvas implements Observer
+public class PlayerView extends JCavernView
 {
+	/** * The Player being shown */
 	private Player	mModel;
 	
-	public PlayerView(Player aPlayer)
+	/**
+	 * Creates a new player view for the given Applet and Player.
+	 *
+	 * @param	inApplet	a non-null Applet
+	 * @param	aPlayer		a non-null Player
+	 */
+	public PlayerView(JCavernApplet inApplet, Player aPlayer)
 	{
+		super(inApplet);
+		
 		mModel = aPlayer;
 		
 		setBackground(Color.black);
@@ -35,11 +44,22 @@ public class PlayerView extends Canvas implements Observer
 		aPlayer.addObserver(this);
 	}
 
+	/**
+	 * Notifies this View that its model has changed.
+	 *
+	 * @param	a	who sent the event (ignored)
+	 * @param	b	information about the change (ignored)
+	 */
 	public void update(Observable a, Object b)
 	{
 		repaint();
 	}
 	
+	/**
+	 * Paints the PlayerView.
+	 *
+	 * @param	g	the non-null Graphics with which paiting is performed.
+	 */
 	public void paint(Graphics g)
 	{
 		setBackground(Color.black);

@@ -21,21 +21,26 @@ import java.util.*;
  * @author	Bill Walker
  * @version	$Id$
  */
-public class MissionView extends Canvas implements Observer
+public class MissionView extends JCavernView
 {
 	/** * The Mission being visualized. */
 	private Mission	mModel;
 	
 	/**
 	 * Creates a new MissionView for the given Mission.
+	 *
+	 * @param	inApplet	a non-null Applet used to retrieve images
+	 * @param	inMission	the mission being displayed
 	 */
-	public MissionView(Mission aMission)
+	public MissionView(JCavernApplet inApplet, Mission inMission)
 	{
-		mModel = aMission;
+		super(inApplet);
+		
+		mModel = inMission;
 		
 		setBackground(Color.black);
 		setForeground(JCavernApplet.CavernOrange);
-		aMission.addObserver(this);
+		inMission.addObserver(this);
 	}
 	
 	/**
@@ -78,7 +83,7 @@ public class MissionView extends Canvas implements Observer
 		
 		try
 		{
-			mModel.getTarget().paint(g, 20, 20, null);
+			mModel.getTarget().paint(getApplet(), g, 20, 20, null);
 		}
 		catch (JCavernInternalError jcie)
 		{

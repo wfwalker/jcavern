@@ -21,7 +21,7 @@ import java.util.*;
  * @author	Bill Walker
  * @version	$Id$
  */
-public class LogView extends Canvas implements Observer
+public class LogView extends JCavernView
 {
 	/** * A list of log messages, used as a fixed length, FIFO queue */
 	private Vector	mLogLines;
@@ -34,12 +34,17 @@ public class LogView extends Canvas implements Observer
 	
 	/**
 	 * Creates a new LogView.
+	 *
+	 * @param	inApplet	the Applet hosting this view
+	 * @param	inSubject	the Player starring in this view
 	 */
-	public LogView(Thing aSubject)
+	public LogView(JCavernApplet inApplet, Thing inSubject)
 	{
+		super(inApplet);
+		
 		mLogLines = new Vector();
 		mNumberOfLines = 5;
-		mSubject = aSubject;
+		mSubject = inSubject;
 		
 		setBackground(Color.black);
 		setForeground(JCavernApplet.CavernOrange);
@@ -47,6 +52,9 @@ public class LogView extends Canvas implements Observer
 
 	/**
 	 * Responds to updates by displaying log messages.
+	 *
+	 * @param	a	the World being observed
+	 * @param	b	the WorldEvent that just happened
 	 */
 	public void update(Observable a, Object b)
 	{
@@ -61,6 +69,7 @@ public class LogView extends Canvas implements Observer
 				case CombatEvent.ATTACKED_MISSED:
 				case CombatEvent.ATTACKED_HIT:
 				case CombatEvent.ATTACKED_KILLED:
+				case CombatEvent.GAINED_POINTS:
 				case WorldEvent.INFO_MESSAGE:
 				case WorldEvent.ERROR_MESSAGE:
 					addLine(anEvent.toString());
@@ -81,8 +90,10 @@ public class LogView extends Canvas implements Observer
 	
 	/**
 	 * Adds a log mesage to this LogView.
+	 *
+	 * @param	aString		a String to add to the log
 	 */
-	public void addLine(String aString)
+	private void addLine(String aString)
 	{
 		mLogLines.addElement(aString);
 		

@@ -12,6 +12,7 @@ import jcavern.*;
 import jcavern.thing.*;
 
 import java.awt.*;
+import java.applet.Applet;
 import java.awt.event.*;
 import java.util.*;
 
@@ -21,7 +22,7 @@ import java.util.*;
  * @author	Bill Walker
  * @version	$Id$
  */
-public class WorldView extends Canvas implements Observer
+public class WorldView extends JCavernView
 {
 	/** * Preferred size of images */
 	public static final int		kPreferredImageSize = 32;
@@ -32,18 +33,25 @@ public class WorldView extends Canvas implements Observer
 	/** * The World being viewed by this View. */
 	private World				mModel;
 	
+	/** * The list of events received from the model for this turn */
 	private Vector				mEvents;
 	
 	/**
 	 * Creates a new WorldView for the given World.
 	 *
-	 * @param	aWorld	a non-null World being viewed.
+	 * @param	inApplet	a non-null Applet used to retrieve images
+	 * @param	inWorld		a non-null World being viewed.
 	 */
-	public WorldView(World aWorld)
+	public WorldView(JCavernApplet inApplet, World inWorld)
 	{
-		System.out.println("Create WorldView");
+		super(inApplet);
 		
-		mModel = aWorld;
+		if (inWorld == null)
+		{
+			throw new IllegalArgumentException("can't create WorldView with null World!");
+		}
+		
+		mModel = inWorld;
 		mEvents = new Vector();
 		
 		setBackground(Color.black);
@@ -66,30 +74,6 @@ public class WorldView extends Canvas implements Observer
 			WorldEvent anEvent = (WorldEvent) theEvents.nextElement();
 			
 			if (anEvent.getSubject() == aSubject)
-			{
-				return anEvent;
-			}
-		}
-		
-		return null;
-	}
-	
-	/** 
-	 * Retrieves a WorldEvent for a particular cause.
-	 * These are events that were caused by the given Thing (i. e., Thing attacked another thing, etc).
-	 *
-	 * @param	aSubject	a non-null Thing
-	 * @return				a non-null WorldEvent
-	 */
-	private WorldEvent getEventForCause(Thing aCause)
-	{
-		Enumeration theEvents = mEvents.elements();
-		
-		while (theEvents.hasMoreElements())
-		{
-			WorldEvent anEvent = (WorldEvent) theEvents.nextElement();
-			
-			if (anEvent.getCause() == aCause)
 			{
 				return anEvent;
 			}
@@ -124,6 +108,9 @@ public class WorldView extends Canvas implements Observer
 	
 	/**
 	 * Receives update notification that the World being viewed has changed.
+	 *
+	 * @param	a	the object that sent the update
+	 * @param	b	information about the update.
 	 */
 	public void update(Observable a, Object b)
 	{
@@ -161,36 +148,54 @@ public class WorldView extends Canvas implements Observer
 	
 	/**
 	 * Paints a board image centered around the given coordinates.
+	 *
+	 * @param		inApplet				a non-null Applet used to retrieve images
+	 * @param		g						a non-null Graphics object with which to paint
+	 * @param		plotX					x coordinate relative to the corner of the world view
+	 * @param		plotY					y coordinate relative to the corner of the world view
+	 * @param		imageName				name of the image
+	 * @exception	JCavernInternalError	could not paint
 	 */
-	private void paintCenteredImage(Graphics g, int plotX, int plotY, String imageName) throws JCavernInternalError
+	private void paintCenteredImage(JCavernApplet inApplet, Graphics g,
+					int plotX, int plotY, String imageName) throws JCavernInternalError
 	{
-		Image theImage = JCavernApplet.getBoardImage(imageName);
+		Image theImage = inApplet.getBoardImage(imageName);
 	
 		g.drawImage(theImage,
-						plotX - WorldView.kPreferredImageSize / 2, plotY - WorldView.kPreferredImageSize / 2,
+						plotX - WorldView.kPreferredImageSize / 2,
+						plotY - WorldView.kPreferredImageSize / 2,
 						WorldView.kPreferredImageSize, WorldView.kPreferredImageSize, null);
 	}
 
 	/**
 	 * Paints a view of the world, centered around the player's current location.
+	 *
+	 * @param	g		a non-null Graphics object with which to paint
 	 */
 	public void paint(Graphics g)
 	{
-		//System.out.println("--- WorldView.paint()");
+		System.out.println("\n\nstart WorldView.paint()");
 		
-		Player		thePlayer = mModel.getPlayer();
-
-		g.drawRect(0, 0, getSize().width - 1, getSize().height - 1);
-
-		if (thePlayer == null)
-		{
-			return;
-		}
+		Player		thePlayer;
+		Location	theLocation;
 		
 		try
 		{
-			Location	theLocation = mModel.enforceMinimumInset(mModel.getLocation(thePlayer), 3);
-		
+			System.out.println("\n\nWorldView.paint() seeking player from " + mModel);
+			thePlayer = mModel.getPlayer();
+			System.out.println("\n\nWorldView.paint() found player " + thePlayer);
+			theLocation = mModel.enforceMinimumInset(mModel.getLocation(thePlayer), 3);
+		}
+		catch (JCavernInternalError jcie)
+		{
+			System.out.println("Can't find player");
+			theLocation = new Location( 5, 5);
+		}
+
+		g.drawRect(0, 0, getSize().width - 1, getSize().height - 1);
+
+		try
+		{
 			for (int yIndex = -3; yIndex <= 3; yIndex++)
 			{
 				for (int xIndex = -3; xIndex <= 3; xIndex++)
@@ -207,7 +212,7 @@ public class WorldView extends Canvas implements Observer
 							Thing		theThing = mModel.getThing(aLocation);
 							WorldEvent	anEvent = getEventForSubject(theThing);
 					
-							theThing.paint(g, plotX, plotY, anEvent);
+							theThing.paint(getApplet(), g, plotX, plotY, anEvent);
 						}
 						else
 						{
@@ -217,7 +222,7 @@ public class WorldView extends Canvas implements Observer
 							{
 								if (anEvent.getEventCode() == CombatEvent.ATTACKED_KILLED)
 								{
-									paintCenteredImage(g, plotX, plotY, "splat");
+									paintCenteredImage(getApplet(), g, plotX, plotY, "splat");
 								}
 								else
 								{

@@ -32,14 +32,16 @@ public class IndexCard extends AppletCard
 	/** * The label for displaying status messages. */
 	private String					mLabel;
 	
+	/** * the tree image associated with this card. */
 	private	Image					mImage;
 
 	/**
 	 * Creates an IndexCard for the given Applet and Player.
 	 * The IndexCard will enable and disable the various buttons based on the status of the current player.
 	 *
-	 * @param	anApplet		a non-null Applet in which the index will be displayed
-	 * @param	currentPlayer	the Player currently associated with the user, or <CODE>null</CODE> if none.
+	 * @param		anApplet				a non-null Applet in which the index will be displayed
+	 * @param		currentPlayer			the Player currently associated with the user, or <CODE>null</CODE> if none.
+	 * @exception	JCavernInternalError	could not load images
 	 */
 	public IndexCard(JCavernApplet anApplet, Player currentPlayer) throws JCavernInternalError
 	{
@@ -50,17 +52,17 @@ public class IndexCard extends AppletCard
 		if (mCurrentPlayer == null)
 		{
 			mLabel = "Press 'New Player' to create a new Player";
-			mImage = JCavernApplet.getBoardImage("tree");
+			mImage = mApplet.getBoardImage("tree");
 		}
 		else if (mCurrentPlayer.isDead())
 		{
 			mLabel = "Player " + mCurrentPlayer.getName() + " is dead. Press 'New Player' to create a new Player";
-			mImage = JCavernApplet.getBoardImage("tree");
+			mImage = mApplet.getBoardImage("tree");
 		}
 		else
 		{
 			mLabel = "Welcome to the King's Castle, " + mCurrentPlayer.getName();
-			mImage = JCavernApplet.getBoardImage("player");
+			mImage = mApplet.getBoardImage("player");
 		}
 		
 		// add the load-player button
