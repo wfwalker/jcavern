@@ -1,5 +1,5 @@
 /* 
-	JCavernApplet.java
+	Treasure.java
 
 	Title:			JCavern And Glen
 	Author:			Bill Walker
@@ -29,30 +29,63 @@ public abstract class Treasure implements Cloneable, Serializable
 	/** * The name of this Treasure. */
 	private String			mName;
 	
-	public Treasure(String aName)
+	/**
+	 * Creates a new treasure item.
+	 *
+	 * @param	inName		non-null String naming the treasure item
+	 */
+	public Treasure(String inName)
 	{
-		mName = aName;	
+		mName = inName;	
 	}
 	
-	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
+	/**
+	 * Records the fact that this item is now in use by a particular player.
+	 *
+	 * @param		inPlayer				a non-null Player using the item
+	 * @param		inWorld					a non-null World in which the item is being used
+	 * @exception	JCavernInternalError	Could not locate the Player in the World
+	 */
+	public void startUseBy(Player inPlayer, World inWorld) throws JCavernInternalError
 	{
-		aPlayer.startUsing(this);
-		aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.USE_INVENTORY, aPlayer.getName() + " begins using " + getName()));
+		inPlayer.startUsing(this);
+		inWorld.eventHappened(new WorldEvent(inPlayer, WorldEvent.USE_INVENTORY, inPlayer.getName() + " begins using " + getName()));
 	}
 	
-	public void stopUseBy(Player aPlayer, World aWorld)
+	/**
+	 * Records the fact that this item is not in use by a particular player.
+	 *
+	 * @param	inPlayer	a non-null Player no longer using the item
+	 * @param	inWorld		a non-null World in which the item is not being used
+	 */
+	public void stopUseBy(Player inPlayer, World inWorld)
 	{
-		aPlayer.stopUsing(this);
-		aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.USE_INVENTORY, aPlayer.getName() + " stops using " + getName()));
+		inPlayer.stopUsing(this);
+		inWorld.eventHappened(new WorldEvent(inPlayer, WorldEvent.USE_INVENTORY, inPlayer.getName() + " stops using " + getName()));
 	}
 	
+	/**
+	 * Implements the cloning interface.
+	 *
+	 * @return	a clone of this treasure item.
+	 */
 	public abstract Object clone();
 	
+	/**
+	 * Returns the name of this treasure item.
+	 *
+	 * @return		the non-null String name of this item.
+	 */
 	public String getName()
 	{
 		return mName;
 	}
 	
+	/**
+	 * Returns a random Treasure.
+	 *
+	 * @return	a random Treasure, one of the items specified in <CODE>treasure.dat</CODE>.
+	 */
 	public static Treasure getRandom()
 	{
 		int randomIndex = (int) (Math.random() * gTreasures.size());
@@ -62,8 +95,10 @@ public abstract class Treasure implements Cloneable, Serializable
 
 	/**
 	 * Load the prototypical treasure items from the treasures.dat file.
+	 *
+	 * @param	aURL	a non-null URL from which to load <CODE>treasures.dat</CODE>
 	 */
-	public static void loadPrototypes(URL aURL )
+	public static void loadPrototypes(URL aURL)
 	{
 		System.out.println("loadPrototypes(" + aURL + ")");
 		
