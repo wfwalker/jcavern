@@ -59,17 +59,6 @@ public class MissionView extends Canvas implements Observer
 		g.drawRect(40, 10, width - 51, 5);
 		g.fillRect(40, 10, (int) (done * (width - 51)), 5);
 		
-		g.drawString(mModel.getKills() + "/" + mModel.getQuota() + " " + mModel.getTarget().getName() + "s", 40, 30);
-		
-		for (index = 0; index < mModel.getQuota(); index++)
-		{
-			if (index < mModel.getKills())
-			{
-				g.drawString("-", 20 + 40 * index, height / 2);
-			}
-			else
-			{
-			}
-		}
+		g.drawString(mModel.getKills() + "/" + mModel.getQuota() + " " + mModel.getTarget().getName() + "s", 40, 30);		
 	}
 }
