@@ -14,13 +14,16 @@ import java.awt.*;
 public class WorldContentsEvent extends WorldEvent
 {
 	/** * Used to indicate the kind of change that happened to a thing. */
-	public static final int		PLACED = 1;
+	public static final int		PLACED = 300;
 	
 	/** * Used to indicate the kind of change that happened to a thing. */
-	public static final int		REMOVED = 2;
+	public static final int		REMOVED = 301;
 	
 	/** * Used to indicate the kind of change that happened to a thing. */
-	public static final int		REVEALED = 6;
+	public static final int		REVEALED = 302;
+	
+	/** * Used to indicate the kind of change that happened to a thing. */
+	public static final int		MOVED = 303;
 	
 	/**
 	 * Creates a WorldContentsEvent for Things placed in the World.
@@ -56,6 +59,18 @@ public class WorldContentsEvent extends WorldEvent
 	public static WorldContentsEvent revealed(Thing aThing, Thing aCause)
 	{
 		return new WorldContentsEvent(null, aThing, REVEALED, aCause, aThing.getName() + " was revealed");
+	}
+	
+	/**
+	 * Creates a WorldContentsEvent for things that move.
+	 *
+	 * @param	aThing		a non-null Thing that was revealed
+	 * @param	aCause		a non-null Thing that did the revealing
+	 * @return				a non-null WorldContentsEvent
+	 */
+	public static WorldContentsEvent moved(Location oldLocation, Thing aThing)
+	{
+		return new WorldContentsEvent(oldLocation, aThing, MOVED, null, aThing.getName() + " moved");
 	}
 	
 	/**
