@@ -13,7 +13,10 @@ import jcavern.*;
 public class AppletCard
 {
 	/** * The applet in which this card displays. */
-	protected JCavernApplet	mApplet;
+	protected JCavernApplet		mApplet;
+	
+	/** * The current AppletCard being displayed. */
+	private static AppletCard	gCurrentCard;
 	
 	/**
 	 * Create a new AppletCard for the given Applet.
@@ -60,6 +63,13 @@ public class AppletCard
 		
 		return aPanel;
 	}
+	
+	/**
+	 * Notifies a Card that it was removed from view by the Applet.
+	 */
+	public void cardRemoved()
+	{
+	}
 
 	/**
 	 * Display this card in its Applet.
@@ -70,8 +80,15 @@ public class AppletCard
 	public void show()
 	{
 		mApplet.removeAll();
+		
+		if (gCurrentCard != null)
+		{
+			gCurrentCard.cardRemoved();
+		}
 
 		mApplet.setBackground(Color.black);
 		mApplet.setForeground(JCavernApplet.CavernOrange);
+		
+		gCurrentCard = this;
 	}
 }
