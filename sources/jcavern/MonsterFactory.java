@@ -29,7 +29,7 @@ public class MonsterFactory
 	{
 		int randomIndex = (int) (Math.random() * gMonsters.length);
 		
-		while (gMonsters[randomIndex].getPoints() > aPlayer.getExperience())
+		while (gMonsters[randomIndex].getPoints() > aPlayer.getPoints())
 		{
 			randomIndex = (int) (Math.random() * gMonsters.length);
 		}
@@ -51,7 +51,7 @@ public class MonsterFactory
 		Mis_target := i;
 		*/
 		
-		int quota = (int) (Math.log(aPlayer.getExperience()) + 3 * Math.random());
+		int quota = (int) (Math.log(aPlayer.getPoints()) + 3 * Math.random());
 		
 		return new Mission(getWorthyOpponent(aPlayer), quota);
 	}

@@ -34,7 +34,7 @@ public class PlayerView extends Canvas implements Observer
 			"Gold " + mModel.getGold() +
 			" Sword " + mModel.getSword() +
 			" Arrows " + mModel.getArrows() +
-			" Experience " + mModel.getExperience();
+			" Experience " + mModel.getPoints();
 			
 		g.drawString(statusString, 10, 20);
 	}
