@@ -76,6 +76,7 @@
 	<target name="junit" depends="compile" >
 		<junit fork="true" haltonerror="true" printsummary="true">
 			<test name="jcaverntest.WorldTest" />
+			<test name="jcaverntest.LocationTest" />
 			
 			<classpath refid="testpath" />
 			<jvmarg value="${vm_run_args}" />
