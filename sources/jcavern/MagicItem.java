@@ -18,14 +18,29 @@ import java.util.Vector;
  */
 public class MagicItem extends Treasure
 {
+	/** * Which magic power does this particular item have? */
 	private int					mPower;
 	
+	/** * Indicates the power to do nothing.*/
 	private static final int	MAGIC_NOTHING = 0;
+	
+	/** * Indicates the power to permanently reveal invisiblet Things. */
 	private static final int	MAGIC_REVEAL_INVISIBILITY = 1;
+
+	/** * Indicates the power to teleport the player randomly within the world. */
 	private static final int	MAGIC_TELEPORTATION = 2;
+
+	/** * Indicates the power to locate all trasure chests, regardless of location. */
 	private static final int	MAGIC_DETECT_TREASURE = 3;
+
+	/** * Indicates the poiwer to location all magic castles, reguardless of location */
 	private static final int	MAGIC_DETECT_MAGIC_CASTLE = 4;
 	
+	/**
+	 * Creates a new MagicItem with the given power.
+	 *
+	 * @param		the integer thhat represents this item's magic power.
+	 */ 
 	public MagicItem(String aName, int power)
 	{
 		super(aName);
