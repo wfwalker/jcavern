@@ -80,6 +80,7 @@ public class KeyboardCommandListener extends KeyAdapter
 							case 'x' :
 							case 'c' : mWorld.move(mPlayer, parseDirectionKey(e)); break;
 							case 's' : mCurrentMode = SWORD_MODE; JCavernApplet.log("Sword attack, direction?"); break;
+							case 'b' : mCurrentMode = RANGED_ATTACK_MODE; JCavernApplet.log("Ranged attack, direction?"); break;
 						} break;
 				case SWORD_MODE: switch (e.getKeyChar())
 						{
@@ -92,6 +93,18 @@ public class KeyboardCommandListener extends KeyAdapter
 							case 'z' :
 							case 'x' :
 							case 'c' : mWorld.attack(mPlayer, parseDirectionKey(e)); mCurrentMode = NORMAL_MODE; break;
+						} break;
+				case RANGED_ATTACK_MODE: switch (e.getKeyChar())
+						{
+							// movement commands
+							case 'q' :
+							case 'w' :
+							case 'e' :
+							case 'a' :
+							case 'd' :
+							case 'z' :
+							case 'x' :
+							case 'c' : mWorld.rangedAttack(mPlayer, parseDirectionKey(e)); mCurrentMode = NORMAL_MODE; break;
 						} break;
 			}
 		}
