@@ -15,13 +15,21 @@ import java.applet.*;
  */
 public class Monster extends Combatant implements Cloneable
 {
+	/** * The textual appearance of the Monster (usually two letters). */
 	private String			mAppearance;
+	
+	/** * How many points the monster is worth when a Player kills it. */
 	private double			mWorth;
+	
+	/** * Is this monster invisible. */
 	private boolean			mInvisible;
 	
 	/** * Likelihood that this monster wants to move on a given turn */
 	private static double	kMoveFraction = 0.7;
 	
+	/**
+	 * Creates a new monster with the given parameters.
+	 */
 	public Monster(String name, String appearance, double points, double worth, boolean invisible)
 	{
 		super(name, (int) points);
@@ -33,9 +41,19 @@ public class Monster extends Combatant implements Cloneable
 		mInvisible = invisible;
 	}
 
+	/**
+	 * Performs one turn by moving toward or attacking an adjacent Player.
+	 */
 	public void doTurn(World aWorld) throws JCavernInternalError
 	{
-		int	aDirection = aWorld.directionToward(this, aWorld.getPlayer());
+		Player	aPlayer = aWorld.getPlayer();
+		
+		if ((aPlayer == null) || (! aPlayer.vulnerableToMonsterAttack(this)))
+		{
+			return;
+		}
+		
+		int		aDirection = aWorld.directionToward(this, aWorld.getPlayer());
 
 		/*		
 		{see if each monster wants to move. If so, update both the
@@ -72,12 +90,18 @@ public class Monster extends Combatant implements Cloneable
 		}
 	}
 	
+	/**
+	 * Returns whether this monster can attack the given combatant.
+	 */
 	public boolean canAttack(Combatant aCombatant)
 	{
 		//System.out.println(getName() + ".canAttack(" + aCombatant + ")");
 		return aCombatant.vulnerableToMonsterAttack(this);
 	}
 	
+	/**
+	 * Returns whether this monster can make a ranged attack the given combatant.
+	 */	
 	public boolean canRangedAttack(Combatant aCombatant)
 	{
 		System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
@@ -94,6 +118,9 @@ public class Monster extends Combatant implements Cloneable
 		return false;
 	}
 		
+	/**
+	 * Returns how much damage this monster does to this opponent.
+	 */
 	public int computeDamageTo(Combatant opponent)
 	{
 		/*
@@ -108,25 +135,43 @@ public class Monster extends Combatant implements Cloneable
 		return (int) (3 * Math.random() + (getPoints() / 8) + (getWorth() / 4));
 	}
 	
+	/**
+	 * Returns how much damage this monster does to this opponent during a ranged attack.
+	 */
 	public int computeRangedDamageTo(Combatant opponent)
 	{
 		return 0;
 	}
 	
+	/**
+	 * Decrements how many ranged attacks this monster can perform.
+	 * This simulates using up a supply of arrows.
+	 */
 	public void decrementRangedAttackCount()
 	{
 	
 	}
 	
+	/**
+	 * Gains experience points when this monster kills a combatant.
+	 * Not currently in use.
+	 */
 	public void gainExperience(Combatant theVictim)
 	{
 	}
 	
+	/**
+	 * Returns how many points this Monster is worth when vanquished.
+	 */
 	public int getWorth()
 	{
 		return (int) mWorth;
 	}
 
+	/**
+	 * Returns a copy of this monster.
+	 * How cool is cloning a monster!
+	 */
 	public Object clone()
 	{
 		return new Monster(getName(), mAppearance, getPoints(), mWorth, mInvisible);
