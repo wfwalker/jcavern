@@ -8,6 +8,7 @@
 
 package jcavern;
 
+import java.util.Vector;
 import java.awt.Graphics;
 
 /**
@@ -15,13 +16,31 @@ import java.awt.Graphics;
  */
 public class Player extends Combatant
 {
+	/** * How many gold pieces does this player have. */
 	private int			mGold;
+
+	/** * What kind of sword does this player have. */
 	private Sword		mSword;
-	private int			mArrows;
-	private Mission		mMission;
 	
+	/** * What kind of armour this player is using. */
+	private Armour		mArmour;
+	
+	private Vector		mItems;
+
+	/** * How many arrows does this player have. */
+	private int			mArrows;
+
+	/** * This player's current mission. */
+	private Mission		mMission;
+
+	/** * Whether this player is currently inside a castle. */	
 	private	Castle		mCastle;
 	
+	/**
+	 * Creates a beginning player with the default initial statistics.
+	 *
+	 * @param	name	a non-null String containing the name of the new player.
+	 */
 	public Player(String name)
 	{
 		/*
@@ -30,24 +49,41 @@ public class Player extends Combatant
 
 		super(name, 24);
 		
+		mItems = new Vector();
+
 		mGold = 10;
-		mSword = new Sword("Sword", 1);
+		receiveItem(new Sword("Sword", 1));
+		receiveItem(new Armour("Armour", 5));
 		mArrows = 20;
 	}
 	
-	public Player(String name, int gold, Sword sword, int arrows, int points, Mission mission)
+	/**
+	 * Creates a new player with the given statistics.
+	 *
+	 * @param	name		a non-null String containing the name of the player.
+	 * @param	gold		how many gold pieces the player has
+	 * @param	sword		what kind of sword does this player have
+	 * @param	arrows		how many arrows does this player have
+	 * @param	points		how many points does this player have
+	 * @param	mission		a non-null Mission this player must complete
+	 */
+	public Player(String name, int gold, Sword sword, Armour armour, int arrows, int points, Mission mission)
 	{
 		super(name, points);
 		
 		mGold = gold;
 		mSword = sword;
+		mArmour = armour;
 		mArrows = arrows;
 		mMission = mission;
 	}
 	
+	/**
+	 * Returns a clone of this player. This also requires cloning the player's Swords and other items.
+	 */
 	public Object clone()
 	{
-		return new Player(getName(), mGold, mSword, mArrows, getPoints(), mMission);
+		return new Player(getName(), mGold, (Sword) mSword.clone(), (Armour) mArmour.clone(), mArrows, getPoints(), mMission);
 	}
 	
 	public void setMission(Mission aMission)
@@ -58,7 +94,14 @@ public class Player extends Combatant
 	
 	public void sufferDamage(int theDamage)
 	{
-		super.sufferDamage(theDamage);
+		int adjustedDamage = theDamage - getArmourPoints();
+		
+		if (adjustedDamage < 0)
+		{
+			adjustedDamage = 0;
+		}
+		
+		super.sufferDamage(adjustedDamage);
 
 		setChanged();
 		notifyObservers();
@@ -113,9 +156,11 @@ public class Player extends Combatant
 	*/
 		if (getPoints() > 1)
 		{
+			Sword aSword = getSword();
+			
 			double damage =
-					mSword.getStrength() * getPoints() / (2 * Math.log(getPoints())) +
-					(mSword.getStrength() + 3) * Math.random();
+					aSword.getStrength() * getPoints() / (2 * Math.log(getPoints())) +
+					(aSword.getStrength() + 3) * Math.random();
 					
 			return (int) damage;	
 		}
@@ -162,14 +207,56 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
-	public Sword getSword()
+	private Sword getSword()
 	{
-		return mSword;
+		for (int index = 0; index < mItems.size(); index++)
+		{
+			Treasure aTreasure = (Treasure) mItems.elementAt(index);
+			
+			if (aTreasure instanceof Sword)
+			{
+				return (Sword) aTreasure;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Vector getItems()
+	{
+		return mItems;
+	}
+	
+	private int getArmourPoints()
+	{
+		int armourPoints = 0;
+		
+		for (int index = 0; index < mItems.size(); index++)
+		{
+			Treasure aTreasure = (Treasure) mItems.elementAt(index);
+			
+			if (aTreasure instanceof Armour)
+			{
+				armourPoints += ((Armour) aTreasure).getPoints();
+			}
+		}
+		
+		return armourPoints;
 	}
 	
 	public int getArrows()
 	{
 		return mArrows;
+	}
+	
+	public void receiveItem(Treasure anItem)
+	{
+		System.out.println(getName() + " received " + anItem);
+		
+		mItems.addElement(anItem);
+		
+		setChanged();
+		notifyObservers();
 	}
 	
 	public Mission getMission()
