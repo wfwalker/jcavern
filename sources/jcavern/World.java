@@ -38,38 +38,44 @@ public class World extends Observable
 	 */
 	public World()
 	{
+		removeAll();
+	}
+	
+	public void removeAll()
+	{
 		mLocationsToThings = new Hashtable();
 		mThingsToLocations = new Hashtable();
 	}
-
-	public static World createWorld(Player aPlayer) throws JCavernInternalError
+	
+	public void populateFor(Player aPlayer) throws JCavernInternalError
 	{
 		try
 		{
-			// Create a world  and a view of the world
-			World aWorld = new World();
-		
+			// Remove all the stuff from the World
+			removeAll();
+			
+			// Get rid of that pesky castle the player is probably carrying
+			aPlayer.setCastle(null);
+			
 			// Place trees
-			aWorld.placeRandomTrees();
+			placeRandomTrees();
 			
 			// Place castles
-			aWorld.placeRandomCastles();
+			placeRandomCastles();
 			
 			// Place treasure chests
-			aWorld.placeRandomTreasureChests(aPlayer);
+			placeRandomTreasureChests(aPlayer);
 			
 			// Place monsters
 			// orignally: Num_Monster := 3*Mis_quota + 2*Random(Mis_Quota);
 			int quota = aPlayer.getMission().getQuota();			
 			int desiredPopulation = (int) (3 * quota + 2 * Math.random() * quota);
 			
-			aWorld.placeRandom(aPlayer.getMission().getTarget(), quota);
-			aWorld.placeWorthyOpponents(aPlayer, desiredPopulation - quota);
+			placeRandom(aPlayer.getMission().getTarget(), quota);
+			placeWorthyOpponents(aPlayer, desiredPopulation - quota);
 		
 			// Put the player in the world
-			aWorld.place(aWorld.getRandomEmptyLocation(), aPlayer);
-			
-			return aWorld;
+			place(getRandomEmptyLocation(), aPlayer);			
 		}
 		catch (ThingCollisionException tce)
 		{
@@ -94,11 +100,19 @@ public class World extends Observable
 	}
 	
 	/**
-	 * Places random trees using the default fraction.
+	 * Places random TreasureChests. The number of TreasureChests is based on the
+	 * number of monsters to be killed in the given Players mission quota.
 	 */
 	public void placeRandomTreasureChests(Player aPlayer) throws ThingCollisionException
 	{
-		placeRandom(new TreasureChest(), aPlayer.getMission().getQuota() / 2);
+		int chestCount = aPlayer.getMission().getQuota() / 2;
+
+		System.out.println("Place " + chestCount + " Random Treasure Chests");
+		
+		for (int index = 0; index < chestCount; index++)
+		{
+			place(getRandomEmptyLocation(), TreasureChest.createRandom());
+		}
 	}
 	
 	/**
@@ -215,6 +229,36 @@ public class World extends Observable
 		}
 	}
 	
+	public Thing getNeighboring(Location aLocation, Thing aPrototype) throws JCavernInternalError
+	{
+		try
+		{
+			Vector neighbors = aLocation.getNeighbors();
+			
+			for (int index = 0; index < neighbors.size(); index++)
+			{
+				try
+				{
+					Location neighbor = (Location) neighbors.elementAt(index);
+				
+					if ((! isEmpty(neighbor)) && (getThing(neighbor).getClass().equals(aPrototype.getClass())))
+					{
+						return getThing(neighbor);
+					}
+				}
+				catch (IllegalLocationException ile)
+				{
+				}
+			}
+		}
+		catch (EmptyLocationException ele)
+		{
+			throw new JCavernInternalError("tried to find neighbors, got unexpected empty location exception " + ele);
+		}
+		
+		throw new IllegalArgumentException("Can't find neighboring " + aPrototype);
+	}
+	
 	/**
 	 * Moves the given thing in the given direction.
 	 */
@@ -293,7 +337,7 @@ public class World extends Observable
 		}
 	}
 	
-	public Player getPlayer() throws JCavernInternalError
+	public Player getPlayer()
 	{
 		Enumeration theThings = mThingsToLocations.keys();
 		
@@ -307,7 +351,7 @@ public class World extends Observable
 			}
 		}
 		
-		throw new JCavernInternalError("No players found in this world");
+		return null;
 	}
 	
 	public void doTurn() throws JCavernInternalError
