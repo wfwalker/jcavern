@@ -319,9 +319,30 @@ public class Player extends Combatant
 	/**
 	 * Increments this player's gold account by the given amount.
 	 */
-	public void receiveGold(int delta)
+	public void receiveGold(int delta) throws JCavernInternalError
 	{
+		if (delta < 0)
+		{
+			throw new JCavernInternalError("can't receive negative gold");
+		}
+		
 		mGold += delta;
+
+		setChanged();
+		notifyObservers();
+	}
+	
+	/**
+	 * Decrements this player's gold account by the given amount.
+	 */
+	public void spendGold(int delta) throws JCavernInternalError
+	{
+		if (delta < 0)
+		{
+			throw new JCavernInternalError("can't spend negative gold");
+		}
+		
+		mGold -= delta;
 
 		setChanged();
 		notifyObservers();
@@ -413,16 +434,18 @@ public class Player extends Combatant
 		mCastle = aCastle;
 	}
 	
-	public void paint(Graphics g, int plotX, int plotY) throws JCavernInternalError
+	/**
+	 * Paints the player, and any castles the Player is currently sitting in.
+	 */
+	public void paint(Graphics g, int plotX, int plotY, boolean highlight) throws JCavernInternalError
 	{
-		if (getCastle() == null)
+		//System.out.println("Player.paint(g, " + plotX + ", " + plotY + ")");
+		
+		super.paint(g, plotX, plotY, highlight);
+
+		if (getCastle() != null)
 		{
-			super.paint(g, plotX, plotY, true);
-		}
-		else
-		{
-			super.paint(g, plotX, plotY, true);
-			getCastle().paint(g, plotX, plotY);
+			getCastle().paint(g, plotX, plotY, true);
 		}
 	}
 	
