@@ -40,6 +40,7 @@ public class PlayerView extends TextArea implements Observer
 		aBuffer.append("  Gold: " + mModel.getGold());
 		aBuffer.append("\n  Arrows: " + mModel.getArrows());
 		aBuffer.append("\n  Points: " + mModel.getPoints() + "/" + mModel.getMaximumPoints());
+		aBuffer.append("\n  Moves: " + mModel.getMoveCount());
 		aBuffer.append("\n\n  In Use:");
 			
 		Vector items = mModel.getInUseItems();
