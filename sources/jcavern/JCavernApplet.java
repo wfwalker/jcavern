@@ -40,7 +40,7 @@ public class JCavernApplet extends Applet
 	
 	/** * Names of image files containing pictures of non-monsters. */
 	public static final String		OtherImageNames[] = {
-		"player", "chest", "tree", "tree2", "castle", "splat", "empty" };
+		"player", "open-chest", "chest", "tree", "tree2", "castle", "splat", "empty" };
 
 	/** * A table of messages */
 	private Hashtable				mImages;
