@@ -180,30 +180,40 @@ public class CombatantTest extends TestCase
 	{
 		Combatant 	aMonster = new Monster("Bogus", "monster", "hit", "killed", 1, 1, false);
 		Combatant 	anotherMonster = new Monster("Bogus", "monster2", "hit", "killed", 1, 1, false);
+		Tree		aTree = new Tree();
 		
-		WorldEvent	playerHits = CombatEvent.hit(null, aMonster, mPlayer, 1);
-		WorldEvent	monsterHits = CombatEvent.hit(null, mPlayer, aMonster, 1);
+		WorldEvent	playerHitsMonster = CombatEvent.hit(null, aMonster, mPlayer, 1);
+		WorldEvent	monsterHitsPlayer = CombatEvent.hit(null, mPlayer, aMonster, 1);
 		
-		WorldEvent	playerMisses = CombatEvent.missed(null, aMonster, mPlayer);
-		WorldEvent	monsterMisses = CombatEvent.missed(null, mPlayer, aMonster);
+		WorldEvent	playerHitsTree = CombatEvent.hit(null, aTree, mPlayer, 1);
+		WorldEvent	monsterMissesTree = CombatEvent.missed(null, aTree, aMonster);
 		
-		WorldEvent	monster2Misses = CombatEvent.missed(null, anotherMonster, aMonster);
-		WorldEvent	monster2Hits = CombatEvent.hit(null, anotherMonster, aMonster, 1);
+		WorldEvent	playerMissesMonster = CombatEvent.missed(null, aMonster, mPlayer);
+		WorldEvent	monsterMissesPlayer = CombatEvent.missed(null, mPlayer, aMonster);
+		
+		WorldEvent	monster2MissesMonster = CombatEvent.missed(null, anotherMonster, aMonster);
+		WorldEvent	monster2HitsMonster = CombatEvent.hit(null, anotherMonster, aMonster, 1);
 
-		assert("highlight monster when player hits monster", aMonster.shouldHighlight(playerHits));
-		assert("highlight player when player hits monster", ! mPlayer.shouldHighlight(playerHits)); // TODO: I _do_ want to highlight player here
+		assert("highlight monster when player hits monster", aMonster.getGraphicalThingView().shouldHighlight(playerHitsMonster));
+		assert("highlight player when player hits monster", mPlayer.getGraphicalThingView().shouldHighlight(playerHitsMonster));
 
-		assert("highlight monster when player misses monster", aMonster.shouldHighlight(playerMisses));
-		assert("highlight player when player misses monster", ! mPlayer.shouldHighlight(playerMisses)); // TODO: Decide whether this is right.
+		assert("highlight tree when player hits tree", ! aTree.getGraphicalThingView().shouldHighlight(playerHitsTree));
+		assert("highlight player when player hits tree", mPlayer.getGraphicalThingView().shouldHighlight(playerHitsTree));
 
-		assert("highlight monster when monster hits player", ! aMonster.shouldHighlight(monsterHits)); // TODO: I _do_ want to highlight the monster here
-		assert("highlight player when monster hits player", mPlayer.shouldHighlight(monsterHits));
+		assert("highlight tree when monster misses tree", ! aTree.getGraphicalThingView().shouldHighlight(monsterMissesTree));
+		assert("highlight monster when monster misses tree", ! aMonster.getGraphicalThingView().shouldHighlight(monsterMissesTree));
 
-		assert("highlight monster when monster misses player", ! aMonster.shouldHighlight(monsterMisses)); // I think this is right
-		assert("highlight player when monster misses player ", mPlayer.shouldHighlight(monsterMisses));
+		assert("highlight monster when player misses monster", aMonster.getGraphicalThingView().shouldHighlight(playerMissesMonster));
+		assert("highlight player when player misses monster", mPlayer.getGraphicalThingView().shouldHighlight(playerMissesMonster));
 
-		assert("highlight player when monster misses monster2 ", ! mPlayer.shouldHighlight(monster2Misses));
-		assert("highlight player when monster misses monster2 ", ! mPlayer.shouldHighlight(monster2Hits));
+		assert("highlight monster when monster hits player", aMonster.getGraphicalThingView().shouldHighlight(monsterHitsPlayer));
+		assert("highlight player when monster hits player", mPlayer.getGraphicalThingView().shouldHighlight(monsterHitsPlayer));
+
+		assert("highlight monster when monster misses player", aMonster.getGraphicalThingView().shouldHighlight(monsterMissesPlayer));
+		assert("highlight player when monster misses player ", mPlayer.getGraphicalThingView().shouldHighlight(monsterMissesPlayer));
+
+		assert("highlight player when monster misses monster2 ", ! mPlayer.getGraphicalThingView().shouldHighlight(monster2MissesMonster));
+		assert("highlight player when monster misses monster2 ", ! mPlayer.getGraphicalThingView().shouldHighlight(monster2HitsMonster));
 	}
 	
 }
