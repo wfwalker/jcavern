@@ -16,12 +16,28 @@ package jcavern;
  */
 public class Sword extends Treasure
 {
-	private int		mStrength;
+	public static final double	kWearFraction = 0.1;
+	
+	private int					mStrength;
+	private int					mCharges;
 	
 	public Sword(String aName, int strength)
 	{
 		super(aName);
 		mStrength = strength;
+		
+		/* charges := charges + Random(10) + 2; */
+		mCharges = (int) (Math.random() * 10 + 2);
+	}
+	
+	public void decrementCharges()
+	{
+		mCharges--;
+	}
+	
+	public boolean isDepleted()
+	{
+		return mCharges <= 0;
 	}
 	
 	public Object clone()
