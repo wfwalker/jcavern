@@ -25,6 +25,9 @@ public abstract class Combatant extends Thing
 
 	/** * How many points has this Combatant ever had. */
 	private int					mMaximumPoints;
+	
+	/** * How many Combatants this Combatant has killed */
+	private int					mKills;
 
 	public class GraphicalCombatantView extends Thing.GraphicalThingView
 	{
@@ -342,6 +345,7 @@ public abstract class Combatant extends Thing
 
 				aWorld.eventHappened(CombatEvent.gained(aLocation, this, opponent.getWorth()));				
 				gainPoints(aWorld, opponent);
+				mKills++;
 			}
 			else
 			{
@@ -396,6 +400,16 @@ public abstract class Combatant extends Thing
 	}
 	
 	/**
+	 * Returns the current number of Combatants this Combatant has killed.
+	 *
+	 * @return		the current number of Combatants this Combatant has killed.
+	 */
+	public int getKills()
+	{
+		return mKills;
+	}
+	
+	/**
 	 * Returns the maximum number of points this Combatant has ever had.
 	 *
 	 * @return	Combatant's lifetime maximum points.
@@ -424,7 +438,7 @@ public abstract class Combatant extends Thing
 	 */
 	public Combatant(String name, String imageName, int points)
 	{
-		this(name, imageName, points, false);
+		this(name, imageName, points, 0, false);
 	}
 	
 
@@ -434,12 +448,14 @@ public abstract class Combatant extends Thing
 	 * @param	name		a non-null Name for this combatant
 	 * @param	imageName	a non-null filename for the image that represents this combatant
 	 * @param	points		how many points this Combatant has.
+	 * @param	kills		how many kills this Combatant has.
 	 * @param	invisible	<CODE>true</CODE> if this Combatant is invisible, <CODE>false</CODE> otherwise.
 	 */
-	public Combatant(String name, String imageName, int points, boolean invisible)
+	public Combatant(String name, String imageName, int points, int kills, boolean invisible)
 	{
 		super(name, imageName, invisible);
 		mPoints = points;
+		mKills = kills;
 		mMaximumPoints = points;
 	}
 }

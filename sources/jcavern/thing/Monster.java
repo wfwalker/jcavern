@@ -81,7 +81,7 @@ public class Monster extends Combatant
 	 */
 	public Monster(String name, String imageName, String hitVerb, String killedVerb, double points, double worth, boolean invisible)
 	{
-		super(name, imageName, (int) points, invisible);
+		super(name, imageName, (int) points, 0, invisible);
 	
 		//System.out.println("Monster(" + name + ", " + imageName + ", " + points + ", " + worth + ", " + invisible + ")");
 		
