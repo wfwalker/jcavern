@@ -20,7 +20,7 @@ import java.io.*;
  * @author	Bill Walker
  * @version	$Id$
  */
-public abstract class Treasure implements Cloneable
+public abstract class Treasure implements Cloneable, Serializable
 {
 	/** * The global list of all the possible Treasures. */
 	private static Vector	gTreasures;

@@ -1,5 +1,6 @@
 package jcavern;
 
+import java.io.Serializable;
 import java.util.Observable;
 import java.awt.*;
 
@@ -9,7 +10,7 @@ import java.awt.*;
  * @author	Bill Walker
  * @version	$Id$
  */
-public abstract class Thing extends Observable implements Cloneable
+public abstract class Thing extends Observable implements Cloneable, Serializable
 {
 	/** * The name of this thing. */
 	private String		mName;
