@@ -101,6 +101,12 @@ public class WorldTest extends TestCase
 		}
 	}
 	
+	public void testGetThings()
+	{
+		assert("found something", mWorld.getThings().size() > 0);
+		assert("found something", mWorld.getThings().contains(mPlayer));
+	}
+
 	/**
 	 * Tests whether you can remove a tree that ain't there.
 	 */
