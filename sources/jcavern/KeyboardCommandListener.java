@@ -44,6 +44,12 @@ public class KeyboardCommandListener extends KeyAdapter
 	
 	/** * In castle visiting mode */
 	private static final int	CASTLE_MODE = 4;
+	
+	/** * In start using mode */
+	private static final int	USE_MODE = 5;
+	
+	/** * In start using mode */
+	private static final int	UNUSE_MODE = 6;
 
 
 	public KeyboardCommandListener(World aWorld, WorldView aWorldView, Player aPlayer, MissionView aMissionView)
@@ -81,64 +87,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		{
 			switch (mCurrentMode)
 			{
-				case NORMAL_MODE: switch (e.getKeyChar())
-						{
-							// movement commands
-							case 'q' :
-							case 'w' :
-							case 'e' :
-							case 'a' :
-							case 'd' :
-							case 'z' :
-							case 'x' :
-							case 'c' : doMove(parseDirectionKey(e)); break;
-							case 's' : mCurrentMode = SWORD_MODE; JCavernApplet.log(mPlayer.getSword().getName() + " attack, direction?"); break;
-							case 'b' : mCurrentMode = RANGED_ATTACK_MODE; JCavernApplet.log("Ranged attack, direction?"); break;
-							case 'v' : if (mPlayer.getCastle() != null)
-										{
-											mCurrentMode = CASTLE_MODE; JCavernApplet.log("Visiting Castle, command?");
-										}
-										else
-										{
-											JCavernApplet.log("No castle to visit");
-										}
-										break;
-							case '.' : JCavernApplet.log("Sit"); break;
-							case 'o' : doOpen(); break;
-							default  : JCavernApplet.log("Unknown command");
-						} break;
-				case CASTLE_MODE: switch (e.getKeyChar())
-						{
-							// movement commands
-							case 'q' : doEndMission(); mCurrentMode = NORMAL_MODE; break;
-							default  : JCavernApplet.log("Unknown castle visit command"); mCurrentMode = NORMAL_MODE;
-						} break;
-				case SWORD_MODE: switch (e.getKeyChar())
-						{
-							// movement commands
-							case 'q' :
-							case 'w' :
-							case 'e' :
-							case 'a' :
-							case 'd' :
-							case 'z' :
-							case 'x' :
-							case 'c' : doAttack(parseDirectionKey(e)); break;
-							default  : JCavernApplet.log("Unknown attack direction"); mCurrentMode = NORMAL_MODE;
-						} break;
-				case RANGED_ATTACK_MODE: switch (e.getKeyChar())
-						{
-							// movement commands
-							case 'q' :
-							case 'w' :
-							case 'e' :
-							case 'a' :
-							case 'd' :
-							case 'z' :
-							case 'x' :
-							case 'c' : doRangedAttack(parseDirectionKey(e)); break;
-							default  : JCavernApplet.log("Unknown attack direction"); mCurrentMode = NORMAL_MODE;
-						} break;
+				case NORMAL_MODE:			keyTypedNormalMode(e); break;
+				case CASTLE_MODE:			keyTypedCastleMode(e); mCurrentMode = NORMAL_MODE; break;
+				case SWORD_MODE:			keyTypedSwordMode(e); mCurrentMode = NORMAL_MODE; break;
+				case RANGED_ATTACK_MODE:	keyTypedRangedAttackMode(e); mCurrentMode = NORMAL_MODE; break;
+				case USE_MODE:				keyTypedUseMode(e); mCurrentMode = NORMAL_MODE; break;
+				case UNUSE_MODE:			keyTypedUnuseMode(e); mCurrentMode = NORMAL_MODE; break;
 			}
 	
 			// and now, the monsters get a turn
@@ -149,7 +103,7 @@ public class KeyboardCommandListener extends KeyAdapter
 			
 			if (mPlayer.isDead())
 			{
-				JCavernApplet.log("Sorry, " + mPlayer.getName() + ", your game is over.");
+				JCavernApplet.current().log("Sorry, " + mPlayer.getName() + ", your game is over.");
 			}
 		}
 		catch(JCavernInternalError jcie)
@@ -158,11 +112,148 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 
+	private void keyTypedNormalMode(KeyEvent e) throws JCavernInternalError
+	{
+		switch (e.getKeyChar())
+		{
+			// movement commands
+			case 'q' :
+			case 'w' :
+			case 'e' :
+			case 'a' :
+			case 'd' :
+			case 'z' :
+			case 'x' :
+			case 'c' : doMove(parseDirectionKey(e)); break;
+			case 's' : mCurrentMode = SWORD_MODE; JCavernApplet.current().log(mPlayer.getSword().getName() + " attack, direction?"); break;
+			case 'b' : mCurrentMode = RANGED_ATTACK_MODE; JCavernApplet.current().log("Ranged attack, direction?"); break;
+			case 'v' : if (mPlayer.getCastle() != null)
+						{
+							mCurrentMode = CASTLE_MODE; JCavernApplet.current().log("Visiting Castle, command?");
+						}
+						else
+						{
+							JCavernApplet.current().log("No castle to visit");
+						}
+						break;
+			case '.' : JCavernApplet.current().log("Sit"); break;
+			case 'o' : doOpen(); break;
+			case 'u' : mCurrentMode = USE_MODE; JCavernApplet.current().log("Start using which item?"); break;
+			case 'U' : mCurrentMode = UNUSE_MODE; JCavernApplet.current().log("Stop using which item?"); break;
+			default  : JCavernApplet.current().log("Unknown command");
+		}
+	}
+
+	private void keyTypedCastleMode(KeyEvent e) throws JCavernInternalError
+	{
+		switch (e.getKeyChar())
+		{
+			case 'q' : doEndMission(); break;
+			default  : JCavernApplet.current().log("Unknown castle visit command");
+		}
+	}
+	
+	private void keyTypedSwordMode(KeyEvent e) throws JCavernInternalError
+	{
+		switch (e.getKeyChar())
+		{
+			// direction keys
+			case 'q' :
+			case 'w' :
+			case 'e' :
+			case 'a' :
+			case 'd' :
+			case 'z' :
+			case 'x' :
+			case 'c' : doAttack(parseDirectionKey(e)); break;
+			default  : JCavernApplet.current().log("Unknown attack direction");
+		}
+	}
+	
+	private void keyTypedRangedAttackMode(KeyEvent e) throws JCavernInternalError
+	{
+		switch (e.getKeyChar())
+		{
+			// direction keys
+			case 'q' :
+			case 'w' :
+			case 'e' :
+			case 'a' :
+			case 'd' :
+			case 'z' :
+			case 'x' :
+			case 'c' : doRangedAttack(parseDirectionKey(e)); break;
+			default  : JCavernApplet.current().log("Unknown attack direction");
+		}
+	}
+	
+	private void keyTypedUseMode(KeyEvent e) throws JCavernInternalError
+	{
+		switch (e.getKeyChar())
+		{
+			case '0' :
+			case '1' :
+			case '2' :
+			case '3' :
+			case '4' :
+			case '5' :
+			case '6' :
+			case '7' :
+			case '8' :
+			case '9' : doUse(Character.getNumericValue(e.getKeyChar()));
+		}
+ 	}
+	
+	private void keyTypedUnuseMode(KeyEvent e) throws JCavernInternalError
+	{
+		switch (e.getKeyChar())
+		{
+			case '0' :
+			case '1' :
+			case '2' :
+			case '3' :
+			case '4' :
+			case '5' :
+			case '6' :
+			case '7' :
+			case '8' :
+			case '9' : doUnuse(Character.getNumericValue(e.getKeyChar()));
+		}
+ 	}
+	
+	//
+	// ------------ methods for controlling the player
+	//
+		
+	private void doUse(int anIndex) throws JCavernInternalError
+	{
+		try
+		{
+			mPlayer.getUnusedTreasureAt(anIndex).startUseBy(mPlayer, mWorld);
+		}
+		catch (IllegalArgumentException iae)
+		{
+			JCavernApplet.current().log("There's no item " + anIndex + " to use!");
+		}
+	}
+
+	private void doUnuse(int anIndex)
+	{
+		try
+		{
+			mPlayer.getInUseTreasureAt(anIndex).stopUseBy(mPlayer, mWorld);
+		}
+		catch (IllegalArgumentException iae)
+		{
+			JCavernApplet.current().log("There's no item " + anIndex + " to stop using!");
+		}
+	}
+	
 	private void doEndMission() throws JCavernInternalError
 	{
 		if (mPlayer.getMission().getCompleted())
 		{
-			JCavernApplet.log("Congratulations, " + mPlayer.getName() + ".");
+			JCavernApplet.current().log("Congratulations, " + mPlayer.getName() + ".");
 			
 			// let's do it again!
 			mPlayer.setMission(MonsterFactory.createMission(mPlayer));
@@ -173,7 +264,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		else
 		{
-			JCavernApplet.log("Sorry, " + mPlayer.getName() + ", you have not completed your mission");
+			JCavernApplet.current().log("Sorry, " + mPlayer.getName() + ", you have not completed your mission");
 		}		
 	}
 	
@@ -187,16 +278,16 @@ public class KeyboardCommandListener extends KeyAdapter
 			}
 			catch(NonCombatantException nce)
 			{
-				JCavernApplet.log(mPlayer.getName() + " can't attack that!");
+				JCavernApplet.current().log(mPlayer.getName() + " can't attack that!");
 			}
 			catch(IllegalLocationException ile)
 			{
-				JCavernApplet.log(mPlayer.getName() + " shot arrow of the edge of the world!"); 
+				JCavernApplet.current().log(mPlayer.getName() + " shot arrow of the edge of the world!"); 
 			}
 		}
 		else
 		{
-			JCavernApplet.log(mPlayer.getName() + " has no more arrows!"); 
+			JCavernApplet.current().log(mPlayer.getName() + " has no more arrows!"); 
 		}
 				
 		mCurrentMode = NORMAL_MODE;
@@ -210,15 +301,15 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch(IllegalLocationException nce)
 		{
-			JCavernApplet.log(mPlayer.getName() + " can't attack off the edge of the world!");
+			JCavernApplet.current().log(mPlayer.getName() + " can't attack off the edge of the world!");
 		}
 		catch(EmptyLocationException nce)
 		{
-			JCavernApplet.log(mPlayer.getName() + " has nothing to attack!");
+			JCavernApplet.current().log(mPlayer.getName() + " has nothing to attack!");
 		}
 		catch(NonCombatantException nce)
 		{
-			JCavernApplet.log(mPlayer.getName() + " can't attack that!");
+			JCavernApplet.current().log(mPlayer.getName() + " can't attack that!");
 		}
 
 		mCurrentMode = NORMAL_MODE;
@@ -229,11 +320,11 @@ public class KeyboardCommandListener extends KeyAdapter
 		TreasureChest aChest = (TreasureChest) mWorld.getNeighboring(mWorld.getLocation(mPlayer), new TreasureChest(null, 0));
 
 		mWorld.remove(aChest);
-		JCavernApplet.log(mPlayer.getName() + " found " + aChest);
+		JCavernApplet.current().log(mPlayer.getName() + " found " + aChest);
 		
 		if (aChest.getGold() > 0)
 		{
-			mPlayer.incrementGold(aChest.getGold());
+			mPlayer.receiveGold(aChest.getGold());
 		}
 		
 		if (aChest.getContents() != null)
@@ -265,16 +356,16 @@ public class KeyboardCommandListener extends KeyAdapter
 				mWorld.remove(theCastle);
 				doMove(direction);
 				mPlayer.setCastle(theCastle);
-				JCavernApplet.log(mPlayer.getName() + " entered " + tce.getMovee().getName());
+				JCavernApplet.current().log(mPlayer.getName() + " entered " + tce.getMovee().getName());
 			}
 			else
 			{
-				JCavernApplet.log(mPlayer.getName() + " collided with " + tce.getMovee().getName());
+				JCavernApplet.current().log(mPlayer.getName() + " collided with " + tce.getMovee().getName());
 			}
 		}
 		catch (IllegalLocationException tce)
 		{
-			JCavernApplet.log(mPlayer.getName() + " can't move off the edge of the world!");
+			JCavernApplet.current().log(mPlayer.getName() + " can't move off the edge of the world!");
 		}
 	}
 }
