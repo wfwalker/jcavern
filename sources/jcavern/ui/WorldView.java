@@ -30,7 +30,7 @@ public class WorldView extends Canvas implements Observer
 	/** * The World being viewed by this View. */
 	private World				mModel;
 	
-	private Hashtable			mEvents;
+	private Vector				mEvents;
 	
 	/**
 	 * Creates a new WorldView for the given World.
@@ -42,10 +42,44 @@ public class WorldView extends Canvas implements Observer
 		System.out.println("Create WorldView");
 		
 		mModel = aWorld;
-		mEvents = new Hashtable();
+		mEvents = new Vector();
 		
 		setBackground(Color.black);
 		setForeground(JCavernApplet.CavernOrange);
+	}
+	
+	private WorldEvent getEventForSubject(Thing aSubject)
+	{
+		Enumeration theEvents = mEvents.elements();
+		
+		while (theEvents.hasMoreElements())
+		{
+			WorldEvent anEvent = (WorldEvent) theEvents.nextElement();
+			
+			if (anEvent.getSubject() == aSubject)
+			{
+				return anEvent;
+			}
+		}
+		
+		return null;
+	}
+	
+	private WorldEvent getEventForLocation(Location aLocation)
+	{
+		Enumeration theEvents = mEvents.elements();
+		
+		while (theEvents.hasMoreElements())
+		{
+			WorldEvent anEvent = (WorldEvent) theEvents.nextElement();
+			
+			if (anEvent.getLocation() != null && anEvent.getLocation().equals(aLocation))
+			{
+				return anEvent;
+			}
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -60,13 +94,14 @@ public class WorldView extends Canvas implements Observer
 		switch (anEvent.getEventCode())
 		{
 			case WorldEvent.TURN_START:
-				mEvents = new Hashtable();
+				mEvents = new Vector();
 				break;
 				
 			case WorldEvent.ATTACKED_HIT:
 			case WorldEvent.ATTACKED_KILLED:
 			case WorldEvent.REVEALED:
-				mEvents.put(anEvent.getSubject(), anEvent);
+			case WorldEvent.RANGED_ATTACK:
+				mEvents.addElement(anEvent);
 				break;
 				
 			case WorldEvent.TURN_STOP:
@@ -108,28 +143,23 @@ public class WorldView extends Canvas implements Observer
 
 						if (! mModel.isEmpty(aLocation))
 						{
-							Thing	theThing = mModel.getThing(aLocation);
-							boolean	highlight = mEvents.containsKey(theThing);
+							Thing		theThing = mModel.getThing(aLocation);
+							WorldEvent	anEvent = getEventForSubject(theThing);
 					
-							/*if (mEvents.containsKey(theThing))
-							{
-								WorldEvent	anEvent = (WorldEvent) mEvents.get(theThing);
-								
-								if (! anEvent.getSubject().getInvisible())
-								{
-									g.drawOval(plotX - 3 * kSpacing / 4, plotY - 3 * kSpacing / 4, 3 * kSpacing / 2, 3 * kSpacing / 2);
-								}
-							}
-							else
-							{
-								// System.out.println("no events for " + theThing + ", just painting");
-							}*/
-							
-							theThing.paint(g, plotX, plotY, highlight);
+							theThing.paint(g, plotX, plotY, anEvent != null);
 						}
 						else
 						{
-							g.drawString(".", plotX, plotY);
+							WorldEvent	anEvent = getEventForLocation(aLocation);
+							
+							if (anEvent != null)
+							{
+								g.drawString(anEvent.toString(), plotX, plotY);
+							}
+							else
+							{
+								g.drawString(".", plotX, plotY);
+							}
 						}
 					} // end if mModel.isEmpty
 				} // end for xIndex
