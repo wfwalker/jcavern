@@ -2,6 +2,7 @@ package jcavern;
 
 import java.util.Observable;
 import java.awt.*;
+import jcavern.thing.*;
 
 /**
  * Class used to describe occurences in a World.
@@ -11,24 +12,6 @@ import java.awt.*;
  */
 public class WorldEvent
 {
-	/** * Used to indicate the kind of change that happened to a thing. */
-	public static final int		PLACED = 1;
-	
-	/** * Used to indicate the kind of change that happened to a thing. */
-	public static final int		REMOVED = 2;
-	
-	/** * Used to indicate the kind of change that happened to a thing. */
-	public static final int		ATTACKED_MISSED = 3;
-	
-	/** * Used to indicate the kind of change that happened to a thing. */
-	public static final int		ATTACKED_HIT = 4;
-	
-	/** * Used to indicate the kind of change that happened to a thing. */
-	public static final int		ATTACKED_KILLED = 5;
-	
-	/** * Used to indicate the kind of change that happened to a thing. */
-	public static final int		REVEALED = 6;
-	
 	/** * Used to indicate the kind of change that happened to a thing. */
 	public static final int		ADDED_INVENTORY = 7;
 	
@@ -135,17 +118,17 @@ public class WorldEvent
 			
 			switch (mEventCode)
 			{
-				case PLACED:
+				case WorldContentsEvent.PLACED:
 						theEventString.append(" was placed "); break;
-				case REMOVED:
+				case WorldContentsEvent.REMOVED:
 						theEventString.append(" was removed "); break;
-				case ATTACKED_MISSED:
+				case CombatEvent.ATTACKED_MISSED:
 						theEventString.append(" was missed "); break;
-				case ATTACKED_HIT:
+				case CombatEvent.ATTACKED_HIT:
 						theEventString.append(" was hit "); break;
-				case ATTACKED_KILLED:
+				case CombatEvent.ATTACKED_KILLED:
 						theEventString.append(" was killed "); break;
-				case REVEALED:
+				case WorldContentsEvent.REVEALED:
 						theEventString.append(" was revealed "); break;
 				case ADDED_INVENTORY:
 						theEventString.append(" picked up "); break;
@@ -165,6 +148,11 @@ public class WorldEvent
 			
 			return theEventString.toString();
 		}
+	}
+	
+	public void setMessage(String aString)
+	{
+		mMessage = aString;
 	}
 	
 	public void setLocation(Location aLocation)
