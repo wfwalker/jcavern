@@ -25,7 +25,7 @@ public class MagicItemTest extends TestCase
 	 *
 	 * @exception	ThingCollisionException		placed two things in the same place
 	 */
-	public void setUp() throws ThingCollisionException
+	public void setUp() throws ThingCollisionException, JCavernInternalError
 	{
 		// Create a world
 		mWorld = new World();
@@ -54,7 +54,7 @@ public class MagicItemTest extends TestCase
 	public void testRevealInvisibility() throws ThingCollisionException, JCavernInternalError
 	{
 		Monster		testMonster = new Monster("invisio", "monster", "hit", "killed", 1, 1, true);
-		MagicItem	testItem = new MagicItem("revealio", 1);
+		MagicItem	testItem = new MagicItem("revealio", MagicItem.MAGIC_REVEAL_INVISIBILITY);
 		mWorld.place(new Location(6, 6), testMonster);
 		
 		assert("hidden", testMonster.getInvisible() == true);
@@ -62,6 +62,37 @@ public class MagicItemTest extends TestCase
 		testItem.startUseBy(mPlayer, mWorld);
 		
 		assert("revealed", testMonster.getInvisible() == false);
+	}
+	
+	/**
+	 * Tests whether the teleporter works.
+	 *
+	 * @exception	JCavernInternalError		some internal problem
+	 */
+	public void testTeleportOne() throws JCavernInternalError
+	{
+		MagicItem	testItem = new MagicItem("teleportio", MagicItem.MAGIC_TELEPORTATION);
+		
+		testItem.startUseBy(mPlayer, mWorld);
+
+		mWorld.getLocation(mPlayer);		
+	}
+	
+	/**
+	 * Tests whether the teleporter works with the magic circle
+	 *
+	 * @exception	JCavernInternalError		some internal problem
+	 */
+	public void testTeleportTwo() throws JCavernInternalError
+	{
+		MagicItem	testItem = new MagicItem("teleportio", MagicItem.MAGIC_TELEPORTATION);
+		Castle		aCastle = new Castle();
+		
+		mPlayer.setCastle(aCastle);
+		
+		testItem.startUseBy(mPlayer, mWorld);
+
+		assert("player teleported out of castle", mPlayer.getCastle() == null);
 	}
 
 }
