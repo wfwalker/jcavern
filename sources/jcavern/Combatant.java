@@ -132,7 +132,7 @@ public abstract class Combatant extends Thing
 		{
 			finishAttack(aWorld, computeDamageTo(opponent), opponent);
 			
-			aWorld.combatantSufferedDamage(opponent);
+			aWorld.thingChanged(opponent);
 		}
 		else
 		{
@@ -171,7 +171,7 @@ public abstract class Combatant extends Thing
 		{
 			finishAttack(aWorld, computeRangedDamageTo(opponent), opponent);
 			
-			aWorld.combatantSufferedDamage(opponent);
+			aWorld.thingChanged(opponent);
 		}
 		else
 		{
@@ -275,15 +275,23 @@ public abstract class Combatant extends Thing
 		
 		super.paint(g, plotX, plotY);
 		
-		double percent = 1.0 * getPoints() / getMaximumPoints();
-		
-		g.fillRect(plotX - gaugeLength / 2, plotY - 20, (int) (gaugeLength * percent), gaugeThickness);
-		g.drawLine(plotX - gaugeLength / 2, plotY - (20 - gaugeThickness / 2), plotX + gaugeLength / 2, plotY - (20 - gaugeThickness / 2));
+		if (! getInvisible())
+		{
+			double percent = 1.0 * getPoints() / getMaximumPoints();
+			
+			g.fillRect(plotX - gaugeLength / 2, plotY - 20, (int) (gaugeLength * percent), gaugeThickness);
+			g.drawLine(plotX - gaugeLength / 2, plotY - (20 - gaugeThickness / 2), plotX + gaugeLength / 2, plotY - (20 - gaugeThickness / 2));
+		}
 	}
 
 	public Combatant(String name, String imageName, int points)
 	{
-		super(name, imageName);		
+		this(name, imageName, points, false);
+	}
+	
+	public Combatant(String name, String imageName, int points, boolean invisible)
+	{
+		super(name, imageName, invisible);		
 		mPoints = points;
 		mMaximumPoints = points;
 	}
