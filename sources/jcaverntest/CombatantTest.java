@@ -32,6 +32,9 @@ public class CombatantTest extends TestCase
 
 	/**
 	 * Builds a world and a player, puts the player in the world.
+	 *
+	 * @exception	ThingCollisionException		trouble placing Things
+	 * @exception	JCavernInternalError		trouble placing Things
 	 */
 	public void setUp() throws ThingCollisionException, JCavernInternalError
 	{
@@ -169,4 +172,38 @@ public class CombatantTest extends TestCase
 		assert("monster NOT attacks player", ! aMonster.canAttack(mPlayer));
 		assert("tree NOT attacks player", ! aTree.canAttack(mPlayer));
 	}
+	
+	/**
+	 * Tests the rules by which Combatants are highlighted.
+	 */
+	public void testHighlightMonsters()
+	{
+		Combatant 	aMonster = new Monster("Bogus", "monster", "hit", "killed", 1, 1, false);
+		Combatant 	anotherMonster = new Monster("Bogus", "monster2", "hit", "killed", 1, 1, false);
+		
+		WorldEvent	playerHits = CombatEvent.hit(null, aMonster, mPlayer, 1);
+		WorldEvent	monsterHits = CombatEvent.hit(null, mPlayer, aMonster, 1);
+		
+		WorldEvent	playerMisses = CombatEvent.missed(null, aMonster, mPlayer);
+		WorldEvent	monsterMisses = CombatEvent.missed(null, mPlayer, aMonster);
+		
+		WorldEvent	monster2Misses = CombatEvent.missed(null, anotherMonster, aMonster);
+		WorldEvent	monster2Hits = CombatEvent.hit(null, anotherMonster, aMonster, 1);
+
+		assert("highlight monster when player hits monster", aMonster.shouldHighlight(playerHits));
+		assert("highlight player when player hits monster", ! mPlayer.shouldHighlight(playerHits)); // TODO: I _do_ want to highlight player here
+
+		assert("highlight monster when player misses monster", aMonster.shouldHighlight(playerMisses));
+		assert("highlight player when player misses monster", ! mPlayer.shouldHighlight(playerMisses)); // TODO: Decide whether this is right.
+
+		assert("highlight monster when monster hits player", ! aMonster.shouldHighlight(monsterHits)); // TODO: I _do_ want to highlight the monster here
+		assert("highlight player when monster hits player", mPlayer.shouldHighlight(monsterHits));
+
+		assert("highlight monster when monster misses player", ! aMonster.shouldHighlight(monsterMisses)); // I think this is right
+		assert("highlight player when monster misses player ", mPlayer.shouldHighlight(monsterMisses));
+
+		assert("highlight player when monster misses monster2 ", ! mPlayer.shouldHighlight(monster2Misses));
+		assert("highlight player when monster misses monster2 ", ! mPlayer.shouldHighlight(monster2Hits));
+	}
+	
 }
