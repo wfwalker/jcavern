@@ -118,7 +118,6 @@ public class MonsterFactory
 					new Monster(
 						aName,
 						imageName,
-						aName.substring(0, 2),
 						points.doubleValue(),
 						worth.doubleValue(),
 						invisible.intValue() < 0));

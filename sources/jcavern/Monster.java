@@ -20,9 +20,6 @@ import java.net.URL;
  */
 public class Monster extends Combatant implements Cloneable
 {
-	/** * The textual appearance of the Monster (usually two letters). */
-	private String			mAppearance;
-	
 	/** * How many points the monster is worth when a Player kills it. */
 	private double			mWorth;
 	
@@ -36,13 +33,12 @@ public class Monster extends Combatant implements Cloneable
 	/**
 	 * Creates a new monster with the given parameters.
 	 */
-	public Monster(String name, String imageName, String appearance, double points, double worth, boolean invisible)
+	public Monster(String name, String imageName, double points, double worth, boolean invisible)
 	{
 		super(name, imageName, (int) points);
 	
 		// System.out.println("Monster(" + name + ", " + appearance + ", " + points + ", " + worth + ", " + invisible + ")");
 		
-		mAppearance = appearance;
 		mWorth = worth;
 		mInvisible = invisible;
 	}
@@ -194,14 +190,14 @@ public class Monster extends Combatant implements Cloneable
 	 */
 	public Object clone()
 	{
-		return new Monster(getName(), getImageName(), mAppearance, getPoints(), mWorth, mInvisible);
+		return new Monster(getName(), getImageName(), getPoints(), mWorth, mInvisible);
 	}
 	
-	public String getAppearance()
+	public String getTextSymbol()
 	{
 		if (! mInvisible)
 		{
-			return mAppearance;
+			return super.getTextSymbol();
 		}
 		else
 		{
