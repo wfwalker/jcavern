@@ -80,7 +80,7 @@ public class MissionCard extends AppletCard implements Observer
 		mLogView = new LogView(inApplet, mPlayer);
 		mLogView.setSize(300, 200);
 		
-		mWorldView.setSize(300, 300);		
+		mWorldView.setSize(300, 320);		
 		mWorld.addObserver(mWorldView);
 		mWorld.addObserver(mLogView);
 		mWorld.addObserver(this);
