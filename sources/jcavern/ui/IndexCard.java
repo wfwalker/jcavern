@@ -1,22 +1,42 @@
 
 package jcavern.ui;
 
+import java.io.*;
 import jcavern.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.applet.*;
 
+/**
+ * IndexCard presents the user with a set of options to manage Players and Missions.
+ */
 public class IndexCard extends AppletCard
 {	
 	/** * The current player. */
 	private Player					mCurrentPlayer;
 
+	/** * The button for undertaking a new mission */
 	private Button					mNewMissionButton;
+	
+	/** * The button for creating a new player */
 	private Button					mNewPlayerButton;
+	
+	/** * The button for loading a player. */
 	private Button					mLoadPlayerButton;
+	
+	/** * The button for saving a player. */
 	private Button					mSavePlayerButton;
+	
+	/** * The label for displaying status messages. */
 	private Label					mLabel;
 
+	/**
+	 * Creates an IndexCard for the given Applet and Player.
+	 * The IndexCard will enable and disable the various buttons based on the status of the current player.
+	 *
+	 * @param	anApplet		a non-null Applet in which the index will be displayed
+	 * @param	currentPlayer	the Player currently associated with the user, or <CODE>null</CODE> if none.
+	 */
 	public IndexCard(JCavernApplet anApplet, Player currentPlayer)
 	{
 		super(anApplet);
@@ -55,9 +75,22 @@ public class IndexCard extends AppletCard
 			public void actionPerformed(ActionEvent e)
 			{
 				System.out.println("Save Player ");
+				
+				try
+				{
+					ObjectOutputStream aStream = new ObjectOutputStream(System.out);
+					aStream.writeObject(mCurrentPlayer);
+					aStream.flush();
+				}
+				catch(IOException ioe)
+				{
+					System.out.println("can't serialize " + ioe);
+				}
+				System.out.println("Done Save Player");
+				
 			}
 		});
-		mSavePlayerButton.setEnabled(false);
+		mSavePlayerButton.setEnabled((mCurrentPlayer != null) && (! mCurrentPlayer.isDead()));
 
 		mNewMissionButton = new Button("New Mission");
 		mNewMissionButton.setForeground(Color.black);
@@ -89,6 +122,9 @@ public class IndexCard extends AppletCard
 		show();
 	}
 	
+	/**
+	 * Displays this IndexCard in its Applet.
+	 */
 	public void show()
 	{
 		super.show();
