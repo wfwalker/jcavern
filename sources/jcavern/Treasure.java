@@ -49,8 +49,8 @@ public abstract class Treasure implements Cloneable
 		
 		try
 		{
-			InputStream		aStream = MonsterFactory.class.getResourceAsStream("/treasure.dat");
-			//InputStream		aStream = aURL.openStream();
+			//InputStream		aStream = MonsterFactory.class.getResourceAsStream("/treasure.dat");
+			InputStream		aStream = aURL.openStream();
 			BufferedReader	aReader = new BufferedReader(new InputStreamReader(aStream));
 			String			aMessageLine;
 
