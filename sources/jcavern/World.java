@@ -56,6 +56,9 @@ public class World extends Observable
 	
 	/**
 	 * Populate this world in a manner appropriate to the given player.
+	 *
+	 * @param		aPlayer					the Player for whom the World is being created
+	 * @exception	JCavernInternalError	the World could not be created.
 	 */
 	public void populateFor(Player aPlayer) throws JCavernInternalError
 	{
@@ -102,16 +105,22 @@ public class World extends Observable
 	
 	/**
 	 * Places random trees using the default fraction.
+	 *
+	 * @return								how many trees were placed
+	 * @exception	JCavernInternalError	the trees could not be added.
 	 */
-	public int placeRandomTrees() throws ThingCollisionException, JCavernInternalError
+	public int placeRandomTrees() throws JCavernInternalError
 	{
 		return placeRandom(new Tree(), kTreeFraction);
 	}
 	
 	/**
-	 * Places random trees using the default fraction.
+	 * Places random castles using the default fraction.
+	 *
+	 * @return								how many castles were placed
+	 * @exception	JCavernInternalError	the castles could not be added.
 	 */
-	public int placeRandomCastles() throws ThingCollisionException, JCavernInternalError
+	public int placeRandomCastles() throws JCavernInternalError
 	{
 		return placeRandom(new Castle(), kCastleFraction);
 	}
@@ -119,25 +128,41 @@ public class World extends Observable
 	/**
 	 * Places random TreasureChests. The number of TreasureChests is based on the
 	 * number of monsters to be killed in the given Players mission quota.
+	 *
+	 * @param		aPlayer					a non-null Player who may find the Chests
+	 * @return								how many treasure chests were placed
+	 * @exception	JCavernInternalError	the Treasure chests could not be added.
 	 */
-	public int placeRandomTreasureChests(Player aPlayer) throws ThingCollisionException, JCavernInternalError
+	public int placeRandomTreasureChests(Player aPlayer) throws JCavernInternalError
 	{
 		int chestCount = aPlayer.getMission().getQuota() / 2;
 
 		System.out.println("Place " + chestCount + " Random Treasure Chests");
 		
-		for (int index = 0; index < chestCount; index++)
+		try
 		{
-			place(getRandomEmptyLocation(), TreasureChest.createRandom());
+			for (int index = 0; index < chestCount; index++)
+			{
+				place(getRandomEmptyLocation(), TreasureChest.createRandom());
+			}
+		}
+		catch(ThingCollisionException tce)
+		{
+			throw new JCavernInternalError("Can't place random treasure chests " + tce);
 		}
 		
 		return chestCount;
 	}
 	
 	/**
-	 * Places random trees according to the fraction passed in.
+	 * Places Things randomly according to the fraction passed in.
+	 *
+	 * @param		aThingPrototype				a non-null Thing to be cloned and placed.
+	 * @param		fraction					what fraction of the squares in the world should be covered
+	 * @return									how many things were placed
+	 * @exception	JCavernInternalError		the Things could not be added.
 	 */
-	public int placeRandom(Thing aThingPrototype, double fraction) throws ThingCollisionException, JCavernInternalError
+	public int placeRandom(Thing aThingPrototype, double fraction) throws JCavernInternalError
 	{
 		int	numberOfThings = (int) (getBounds().width * getBounds().height * fraction);
 		
@@ -149,33 +174,57 @@ public class World extends Observable
 	}
 	
 	/**
-	 * Places random trees according to the fraction passed in.
+	 * Places a given number of Things according to the fraction passed in.
+	 *
+	 * @param		aThingPrototype				a non-null Thing to be cloned and placed.
+	 * @param		numberOfThings				how many squares in the world should be covered
+	 * @exception	JCavernInternalError		the Things could not be added.
 	 */
-	public void placeRandom(Thing aThingPrototype, int numberOfThings) throws ThingCollisionException, JCavernInternalError
+	public void placeRandom(Thing aThingPrototype, int numberOfThings) throws JCavernInternalError
 	{
 		System.out.println("Place " + numberOfThings + " Random " + aThingPrototype);
 		
-		for (int index = 0; index < numberOfThings; index++)
+		try
 		{
-			place(getRandomEmptyLocation(), (Thing) aThingPrototype.clone());
+			for (int index = 0; index < numberOfThings; index++)
+			{
+				place(getRandomEmptyLocation(), (Thing) aThingPrototype.clone());
+			}
+		}
+		catch(ThingCollisionException tce)
+		{
+			throw new JCavernInternalError("Can't place random things, " + tce);
 		}
 	}
 	
 	/**
 	 * Places appropriate opponents on the board, based on the prowess of the given player.
+	 *
+	 * @param		aPlayer						for whom the opponents should be worthy
+	 * @param		numberOfMonsters			how many squares in the world should be covered
+	 * @exception	JCavernInternalError		the Monsters could not be added.
 	 */
-	public void placeWorthyOpponents(Player aPlayer, int numberOfMonsters) throws ThingCollisionException, JCavernInternalError
+	public void placeWorthyOpponents(Player aPlayer, int numberOfMonsters) throws JCavernInternalError
 	{
 		System.out.println("Place " + numberOfMonsters + " Worthy Opponents");
-		
-		for (int index = 0; index < numberOfMonsters; index++)
+
+		try
+		{		
+			for (int index = 0; index < numberOfMonsters; index++)
+			{
+				place(getRandomEmptyLocation(), MonsterFactory.getWorthyOpponent(aPlayer));
+			}
+		}
+		catch(ThingCollisionException tce)
 		{
-			place(getRandomEmptyLocation(), MonsterFactory.getWorthyOpponent(aPlayer));
+			throw new JCavernInternalError("Can't place random things, " + tce);
 		}
 	}
 	
 	/**
 	 * Returns a random location within the bounds of this world.
+	 *
+	 * @return		a random location within the bounds of this world.
 	 */
 	public Location getRandomLocation()
 	{
@@ -187,6 +236,8 @@ public class World extends Observable
 	
 	/**
 	 * Returns a random, empty location within the bounds of this world.
+	 *
+	 * @return		a random, empty location within the bounds of this world.
 	 */
 	public Location getRandomEmptyLocation()
 	{
@@ -200,6 +251,11 @@ public class World extends Observable
 		return emptyLocation;
 	}
 
+	/**
+	 * Informs the World that an event happened.
+	 *
+	 * @param	anEvent		a non-null WorldEvent describing what happened.
+	 */
 	public void eventHappened(WorldEvent anEvent)
 	{
 		setChanged();
@@ -208,17 +264,32 @@ public class World extends Observable
 
 	/**
 	 * Returns the bounds of this world.
+	 *
+	 * @return	a non-null Rectangle describing the bounds of this world.
 	 */
 	private Rectangle getBounds()
 	{
 		return kBounds;
 	}
 	
+	/**
+	 * Transforms the given location into one that observes an inset from the bounds of this World
+	 *
+	 * @param	aLocation	a non-null Location
+	 * @param	inset		an inset from the bounds of this world
+	 * @return				a non-null Location that observes an inset from the bounds of this World
+	 */
 	public Location enforceMinimumInset(Location aLocation, int inset)
 	{
 		return aLocation.enforceMinimumInset(getBounds(), inset);
 	}
 	
+	/**
+	 * Returns whether the given Location is within the bounds of this world
+	 *
+	 * @param	aLocation	a non-null Location
+	 * @return				<CODE>true</CODE> if the given Location is within the bounds of this world, <CODE>false</CODE> otherwise.
+	 */
 	public boolean inBounds(Location aLocation)
 	{
 		return aLocation.inBounds(getBounds());
@@ -228,6 +299,12 @@ public class World extends Observable
 	 * Returns the Thing in the given direction from the given Thing.
 	 * The seearch proceeds outward from the given Thing, until it encounters another Thing,
 	 * or the edge of the world.
+	 *
+	 * @param		attacker					a non-null Thing
+	 * @param		aDirection					one of the direction codes defined in class Location
+	 * @return									a non-null Thing in the given direction from the first Thing
+	 * @exception	IllegalLocationException	there's no thing in that direction
+	 * @exception	JCavernInternalError		could not retrieve the Thing
 	 */
 	public Thing getThingToward(Thing attacker, int aDirection) throws JCavernInternalError, IllegalLocationException
 	{
@@ -262,6 +339,14 @@ public class World extends Observable
 		}
 	}
 	
+	/**
+	 * Returns the first Thing found in an adjacent Location that matches the prototype.
+	 *
+	 * @param		aLocation					a non-null Location
+	 * @param		aPrototype					an examplar of the kind of Thing to look for
+	 * @return									a matching, non-null Thing adjacent to the first Thing
+	 * @exception	JCavernInternalError		could not retrieve the Thing
+	 */
 	public Thing getNeighboring(Location aLocation, Thing aPrototype) throws JCavernInternalError
 	{
 		try
@@ -294,6 +379,12 @@ public class World extends Observable
 	
 	/**
 	 * Moves the given thing in the given direction.
+	 *
+	 * @param		aThing						a non-null Thing in this world
+	 * @param		direction					one of the direction codes in class Location
+	 * @exception	ThingCollisionException		there's already in a thing in the destination location
+	 * @exception	JCavernInternalError		the given Thing is not of this world
+	 * @exception	IllegalLocationException	tried to move off the edge of the world
 	 */
 	public void move(Combatant aThing, int direction) throws ThingCollisionException, JCavernInternalError, IllegalLocationException
 	{
@@ -332,6 +423,11 @@ public class World extends Observable
 		
 	/**
 	 * Finds the direction between two things.
+	 *
+	 * @param		aThing					an origin
+	 * @param		anotherThing			a destination
+	 * @return								a direction code pointing from the origin to the destination
+	 * @exception	JCavernInternalError	the origin or destination are not of this world
 	 */
 	public int getDirectionToward(Thing aThing, Thing anotherThing) throws JCavernInternalError
 	{
@@ -353,6 +449,11 @@ public class World extends Observable
 	
 	/**
 	 * Finds the distance between two things.
+	 *
+	 * @param		aThing					an origin
+	 * @param		anotherThing			a destination
+	 * @return								a distance from the origin to the destination
+	 * @exception	JCavernInternalError	the origin or destination are not of this world
 	 */
 	public int getDistanceBetween(Thing aThing, Thing anotherThing) throws JCavernInternalError
 	{
@@ -374,6 +475,11 @@ public class World extends Observable
 	
 	/**
 	 * Retrieves the thing at the given location.
+	 *
+	 * @param		aLocation					a non-null Location
+	 * @return									the non-null thing at that location
+	 * @exception	EmptyLocationException		the given location is empty
+	 * @exception	IllegalLocationException	the given location is invalid
 	 */
 	public Thing getThing(Location aLocation) throws EmptyLocationException, IllegalLocationException
 	{
@@ -391,7 +497,13 @@ public class World extends Observable
 		}
 	}
 	
-	public Player getPlayer()
+	/**
+	 * Returns the first Player found in this World.
+	 *
+	 * @return								the first Player found in this World.
+	 * @exception	JCavernInternalError	there's no Player in this World
+	 */
+	public Player getPlayer() throws JCavernInternalError
 	{
 		Enumeration theThings = mThingsToLocations.keys();
 		
@@ -405,9 +517,15 @@ public class World extends Observable
 			}
 		}
 		
-		return null;
+		throw new JCavernInternalError("Can't find Player in world");
 	}
 	
+	/**
+	 * Performs one turn by giving every Thing in the world a chance to
+	 * do something.
+	 *
+	 * @exception	JCavernInternalError	could not perform turn operations
+	 */
 	public void doTurn() throws JCavernInternalError
 	{
 		Enumeration theThings = mThingsToLocations.keys();
@@ -418,6 +536,12 @@ public class World extends Observable
 		}
 	}
 	
+	/**
+	 * Returns all the Things matching the given prototype.
+	 *
+	 * @param	aPrototype		a non-null prototype of the thing to look for
+	 * @return					all the matching things
+	 */
 	public Vector getThings(Thing aPrototype)
 	{
 		Enumeration	theThings = mThingsToLocations.keys();
@@ -437,6 +561,11 @@ public class World extends Observable
 		return specialThings;
 	}
 	
+	/**
+	 * Returns all the Things in the World.
+	 *
+	 * @return		all the Things
+	 */
 	public Vector getThings()
 	{
 		Enumeration	theThings = mThingsToLocations.keys();
@@ -452,6 +581,9 @@ public class World extends Observable
 	
 	/**
 	 * Answers whether there is any thing at the given location.
+	 *
+	 * @param	aLocation	a non-null Location
+	 * @return				<CODE>true</CODE> if the location is emtpy, <CODE>false</CODE> otherwise
 	 */
 	public boolean isEmpty(Location aLocation)
 	{
@@ -467,6 +599,11 @@ public class World extends Observable
 	
 	/**
 	 * Places a Thing at the given location.
+	 *
+	 * @param		aLocation					a non-null Location
+	 * @param		aThing						a non-null Thing to place at that location
+	 * @exception	ThingCollisionException		there's already a Thing at that location
+	 * @exception	JCavernInternalError		could not place the Thing.
 	 */
 	public void place(Location aLocation, Thing aThing) throws ThingCollisionException, JCavernInternalError
 	{
@@ -485,6 +622,10 @@ public class World extends Observable
 	
 	/**
 	 * Retrieves the location of the given thing.
+	 *
+	 * @param		aThing					a non-null Thing
+	 * @return								a non-null Location for the given Thing
+	 * @exception	JCavernInternalError	could not find the Thing
 	 */
 	public Location getLocation(Thing aThing) throws JCavernInternalError
 	{
@@ -498,6 +639,9 @@ public class World extends Observable
 	
 	/**
 	 * Remove the given thing from the world.
+	 *
+	 * @param		thingToRemove				a non-null Thing to remove
+	 * @exception	JCavernInternalError		could not remove the Thing.
 	 */
 	public void remove(Thing thingToRemove) throws JCavernInternalError
 	{
