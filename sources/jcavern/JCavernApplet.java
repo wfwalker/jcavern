@@ -29,6 +29,9 @@ public class JCavernApplet extends Applet
 	/** * The official PLATO orange color, more or less. */
 	public static final Color		CavernOrange = new Color(0xFF, 0x66, 0x00);
 	
+	/** * The official PLATO orange color, more or less. */
+	public static final Color		CavernOrangeDim = new Color(0x7F, 0x33, 0x00);
+	
 	/** * Names of image files containing pictures of monsters. */
 	public static final String		MonsterImageNames[] = {
 		"crab", "snail", "jubjub", "blob", "hoplite", "guy", "monster", "trex",
@@ -37,13 +40,31 @@ public class JCavernApplet extends Applet
 	
 	/** * Names of image files containing pictures of non-monsters. */
 	public static final String		OtherImageNames[] = {
-		"player", "chest", "tree", "tree2", "castle", "splat" };
+		"player", "chest", "tree", "tree2", "castle", "splat", "empty" };
 
 	/** * A table of messages */
 	private Hashtable				mImages;
 
 	/** * A MediaTracker to make sure the images get loaded. */
 	private MediaTracker			mTracker;
+	
+	/** * The AppletCard currently being displayed by this Applet. */
+	private AppletCard				mAppletCard;
+	
+	/**
+	 * Sets the current AppletCard.
+	 *
+	 * @param	inAppletCard	a non-null new AppletCard
+	 */	
+	public void setAppletCard(AppletCard inAppletCard)
+	{
+		if (mAppletCard != null)
+		{
+			mAppletCard.cardRemoved();
+		}
+
+		mAppletCard = inAppletCard;
+	}
 
 	/**
 	 * Displays the home card.
