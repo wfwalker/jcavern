@@ -38,33 +38,35 @@ public class EndMissionCard extends AppletCard implements ActionListener
 	 */
     public void show()
     {
-    	mApplet.removeAll();
-    	
-    	mApplet.setLayout(new GridLayout(8, 1));
-    	
-		//mApplet.setForeground(Color.black);
-		//mApplet.setBackground(Color.white);
-
-		mApplet.add(new Label("End of Mission"));
-
-		// add spacer panels, so the dialog shows up where
-		// the new mission button was.		
-		
-		mApplet.add(createLabelledButtonPanel(new Button("Load Player"), "Load player from database", false));
-		mApplet.add(createLabelledButtonPanel(new Button("Save Player"), "Save player to database", false));
-		
-		//Create middle section.
-		Panel alertPanel = new Panel();
-		alertPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-		alertPanel.add(mMessage);
-		alertPanel.add(mOKButton);
-		
-		mApplet.add(alertPanel);
-		
-		mApplet.add(createLabelledButtonPanel(new Button("New Player"), "Create a new player", false));
-
-		//Initialize this dialog to its preferred size.
-		mApplet.validate();
+    	try
+    	{
+	    	super.show();
+	    	
+	    	mApplet.setLayout(new GridLayout(8, 1));
+	    	
+			// add spacer panels, so the dialog shows up where
+			// the new mission button was.		
+			mApplet.add(createLabelledButtonPanel(new ImageCanvas(JCavernApplet.getBoardImage("tree")), "End of mission"));
+			mApplet.add(createLabelledButtonPanel(new Button("Load Player"), "Load player from database", false));
+			mApplet.add(createLabelledButtonPanel(new Button("Save Player"), "Save player to database", false));
+			
+			//Create middle section.
+			Panel alertPanel = new Panel();
+			alertPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+			alertPanel.add(mMessage);
+			alertPanel.add(mOKButton);
+			
+			mApplet.add(alertPanel);
+			
+			mApplet.add(createLabelledButtonPanel(new Button("New Player"), "Create a new player", false));
+	
+			//Initialize this dialog to its preferred size.
+			mApplet.validate();
+		}
+		catch (JCavernInternalError jcie)
+		{
+			System.out.println("can't show end of mission card " + jcie);
+		}
     }
 
 	/**

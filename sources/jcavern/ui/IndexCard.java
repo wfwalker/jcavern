@@ -2,10 +2,12 @@
 package jcavern.ui;
 
 import java.io.*;
-import jcavern.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.applet.*;
+
+import jcavern.*;
+import jcavern.thing.*;
 
 /**
  * IndexCard presents the user with a set of options to manage Players and Missions.
@@ -28,7 +30,9 @@ public class IndexCard extends AppletCard
 	private Button					mSavePlayerButton;
 	
 	/** * The label for displaying status messages. */
-	private Label					mLabel;
+	private String					mLabel;
+	
+	private	Image					mImage;
 
 	/**
 	 * Creates an IndexCard for the given Applet and Player.
@@ -37,7 +41,7 @@ public class IndexCard extends AppletCard
 	 * @param	anApplet		a non-null Applet in which the index will be displayed
 	 * @param	currentPlayer	the Player currently associated with the user, or <CODE>null</CODE> if none.
 	 */
-	public IndexCard(JCavernApplet anApplet, Player currentPlayer)
+	public IndexCard(JCavernApplet anApplet, Player currentPlayer) throws JCavernInternalError
 	{
 		super(anApplet);
 		
@@ -45,15 +49,18 @@ public class IndexCard extends AppletCard
 		
 		if (mCurrentPlayer == null)
 		{
-			mLabel = new Label("Press 'New Player' to create a new Player");
+			mLabel = "Press 'New Player' to create a new Player";
+			mImage = JCavernApplet.getBoardImage("tree");
 		}
 		else if (mCurrentPlayer.isDead())
 		{
-			mLabel = new Label("Player " + mCurrentPlayer.getName() + " is dead. Press 'New Player' to create a new Player");
+			mLabel = "Player " + mCurrentPlayer.getName() + " is dead. Press 'New Player' to create a new Player";
+			mImage = JCavernApplet.getBoardImage("tree");
 		}
 		else
 		{
-			mLabel = new Label("Welcome to the King's Castle, " + mCurrentPlayer.getName());
+			mLabel = "Welcome to the King's Castle, " + mCurrentPlayer.getName();
+			mImage = JCavernApplet.getBoardImage("player");
 		}
 		
 		// add the load-player button
@@ -131,11 +138,7 @@ public class IndexCard extends AppletCard
 		
 		mApplet.setLayout(new GridLayout(8, 1));
 		
-		//mApplet.setForeground(Color.black);
-		//mApplet.setBackground(Color.white);
-		
-		mApplet.add(mLabel);
-		
+		mApplet.add(createLabelledButtonPanel(new ImageCanvas(mImage), mLabel));
 		mApplet.add(createLabelledButtonPanel(mLoadPlayerButton, "Load player from database"));
 		mApplet.add(createLabelledButtonPanel(mSavePlayerButton, "Save player to database"));
 		mApplet.add(createLabelledButtonPanel(mNewMissionButton, "Undertake a new mission"));
