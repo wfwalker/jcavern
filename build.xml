@@ -1,65 +1,89 @@
 
+<?xml-stylesheet type="text/xsl" href="build.xsl"?>
+
 <project name="jcavern" default="compile" basedir="." >
 
 	<!-- locations of external tools -->
 
-	<property name="jdk_home" value="c:/jdk1.2.2" />
+	<property name="jdk_home" value="c:/jdk1.2.2" description="home directory of the java development kit"/>
 
-	<property name="ant_home" value="c:/jakarta-ant" />
+	<property name="ant_home" value="c:/jakarta-ant" description="home directory of ant build system"/>
+
+	<property name="xalan_home" value="c:/xalan" description="home directory of xalan engine for XML"/>
+
+	<property name="build.compiler" value="jikes" description="java compiler to use"/>
 	
 	<!-- folders within the jcavern module  -->
 
-	<property name="binaries" value="bin" />
-	<property name="images" value="images" />
-	<property name="sources" value="sources" />
-	<property name="documentation" value="docs" />
-	<property name="libraries" value="lib" />
+	<property name="binaries" value="bin" description="location of binaries"/>
+	<property name="images" value="images" description="location of image files"/>
+	<property name="sources" value="sources" description="location of source code"/>
+	<property name="documentation" value="docs" description="location of HTML javadoc documentation"/>
+	<property name="libraries" value="lib" description="location of libraries"/>
+	<property name="test-reports" value="reports" description="location of unit test reports"/>
 	
+	<taskdef
+		name="junit"
+		classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
+		classpath="${libraries}/junit.jar;c:/jakarta-ant/lib/optional.jar"/>
+
 	<!-- java classpaths -->
 	
-	<path id="buildpath">
+	<path id="buildpath" description="class path for building project">
 		<pathelement location="${binaries}" />
 		<pathelement location="${libraries}/junit.jar" />
 	</path>
 
-	<path id="runpath">
+	<path id="runpath" description="class path for running project">
 		<pathelement location="${binaries}" />
 		<pathelement location="${jdk_home}/lib/tools.jar" />
 		<pathelement location="${libraries}/junit.jar" />
 	</path>
 	
-	<path id="testpath">
+	<path id="testpath" description="class path for unit testing project">
 		<pathelement location="${binaries}" />
 		<pathelement location="${jdk_home}/lib/tools.jar" />
 		<pathelement location="${libraries}/junit.jar" />
 		<pathelement location="${ant_home}/lib/ant.jar" />
+		<pathelement location="${ant_home}/lib/jaxp.jar" />
+		<pathelement location="${ant_home}/lib/parser.jar" />
 		<pathelement location="${ant_home}/lib/optional.jar" />
+		<pathelement location="${xalan_home}/xalan.jar" />
+		<pathelement location="${xalan_home}/xerces.jar" />
+		<pathelement location="${xalan_home}/bsf.jar" />
 	</path>
 	
 	<!-- targets for compiling jcavern -->
 
-	<target name="prepare">
+	<target
+		name="prepare"
+		description="prepare to compile by creating bin directory">
 		<mkdir dir="${binaries}" />
 	</target>
 	
-	<target name="clean">
+	<target
+		name="clean"
+		description="remove bin directory, so that the next compile operation will recompile everything">
 		<delete dir="${binaries}" />
 	</target>
 	
-	<target name="compile" depends="prepare" >
+	<target
+		name="compile"
+		depends="prepare"
+		description="compile java source as needed; copy data and image files into bin directory">
 		<javac srcdir="${sources}" destdir="${binaries}">
 			<classpath refid="buildpath"/>
 		</javac>
 
-		<copy file="monster.dat" toFile="${binaries}/monster.dat" />
-		<copy file="treasure.dat" toFile="${binaries}/treasure.dat" />
+		<copy file="monster.dat" toFile="${binaries}/monster.dat" description="copy monsters data file"/>
+		<copy file="treasure.dat" toFile="${binaries}/treasure.dat" description="copy treasure items data file"/>
 
-		<copy todir="${binaries}/images" >
+		<copy todir="${binaries}/images" description = "copy image files for WorldView">
 			<fileset dir="${images}" />
 		</copy>
 	</target>
 	
-	<target name="runapplet" depends="compile" >
+	<target name="runapplet" depends="compile" description="having compiled and copied over data and image files, run the applet">
 		<exec executable="appletviewer">
 			<arg value="JCavernApplet.html" />
 		</exec>
@@ -67,7 +91,7 @@
 
 	<!-- target for creating javadoc documentation -->
 
-	<target name="javadoc">
+	<target name="javadoc" description="create standard HTML javadoc pages in the docs directory">
 		<mkdir dir="${documentation}" />
 
 		<javadoc
@@ -81,7 +105,7 @@
 		</javadoc>
 	</target>
 
-	<target name="javadoc-lint" >
+	<target name="javadoc-lint" description="run the doclint doclet to look for broken javadoc tags">
 		<mkdir dir="${documentation}" />
 
 		<javadoc
@@ -97,7 +121,7 @@
 		</javadoc>
 	</target>
 
-	<target name="javadoc-xml" >
+	<target name="javadoc-xml" description="run the xmldoclet to generate xml javadoc pages">
 		<mkdir dir="${documentation}" />
 
 		<javadoc
@@ -114,7 +138,7 @@
 	</target>
 
 
-	<target name="doxygen" >
+	<target name="doxygen" description="run the doxygen tool, a javadoc-like facility">
 		<exec executable="c:/doxygen-1.2.6/bin/doxygen" >
 			<arg value="c:/doxygen-1.2.6/doxy-jcavern-config" />
 		</exec>
@@ -122,20 +146,34 @@
 
 	<!-- targets for doing unit testing -->
 	
-	<target name="junit" depends="compile" >
-		<delete>
-			<fileset dir="." includes="TEST*Test.txt" />
-		</delete>
+	<target name="junit" depends="compile" description="Run unit tests using Swing test runner">
+		<java fork="true" classname="junit.swingui.TestRunner">
+			<arg line="jcavern.*"/>
+			<classpath refid="runpath"/>
+		</java>
+	</target>
+
+	<target name="junit-text" depends="compile" description="Run unit tests using text-only ui">
+		<delete dir="${test-reports}"/>
+		<mkdir dir="${test-reports}"/>
 
 		<junit fork="true" haltonerror="true" printsummary="true">
-			<formatter type="plain" />
+			<formatter type="xml" />
 			
-			<batchtest>
+			<batchtest todir="${test-reports}">
 				<fileset dir="${binaries}" includes="jcaverntest/*Test.class" />
 			</batchtest>
 			
 			<classpath refid="testpath" />
 		</junit>
+
+		<junitreport todir="${test-reports}">
+			<fileset dir="${test-reports}">
+				<include name="TEST-*.xml"/>
+			</fileset>
+
+			<report format="frames" todir="${test-reports}"/>
+		</junitreport>
 	</target>
 
 </project>
