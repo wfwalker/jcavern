@@ -14,6 +14,9 @@ import java.net.URL;
 
 /**
  * A Monster is a combatant that appears in the world.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
  */
 public class Monster extends Combatant implements Cloneable
 {
@@ -32,9 +35,9 @@ public class Monster extends Combatant implements Cloneable
 	/**
 	 * Creates a new monster with the given parameters.
 	 */
-	public Monster(String name, String appearance, double points, double worth, boolean invisible)
+	public Monster(String name, String imageName, String appearance, double points, double worth, boolean invisible)
 	{
-		super(name, (int) points);
+		super(name, imageName, (int) points);
 	
 		// System.out.println("Monster(" + name + ", " + appearance + ", " + points + ", " + worth + ", " + invisible + ")");
 		
@@ -184,7 +187,7 @@ public class Monster extends Combatant implements Cloneable
 	 */
 	public Object clone()
 	{
-		return new Monster(getName(), mAppearance, getPoints(), mWorth, mInvisible);
+		return new Monster(getName(), getImageName(), mAppearance, getPoints(), mWorth, mInvisible);
 	}
 	
 	public String getAppearance()
@@ -203,11 +206,7 @@ public class Monster extends Combatant implements Cloneable
 	{
 		if (! mInvisible)
 		{
-			Image theImage = JCavernApplet.current().getBoardImage("monster");
-		
-			g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
-		
-			super.paint(g, plotX + 10, plotY - 10);
+			super.paint(g, plotX, plotY);
 		}
 		else
 		{

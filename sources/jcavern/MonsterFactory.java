@@ -15,11 +15,16 @@ import java.io.*;
 /**
  * The MonsterFactory creates Monsters based on the monsters.dat file. It also
  * creates Missions appropriate to the prowess of the player.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
  */
 public class MonsterFactory
 {
+	private static final String		gImageNames[] = { "monster", "eyeball", "darklord", "chavin", "wahoo", "gobbler", "jackolantern" };
+	
 	/** * A list of Monsters stored in the order they were read from monsters.dat. */
-	public static Vector		gMonsters;
+	public static Vector			gMonsters;
 	
 	/**
 	 * Retrieves an appropriate opponent for this Player.
@@ -88,6 +93,7 @@ public class MonsterFactory
 			InputStream		aStream = aURL.openStream();
 			BufferedReader	aReader = new BufferedReader(new InputStreamReader(aStream));
 			String			aMessageLine;
+			int				imageNameIndex = 0;
 
 			while ((aMessageLine = aReader.readLine()) != null)
 			{
@@ -99,8 +105,10 @@ public class MonsterFactory
 				Double				points = Double.valueOf(aTokenizer.nextToken());
 				Double				worth = Double.valueOf(aTokenizer.nextToken());
 				Integer				invisible = Integer.valueOf(aTokenizer.nextToken());
+				String				imageName = gImageNames[(imageNameIndex++) % gImageNames.length];
+				Monster				theMonster = new Monster(aName, imageName, aName.substring(0, 2), points.doubleValue(), worth.doubleValue(), invisible.intValue() < 0);
 				
-				gMonsters.addElement(new Monster(aName, aName.substring(0, 2), points.doubleValue(), worth.doubleValue(), invisible.intValue() < 0));
+				gMonsters.addElement(new Monster(aName, imageName, aName.substring(0, 2), points.doubleValue(), worth.doubleValue(), invisible.intValue() < 0));
 			}
 		}
 		catch (MalformedURLException mue)

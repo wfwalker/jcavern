@@ -10,6 +10,9 @@ package jcavern;
 
 /**
  * Represents a Thing that can participate in combat.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
  */
 public abstract class Combatant extends Thing
 {
@@ -225,9 +228,9 @@ public abstract class Combatant extends Thing
 		return mPoints;
 	}
 	
-	public Combatant(String name, int points)
-	{		super(name);
-		
+	public Combatant(String name, String imageName, int points)
+	{
+		super(name, imageName);		
 		mPoints = points;
 	}
 }
