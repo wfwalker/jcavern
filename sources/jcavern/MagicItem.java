@@ -1,5 +1,5 @@
 /* 
-	JCavernApplet.java
+	MagicItem.java
 
 	Title:			JCavern And Glen
 	Author:			Bill Walker
@@ -38,11 +38,15 @@ public class MagicItem extends Treasure
 
 	/** * Indicates the poiwer to location all magic castles, reguardless of location */
 	public static final int		MAGIC_DETECT_MAGIC_CASTLE = 4;
+
+	/** * Indicates the poiwer to location all magic castles, reguardless of location */
+	public static final int		MAGIC_DETECT_QUEST_MONSTER = 5;
 	
 	/**
 	 * Creates a new MagicItem with the given power.
 	 *
-	 * @param		the integer thhat represents this item's magic power.
+	 * @param	aName		the name of this magic item
+	 * @param	power		the integer thhat represents this item's magic power.
 	 */ 
 	public MagicItem(String aName, int power)
 	{
@@ -50,11 +54,23 @@ public class MagicItem extends Treasure
 		mPower = power;
 	}
 	
+	/**
+	 * Returns a string-based representation of this item.
+	 *
+	 * @return		a string-based representation of this item.
+	 */
 	public String toString()
 	{
 		return getName();
 	}
 	
+	/**
+	 * Informs this magic item that a Player is starting to use it.
+	 *
+	 * @param		aPlayer					a non-null player using this item
+	 * @param		aWorld					a world in which the use takes places
+	 * @exception	JCavernInternalError	could not use the item.
+	 */
 	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
 	{
 		aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + " starts using " + getName()));
@@ -80,21 +96,40 @@ public class MagicItem extends Treasure
 			case MAGIC_DETECT_MAGIC_CASTLE:
 					aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, getName() + ": detect magic castle")); 
 					doDetectMagicCastle(aPlayer, aWorld); break;
+					
+			case MAGIC_DETECT_QUEST_MONSTER:
+					aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, getName() + ": detect quest monster")); 
+					doDetectQuestMonster(aPlayer, aWorld); break;
 			
 			default:
 					throw new JCavernInternalError("MagicItem.startUseBy(), known power");
 		}
 	}
 	
+	/**
+	 * Informs the magic item that the Player is stopping use of the item.
+	 *
+	 * @param	aPlayer 	a non-null Player who is ceasing use of this item
+	 */
 	public void stopUseBy(Player aPlayer)
 	{
 	}
 
+	/**
+	 * Returns a clone of this magic item.
+	 *
+	 * @return		a clone of this magic item.
+	 */
 	public Object clone()
 	{
 		return new MagicItem(new String(getName()), mPower);
 	}
 		
+	/**
+	 * Returns the magic power code for this Item.
+	 *
+	 * @return		the magic power code for this Item.
+	 */
 	public int getPower()
 	{
 		return mPower;
@@ -102,6 +137,10 @@ public class MagicItem extends Treasure
 	
 	/**
 	 * Removes the Thing from the world and places it randomly.
+	 *
+	 * @param		aThing					a non-null Thing to teleport
+	 * @param		aWorld					the non-null World in which the teleportation will happen
+	 * @exception	JCavernInternalError	could not teleport
 	 */
 	private void doTeleportation(Thing aThing, World aWorld) throws JCavernInternalError
 	{
@@ -116,6 +155,12 @@ public class MagicItem extends Treasure
 		}
 	}
 	
+	/**
+	 * Reveals invisible Things
+	 *
+	 * @param		aPlayer					the non-null Player using the item
+	 * @param		aWorld					the non-null World in which magic castles may be located
+	 */
 	private void doRevealInvisibility(Player aPlayer, World aWorld)
 	{
 		Vector	theThings = aWorld.getThings();
@@ -133,6 +178,14 @@ public class MagicItem extends Treasure
 		}
 	}
 	
+	/**
+	 * Detects the given kind of Thing anywhere in the World.
+	 *
+	 * @param		seeker					the non-null Player using the item
+	 * @param		aWorld					the non-null World in which magic castles may be located
+	 * @param		aPrototype				a non-null Thing representing the kind of Thing to detect
+	 * @exception	JCavernInternalError	could not detect magic castles
+	 */
 	private void doDetectThings(Thing seeker, World aWorld, Thing aPrototype) throws JCavernInternalError
 	{
 		Vector	theThings = aWorld.getThings(aPrototype);
@@ -153,13 +206,39 @@ public class MagicItem extends Treasure
 		}
 	}
 	
+	/**
+	 * Detects treasure anywhere in the World.
+	 *
+	 * @param		seeker					the non-null Player using the item
+	 * @param		aWorld					the non-null World in which treasure may be located
+	 * @exception	JCavernInternalError	could not detect treasure
+	 */
 	private void doDetectTreasure(Thing seeker, World aWorld) throws JCavernInternalError
 	{
 		doDetectThings(seeker, aWorld, new TreasureChest(null, 0));
 	}
 	
+	/**
+	 * Detects magic castles anywhere in the World.
+	 *
+	 * @param		seeker					the non-null Player using the item
+	 * @param		aWorld					the non-null World in which magic castles may be located
+	 * @exception	JCavernInternalError	could not detect magic castles
+	 */
 	private void doDetectMagicCastle(Thing seeker, World aWorld) throws JCavernInternalError
 	{
 		doDetectThings(seeker, aWorld, new Castle());
+	}
+
+	/**
+	 * Detects quest monsters anywhere in the World.
+	 *
+	 * @param		seeker					the non-null Player using the item
+	 * @param		aWorld					the non-null World in which magic castles may be located
+	 * @exception	JCavernInternalError	could not detect magic castles
+	 */
+	private void doDetectQuestMonster(Player seeker, World aWorld) throws JCavernInternalError
+	{
+		doDetectThings(seeker, aWorld, seeker.getMission().getTarget());
 	}
 }
