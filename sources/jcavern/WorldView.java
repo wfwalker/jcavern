@@ -12,9 +12,17 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * WorldView displays a view of a world centered around a player's location.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
+ */
 public class WorldView extends Canvas implements Observer
 {
-	private World	mModel;
+	private static final int	kSpacing = 40;
+	
+	private World				mModel;
 	
 	public WorldView(World aWorld)
 	{
@@ -23,7 +31,7 @@ public class WorldView extends Canvas implements Observer
 		mModel = aWorld;
 		
 		setBackground(Color.black);
-		setForeground(Color.orange);
+		setForeground(JCavernApplet.CavernOrange);
 	}
 	
 	public void update(Observable a, Object b)
@@ -50,8 +58,8 @@ public class WorldView extends Canvas implements Observer
 				for (int xIndex = -3; xIndex <= 3; xIndex++)
 				{
 					Location	aLocation = new Location(xIndex + theLocation.getX(), yIndex + theLocation.getY());
-					int			plotX = 30 + 30 * (xIndex + 3);
-					int			plotY = 30 + 30 * (yIndex + 3);
+					int			plotX = kSpacing + kSpacing * (xIndex + 3);
+					int			plotY = kSpacing + kSpacing * (yIndex + 3);
 					
 					if (aLocation.inBounds(mModel.getBounds()))
 					{
@@ -68,7 +76,7 @@ public class WorldView extends Canvas implements Observer
 					}
 					else
 					{
-						g.fillRect(plotX - 15, plotY - 15, 30, 30);
+						g.fillRect(plotX - kSpacing / 2, plotY - kSpacing / 2, kSpacing, kSpacing);
 					}
 				}
 			}
