@@ -198,13 +198,13 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
-	public void gainPoints(Combatant theVictim)
+	public void gainPoints(World aWorld, Combatant theVictim)
 	{
-		super.gainPoints(theVictim);
+		super.gainPoints(aWorld, theVictim);
 		
 		if (mMission != null)
 		{
-			mMission.adjustQuota(theVictim);
+			mMission.adjustQuota(aWorld, this, theVictim);
 		}
 		
 		setChanged();
@@ -228,7 +228,7 @@ public class Player extends Combatant
 	
 	public boolean canRangedAttack(Combatant aCombatant)
 	{
-		System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
+		//System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
 		return (mArrows > 0) && aCombatant.vulnerableToPlayerRangedAttack(this);
 	}
 	
@@ -273,7 +273,7 @@ public class Player extends Combatant
 		notifyObservers();	
 	}
 	
-	public void decrementAttackCount()
+	public void decrementAttackCount(World aWorld)
 	{
 		Sword theSword = getSword();
 		
@@ -284,11 +284,11 @@ public class Player extends Combatant
 			if (theSword.isDepleted())
 			{
 				drop(theSword);
-				MissionCard.log(getNounPhrase() + "'s sword shatters");
+				aWorld.eventHappened(new WorldEvent(this, WorldEvent.USE_INVENTORY, getNounPhrase() + "'s sword shatters"));
 			}
 			else
 			{
-				MissionCard.log(getNounPhrase() + "'s sword chips");
+				aWorld.eventHappened(new WorldEvent(this, WorldEvent.INFO_MESSAGE, getNounPhrase() + "'s sword chips"));
 			}
 		}
 	
@@ -426,6 +426,20 @@ public class Player extends Combatant
 		}
 	}
 	
+	/**
+	 * Handles a single turn by incrementing the move counter and notifying observers
+	 *
+	 * @param		aWorld					the non-null World in which the action is taking place.
+	 * @exception	JCavernInternalError	the Thing could not process its turn
+	 */
+	public void doTurn(World aWorld) throws JCavernInternalError
+	{
+		super.doTurn(aWorld);
+		
+		setChanged();
+		notifyObservers();
+	}
+
 	public void thingRemoved(World aWorld, Location aLocation) throws JCavernInternalError
 	{
 		if (getCastle() != null)
