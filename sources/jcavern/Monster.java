@@ -15,49 +15,66 @@ import java.applet.*;
  */
 public class Monster extends Combatant implements Cloneable
 {
-	private String	mAppearance;
-	private double	mPoints;
-	private double	mWorth;
-	private boolean	mInvisible;
+	private String			mAppearance;
+	private double			mWorth;
+	private boolean			mInvisible;
+	
+	/** * Likelihood that this monster wants to move on a given turn */
+	private static double	kMoveFraction = 0.7;
 	
 	public Monster(String name, String appearance, double points, double worth, boolean invisible)
 	{
-		super(name);
+		super(name, (int) points);
 	
-		System.out.println("Monster(" + name + ", " + appearance + ", " + points + ", " + worth + ", " + invisible + ")");
+		// System.out.println("Monster(" + name + ", " + appearance + ", " + points + ", " + worth + ", " + invisible + ")");
 		
 		mAppearance = appearance;
-		mPoints = points;
 		mWorth = worth;
 		mInvisible = invisible;
 	}
 
-	public void doTurn(World aWorld) throws NoSuchThingException
+	public void doTurn(World aWorld) throws JCavernInternalError
 	{
 		int	aDirection = aWorld.directionToward(this, aWorld.getPlayer());
+
+		/*		
+		{see if each monster wants to move. If so, update both the
+		quadrant Q[,] array and the x[],y[] arrays.}
+		if Random(10)>3 then begin
+		*/
 		
-		try
+		if (Math.random() < kMoveFraction)
 		{
-			aWorld.move(this, aDirection);
-		}
-		catch (ThingCollisionException tce)
-		{
-			if (tce.getMovee() instanceof Player)
+			try
 			{
-				aWorld.attack(this, aDirection);
+				aWorld.move(this, aDirection);
 			}
-		}
-		catch (IllegalLocationException ile)
-		{
-			System.out.println("illegal location " + ile);
-		}
-		catch (NoSuchThingException nst)
-		{
-			System.out.println("no such thing " + nst);
+			catch (ThingCollisionException tce)
+			{
+				try
+				{
+					if (tce.getMovee() instanceof Player)
+					{
+						attack(aWorld, tce.getMovee());
+					}
+				}
+				catch (NonCombatantException nce)
+				{
+					System.out.println("non combatant " + nce);
+				}
+				catch (JCavernInternalError nst)
+				{
+					System.out.println("no such thing " + nst);
+				}
+			}
+			catch (IllegalLocationException ile)
+			{
+				System.out.println("illegal location " + ile);
+			}
 		}
 	}
 		
-	public int computeDamage()
+	public int computeDamage(Combatant opponent)
 	{
 		/*
 		dam := Q[i,j].m.points/8 + Random(3) + Q[i,j].m.worth/4
@@ -68,12 +85,17 @@ public class Monster extends Combatant implements Cloneable
 		Plot_Stats(TRUE);
 		*/
 		
-		double	damage = 3 * Math.random() + (mPoints / 8) + (mWorth / 4);
-		
-		return (int) damage;
+		if (opponent instanceof Tree)
+		{
+			return 0;
+		}
+		else
+		{
+			return (int) (3 * Math.random() + (getPoints() / 8) + (getWorth() / 4));
+		}
 	}
 	
-	public int computeRangedDamage()
+	public int computeRangedDamage(Combatant opponent)
 	{
 		return 0;
 	}
@@ -83,18 +105,8 @@ public class Monster extends Combatant implements Cloneable
 	
 	}
 	
-	public void sufferDamage(int theDamage)
-	{
-		mPoints -= theDamage;
-	}
-	
 	public void gainExperience(Combatant theVictim)
 	{
-	}
-	
-	public boolean isDead()
-	{
-		return mPoints < 0;
 	}
 	
 	public int getWorth()
@@ -104,7 +116,7 @@ public class Monster extends Combatant implements Cloneable
 
 	public Object clone()
 	{
-		return new Monster(getName(), mAppearance, mPoints, mWorth, mInvisible);
+		return new Monster(getName(), mAppearance, getPoints(), mWorth, mInvisible);
 	}
 	
 	public String getAppearance()
@@ -117,10 +129,5 @@ public class Monster extends Combatant implements Cloneable
 		{
 			return ".";
 		}
-	}
-	
-	public double getPoints()
-	{
-		return mPoints;
 	}
 }
