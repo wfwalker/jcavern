@@ -4,6 +4,7 @@ package jcaverntest;
 import junit.framework.*;
 
 import jcavern.*;
+import jcavern.thing.*;
 
 /**
  * Tests functionality of jcavern.

@@ -5,6 +5,7 @@ import junit.framework.*;
 
 import java.awt.Rectangle;
 import jcavern.*;
+import jcavern.thing.*;
 
 /**
  * Tests functionality of MagicItem.

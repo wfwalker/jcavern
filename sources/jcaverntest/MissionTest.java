@@ -5,6 +5,7 @@ import junit.framework.*;
 import java.net.*;
 
 import jcavern.*;
+import jcavern.thing.*;
 
 /**
  * Tests functionality of Mission.
