@@ -25,6 +25,7 @@ public class PlayerView extends TextArea implements Observer
 	public PlayerView(Player aPlayer)
 	{
 		super("", 15, 20, TextArea.SCROLLBARS_NONE);
+		setEditable(false);
 
 		mModel = aPlayer;
 		
@@ -38,7 +39,7 @@ public class PlayerView extends TextArea implements Observer
 		
 		aBuffer.append("  Gold: " + mModel.getGold());
 		aBuffer.append("\n  Arrows: " + mModel.getArrows());
-		aBuffer.append("\n  Experience: " + mModel.getPoints());
+		aBuffer.append("\n  Points: " + mModel.getPoints() + "/" + mModel.getMaximumPoints());
 		aBuffer.append("\n\n  In Use:");
 			
 		Vector items = mModel.getInUseItems();
