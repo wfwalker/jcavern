@@ -58,9 +58,9 @@ public class LogView extends JCavernView
 	 */
 	public void update(Observable a, Object b)
 	{
-		//System.out.println("LogView.update(" + a + ", " + b + ")");
 		
 		WorldEvent anEvent = (WorldEvent) b;
+		System.out.println("- " + anEvent);
 		
 		if (mSubject == anEvent.getSubject())
 		{
@@ -73,6 +73,9 @@ public class LogView extends JCavernView
 				case WorldEvent.INFO_MESSAGE:
 				case WorldEvent.ERROR_MESSAGE:
 					addLine(anEvent.toString());
+					break;
+				case WorldEvent.TURN_START:
+					addLine("--------------------");
 					break;
 				default:
 					//System.out.println("rejected " + anEvent);
@@ -124,7 +127,5 @@ public class LogView extends JCavernView
 		{
 			g.drawString((String) mLogLines.elementAt(index), 1, y); y += lineHeight;
 		}
-		
-		g.drawLine(0, lineHeight + 2, getWidth(), lineHeight + 2);
 	}
 }
