@@ -207,4 +207,12 @@ public class Monster extends Combatant implements Cloneable
 	{
 		return new Monster(getName(), getImageName(), mHitVerb, mKilledVerb, getPoints(), mWorth, getInvisible());
 	}
+
+	/**
+	 * Paints the Monster, but only paints the gauge if it's not a tree.
+	 */
+	public void paint(Graphics g, int plotX, int plotY)
+	{
+		paint(g, plotX, plotY, ! getName().startsWith("Tree"));
+	}
 }
