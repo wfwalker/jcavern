@@ -167,7 +167,7 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	 * Creates a new thing with the given name, image name, and invisibility flag.
 	 *
 	 * @param	aName		a non-null String name
-	 * @param	imageName	a non-null board image name
+	 * @param	inImageName	a non-null board image name
 	 * @param	invisible	<CODE>true</CODE> if this Thing is invisible, <CODE>false</CODE> otherwise
 	 */
 	public Thing(String aName, String inImageName, boolean invisible)
@@ -178,51 +178,6 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 		mGraphicalThingView = createGraphicalThingView(inImageName);
 	}
 
-	public String getDataString() throws JCavernInternalError
-	{
-		StringBuffer playerDataString = new StringBuffer();
-		
-		try
-		{
-			ByteArrayOutputStream someBytes = new ByteArrayOutputStream();
-			ObjectOutputStream aStream = new ObjectOutputStream(someBytes);
-			aStream.writeObject(this);
-			aStream.flush();
-			
-			byte[]			theBytes = someBytes.toByteArray();
-			
-			for (int byteIndex = 0; byteIndex < theBytes.length; byteIndex++)
-			{
-				//playerDataString.append(" 0x");
-				playerDataString.append(" ");
-				playerDataString.append(Integer.toHexString(Math.abs(theBytes[byteIndex])).toUpperCase());
-			}
-			
-			System.out.println("-- " + playerDataString.toString() + " --");
-		}
-		catch(IOException ioe)
-		{
-			throw new JCavernInternalError("can't serialize " + ioe);
-		}
-		
-		return playerDataString.toString();
-	}
-
-	public static void fromDataString(String inDataString) throws JCavernInternalError
-	{
-		StringTokenizer aTokenizer = new StringTokenizer(inDataString);
-		int				index = 0;
-		byte[]			theBytes = new byte[aTokenizer.countTokens()];
-		
-		while (aTokenizer.hasMoreTokens())
-		{
-			String	aToken = aTokenizer.nextToken();
-			theBytes[index] = (byte) Integer.parseInt(aToken, 16);
-			System.out.println(index + " " + aToken + " " + theBytes[index]);
-			index++;
-		}
-		
-	}
 
 	/**
 	 * Returns whether this combatant has a proper name
@@ -284,7 +239,8 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	/**
 	 * Creates a GraphicalThingView appropriate to this Thing.
 	 *
-	 * @return	a non-nullGraphicalThingView appropriate to this Thing.
+	 * @param	inImageName		a non-null String image name
+	 * @return					a non-null GraphicalThingView appropriate to this Thing.
 	 */
 	protected GraphicalThingView createGraphicalThingView(String inImageName)
 	{
