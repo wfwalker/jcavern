@@ -124,8 +124,6 @@ public class Player extends Combatant
 		Sword aSword = new Sword("Sword", 1);
 		receiveItem(aSword);
 		startUsing(aSword);
-		receiveItem(new MagicItem("Unum", 1));
-		receiveItem(new MagicItem("Shoes", 4));
 		mArrows = 20;
 	}
 	
@@ -191,9 +189,9 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
-	protected String getArticle()
+	protected boolean hasProperName()
 	{
-		return "";
+		return true;
 	}
 
 	public int getWorth()
@@ -325,7 +323,7 @@ public class Player extends Combatant
 	
 	public void receiveItem(Treasure anItem)
 	{
-		System.out.println(getName() + " received " + anItem);
+		//System.out.println(getName() + " received " + anItem);
 		
 		mUnusedItems.addElement(anItem);
 		
