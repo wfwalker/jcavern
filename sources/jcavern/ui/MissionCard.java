@@ -13,7 +13,7 @@ import java.applet.Applet;
  * including a view of the Player's statistics and equipment, a view of the World and
  * its inhabitants, a view of the status of the mission, and a view of the log messages.
  */
-public class MissionCard extends AppletCard
+public class MissionCard extends AppletCard implements Observer
 {
 	/** * The official PLATO orange color, as used in jcavern. */
 	public static final Color		CavernOrange = new Color(0xFF, 0x66, 0x00);
@@ -36,67 +36,78 @@ public class MissionCard extends AppletCard
 	/** * The representation of the player */
 	private Player					mPlayer;
 	
-	/** * A table of messages */
-	private Hashtable				mImages;
-
-	/** * A MediaTracker to make sure the images get loaded. */
-	private MediaTracker			mTracker;
-	
-	/** * The current global instance of a MissionCard. */
-	private static MissionCard		gWindow;
+	/**
+	 * Receives update notification that the World being viewed has changed.
+	 * In this particular case, the MissionCard is looking for a MISSION_END event.
+	 * Upon finding one, it creates and displays an EndMissionCard.
+	 *
+	 * @param	a	the object sending the event
+	 * @param	b	details about the event
+	 */
+	public void update(Observable a, Object b)
+	{
+		// System.out.println("MissionCard.update(" + a + ", " + b + ")");
 		
-	/**
-	 * Displays an EndMissionCard on the current global instance of MissionCard.
-	 *
-	 * @param	aString		a non-null String containing an end-of-mission message
-	 */
-	public static void endMissionAlert(String aString)
-	{
-		gWindow.privateEndMissionAlert(aString);
-	}
-	
-	/**
-	 * Displays an EndMissionCard on this MissionCard's Applet.
-	 *
-	 * @param	aString		a non-null String containing an end-of-mission message
-	 */
-	private void privateEndMissionAlert(String aString)
-	{
-		EndMissionCard anAlert = new EndMissionCard(mApplet, aString);
-		anAlert.show();
+		WorldEvent anEvent = (WorldEvent) b;
+
+		if (anEvent.getEventCode() == WorldEvent.MISSION_END)
+		{
+			AppletCard anAlert = new NewEndMissionCard(mApplet, anEvent, mWorld);
+			anAlert.show();
+		}
 	}
 
     /**
      * Creates a new MissionCard for the given Applet and Player.
      *
-     * @param	anApplet	a non-null Applet in which to display the message
-     * @param	thePlayer	a non-null Player who will do a Mission
+     * @param	inApplet	a non-null Applet in which to display the message
+     * @param	inPlayer	a non-null Player who will do a Mission
      */
-	public MissionCard(JCavernApplet anApplet, Player thePlayer)
+	public MissionCard(JCavernApplet inApplet, Player inPlayer)
 	{
-		super(anApplet);
+		super(inApplet);
 		
-		mPlayer = thePlayer;
+		mPlayer = inPlayer;
 		
-		mPlayerView = new PlayerView(mPlayer);
+		mPlayerView = new PlayerView(inApplet, mPlayer);
 		mPlayer.setMission(MonsterFactory.createMission(mPlayer));
-		mMissionView = new MissionView(mPlayer.getMission());
+		mMissionView = new MissionView(inApplet, mPlayer.getMission());
 
 		// Create a world  and a view of the world
 		mWorld = new World();
-		mWorldView = new WorldView(mWorld);
+		mWorldView = new WorldView(inApplet, mWorld);
 
-		mLogView = new LogView(mPlayer);
+		mLogView = new LogView(inApplet, mPlayer);
 		mLogView.setSize(300, 200);
 		
 		mWorldView.setSize(300, 300);		
 		mWorld.addObserver(mWorldView);
 		mWorld.addObserver(mLogView);
+		mWorld.addObserver(this);
 		
 		mPlayerView.setSize(150, 300);
 		
 		mMissionView.setSize(150, 200);		
 		mPlayer.getMission().addObserver(mMissionView);
+	}
+	
+	/**
+	 * Notifies this card that it was removed from view by the Applet.
+	 */
+	public void cardRemoved()
+	{
+		mWorld.deleteObserver(mWorldView);
+		mWorld.deleteObserver(mLogView);
+		mWorld.deleteObserver(this);
+		mPlayer.deleteObserver(mPlayerView);
+		mPlayer.getMission().deleteObserver(mMissionView);
+		
+		mWorldView = null;
+		mPlayerView = null;
+		mMissionView = null;
+		mWorld = null;
+		mLogView = null;
+		mPlayer = null;
 	}
 	
 	/**
@@ -124,23 +135,17 @@ public class MissionCard extends AppletCard
 		rightPanel.add(mPlayerView, BorderLayout.NORTH);
 		rightPanel.add(mMissionView, BorderLayout.SOUTH);
 		
-		//mApplet.add(mWorldView);
-		//mApplet.add(mPlayerView);
-		//mApplet.add(mLogView);
-		//mApplet.add(mMissionView);
 		mApplet.add(leftPanel);
 		mApplet.add(rightPanel);
 		
 		mApplet.validate();
-
-		gWindow = this;
 		
 		try
 		{
 			mWorld.populateFor(mPlayer);
 		
 			mWorldView.requestFocus();
-        	mWorldView.addKeyListener(new KeyboardCommandListener(mWorld, mWorldView, mPlayer, mMissionView));
+        	mWorldView.addKeyListener(new KeyboardCommandListener(mWorld, mPlayer));
 			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.TURN_STOP));
 		}
 		catch (JCavernInternalError jcie)
