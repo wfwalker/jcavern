@@ -22,8 +22,12 @@ import java.util.*;
  */
 public class MissionView extends Canvas implements Observer
 {
+	/** * The Mission being visualized. */
 	private Mission	mModel;
 	
+	/**
+	 * Creates a new MissionView for the given Mission.
+	 */
 	public MissionView(Mission aMission)
 	{
 		mModel = aMission;
@@ -33,6 +37,11 @@ public class MissionView extends Canvas implements Observer
 		aMission.addObserver(this);
 	}
 	
+	/**
+	 * Sets the Mission to be visualized.
+	 *
+	 * @param	aModel		a non-null Mission
+	 */
 	public void setModel(Mission aModel)
 	{
 		mModel.deleteObserver(this);
@@ -41,11 +50,24 @@ public class MissionView extends Canvas implements Observer
 		repaint();
 	}
 	
+	/**
+	 * Reponds to update messages from the Mission being visualized by repainting.
+	 *
+	 * @param	a	the Mission being visualized
+	 * @param	b	not in use
+	 */
 	public void update(Observable a, Object b)
 	{
 		repaint();
 	}
 	
+	/**
+	 * Paints a visualization of a Mission.
+	 * The visualization includes a thermometer-style progress indicator
+	 * as well as a textual representation of the state of the Mission.
+	 *
+	 * @param	g 	a non-null Graphics object for painting.
+	 */
 	public void paint(Graphics g)
 	{
 		int		index;
@@ -55,7 +77,7 @@ public class MissionView extends Canvas implements Observer
 		
 		try
 		{
-			mModel.getTarget().paint(g, 20, height / 2, false);
+			mModel.getTarget().paint(g, 20, 20, false);
 		}
 		catch (JCavernInternalError jcie)
 		{
