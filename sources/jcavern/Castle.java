@@ -21,17 +21,12 @@ public class Castle extends Thing
 {
 	public Castle()
 	{
-		super("Castle");
+		super("Castle", "castle");
 	}
 	
 	public Object clone()
 	{
 		return new Castle();
-	}
-	
-	public void paint(Graphics g, int plotX, int plotY)
-	{
-		g.drawOval(plotX - 20, plotY - 20, 40, 40);
 	}
 }
 
