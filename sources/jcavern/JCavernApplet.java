@@ -21,24 +21,30 @@ import java.applet.*;
 public class JCavernApplet extends Applet
 {
 	/** * A view of the game world */
-	private WorldView		mWorldView;
+	private WorldView			mWorldView;
 	
 	/** * A view of the player statistics */
-	private PlayerView		mPlayerView;
+	private PlayerView			mPlayerView;
 	
 	/** * A model of the game world */
-	private World			mWorld;
+	private World				mWorld;
 	
 	/** * The representation of the player */
-	private Player			mPlayer;
+	private Player				mPlayer;
 	
-	private TextArea		mLogView;
+	private static TextArea		gLogView;
 
 	/**
 	 * Creates game world, player, viewers.
 	 */
 	public JCavernApplet()
 	{
+	}
+	
+	public static void log(String aString)
+	{
+		gLogView.append(aString);
+		gLogView.append("\n");
 	}
 
 	/**
@@ -47,7 +53,7 @@ public class JCavernApplet extends Applet
 	public void start()
 	{
 		mWorldView.requestFocus();
-        mWorldView.addKeyListener(new KeyboardCommandListener(mWorld, mPlayer, mLogView));
+        mWorldView.addKeyListener(new KeyboardCommandListener(mWorld, mPlayer));
 	}
 
 	// Get applet information
@@ -73,7 +79,7 @@ public class JCavernApplet extends Applet
 			mWorld.placeWorthyOpponents(mPlayer, 10);
 			mWorldView = new WorldView(mWorld);
 	
-			mLogView = new TextArea(5, 80);
+			gLogView = new TextArea(5, 80);
 			
 			mWorldView.setSize(500, 500);		
 			add(mWorldView);
@@ -83,7 +89,7 @@ public class JCavernApplet extends Applet
 			add(mPlayerView);
 			mPlayer.addObserver(mPlayerView);
 			
-			add(mLogView);
+			add(gLogView);
 			
 			// Put the player in the world
 			mWorld.place(mWorld.getRandomEmptyLocation(), mPlayer);
