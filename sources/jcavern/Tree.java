@@ -10,11 +10,18 @@ package jcavern;
 
 import java.awt.*;
 
+/**
+ * Trees inhabit the World and look nice. They can be chopped down by Players,
+ * but not by Monsters or other Trees.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
+ */
 public class Tree extends Combatant
 {
 	public Tree()
 	{
-		super("Tree", 0);
+		super("Tree", "tree", 0);
 	}
 	
 	public Object clone()
