@@ -134,9 +134,12 @@ public class Player extends Combatant
 
 		mGold = 10;
 		
-		Sword aSword = new Sword("Sword", 1);
+		// set the player up with an indestructable but uninteresting sword
+		Sword aSword = new Sword("Sword", 1, 100);
 		receiveItem(aSword);
 		startUsing(aSword);
+		
+		// and give him some arrows
 		mArrows = 20;
 	}
 	
@@ -281,6 +284,11 @@ public class Player extends Combatant
 			if (theSword.isDepleted())
 			{
 				drop(theSword);
+				MissionCard.log(getNounPhrase() + "'s sword shatters");
+			}
+			else
+			{
+				MissionCard.log(getNounPhrase() + "'s sword chips");
 			}
 		}
 	
@@ -314,6 +322,17 @@ public class Player extends Combatant
 	public void receiveGold(int delta)
 	{
 		mGold += delta;
+
+		setChanged();
+		notifyObservers();
+	}
+	
+	/**
+	 * Increments this player's number of arrows.
+	 */
+	public void receiveArrows(int delta)
+	{
+		mArrows += delta;
 
 		setChanged();
 		notifyObservers();
