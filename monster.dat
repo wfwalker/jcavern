@@ -1,65 +1,65 @@
-Gnat           2.0 2.0 -1
-Nomad          10.0 2.0 0
-Spider         13.0 4.0 0
-Moth           18.0 5.0 0
-T of Death     20.0 3.0 0
-Snark          28.0 9.0 0
-Bolotomus      28.0 9.0 0
-Nimbus         36.0 11.0 0
-Troll          50.0 22.0 0
-Dragon         75.0 28.0 0
-Aardvark       100.0 33.0 0
-Werewolf       120.0 37.0 0
-Buffalo        140.0 43.0 0
-Troglodyte     150.0 45.0 0
-Nazgul         200.0 50.0 0
-Toilet Elf     205.0 53.0 0
-Cyclops        230.0 56.0 0
-Elbowsaurus    230.0 56.0 0
-Vampire        250.0 58.0 0
-Jaguar         250.0 58.0 0
-Griffon        300.0 65.0 0
-Kobold         700.0 100.0 0
-Serpent        800.0 100.0 0
-Boojum         900.0 120.0 0
-Fury           1000.0 140.0 0
-Berzerker      1400.0 180.0 0
-Titan          1600.0 200.0 0
-Minotaur       1800.0 240.0 0
-Phantom        2000.0 300.0 -1
-Questing Beast 2400.0 400.0 0
-T of Doom      3500.0 500.0 0
-Juggernaut     4000.0 600.0 0
-Sasquatch      5000.0 700.0 0
-Iguana         6000.0 900.0 0
-Pit Fiend      7000.0 1000.0 0
-Dragon Turtle  7000.0 1000.0 0
-Zebra          8000.0 1400.0 0
-Centurion      30000.0 5000.0 0
-Spectre        31000.0 6000.0 -1
-Centipede      36000.0 7500.0 0
-Gorgon         45000.0 9000.0 0
-Medusa         53000.0 10000.0 0
-Rhinoceros     61000.0 11800.0 0
-Dinosaur       70000.0 13500.0 0
-Octopus        80000.0 16000.0 0
-Wyvern         90000.0 18000.0 0
-Elephant       100000.0 20000.0 0
-Djinni         120000.0 23000.0 0
-Wraith         140000.0 26000.0 -1
-Mastadon       160000.0 30000.0 0
-Panther        180000.0 33000.0 0
-Hydra          200000.0 38000.0 0
-T of Destiny   230000.0 44000.0 0
-Lobster        265000.0 50000.0 0
-Fungus         300000.0 55000.0 0
-Godzilla       350000.0 62000.0 0
-Kraken         400000.0 74000.0 0
-Jabberwock     1000000.0 150000.0 0
-Bandersnatch   2000000.0 300000.0 0
-Samurai        4000000.0 700000.0 0
-Angel of Death 8000000.0 900000.0 0
-Godling        16000000.0 1600000.0 0
-P Anti-Ken     1.6E8 1.6E7 0
-P Anti-Ken II  3.2E8 3.2E7 0
-P Anti-Ken III 6.4E8 1.6E7 0
+Gnat, 2.0, 2.0, -1
+Nomad, 10.0, 2.0, 0
+Spider, 13.0, 4.0, 0
+Moth, 18.0, 5.0, 0
+T of Death, 20.0, 3.0, 0
+Snark, 28.0, 9.0, 0
+Bolotomus, 28.0, 9.0, 0
+Nimbus, 36.0, 11.0, 0
+Troll, 50.0, 22.0, 0
+Dragon, 75.0, 28.0, 0
+Aardvark, 100.0, 33.0, 0
+Werewolf, 120.0, 37.0, 0
+Buffalo, 140.0, 43.0, 0
+Troglodyte, 150.0, 45.0, 0
+Nazgul, 200.0, 50.0, 0
+Toilet Elf, 205.0, 53.0, 0
+Cyclops, 230.0, 56.0, 0
+Elbowsaurus, 230.0, 56.0, 0
+Vampire, 250.0, 58.0, 0
+Jaguar, 250.0, 58.0, 0
+Griffon, 300.0, 65.0, 0
+Kobold, 700.0, 100.0, 0
+Serpent, 800.0, 100.0, 0
+Boojum, 900.0, 120.0, 0
+Fury, 1000.0, 140.0, 0
+Berzerker, 1400.0, 180.0, 0
+Titan, 1600.0, 200.0, 0
+Minotaur, 1800.0, 240.0, 0
+Phantom, 2000.0, 300.0, -1
+Questing Beast, 2400.0, 400.0, 0
+T of Doom, 3500.0, 500.0, 0
+Juggernaut, 4000.0, 600.0, 0
+Sasquatch, 5000.0, 700.0, 0
+Iguana, 6000.0, 900.0, 0
+Pit Fiend, 7000.0, 1000.0, 0
+Dragon Turtle, 7000.0, 1000.0, 0
+Zebra, 8000.0, 1400.0, 0
+Centurion, 30000.0, 5000.0, 0
+Spectre, 31000.0, 6000.0, -1
+Centipede, 36000.0, 7500.0, 0
+Gorgon, 45000.0, 9000.0, 0
+Medusa, 53000.0, 10000.0, 0
+Rhinoceros, 61000.0, 11800.0, 0
+Dinosaur, 70000.0, 13500.0, 0
+Octopus, 80000.0, 16000.0, 0
+Wyvern, 90000.0, 18000.0, 0
+Elephant, 100000.0, 20000.0, 0
+Djinni, 120000.0, 23000.0, 0
+Wraith, 140000.0, 26000.0, -1
+Mastadon, 160000.0, 30000.0, 0
+Panther, 180000.0, 33000.0, 0
+Hydra, 200000.0, 38000.0, 0
+T of Destiny, 230000.0, 44000.0, 0
+Lobster, 265000.0, 50000.0, 0
+Fungus, 300000.0, 55000.0, 0
+Godzilla, 350000.0, 62000.0, 0
+Kraken, 400000.0, 74000.0, 0
+Jabberwock, 1000000.0, 150000.0, 0
+Bandersnatch, 2000000.0, 300000.0, 0
+Samurai, 4000000.0, 700000.0, 0
+Angel of Death, 8000000.0, 900000.0, 0
+Godling, 16000000.0, 1600000.0, 0
+P Anti-Ken, 1.6E8, 1.6E7, 0
+P Anti-Ken II, 3.2E8, 3.2E7, 0
+P Anti-Ken III, 6.4E8, 1.6E7, 0
