@@ -53,15 +53,18 @@ public class EndMissionCard extends AppletCard implements ActionListener
 		mWorld = inWorld;
 		Player aPlayer = (Player) inEvent.getSubject();
 		
+		// Create a world  and a view of the world
+		mWorldView = new WorldView(inApplet, mWorld, inEvent.getLocation());
+		
+		int preferredWorldViewRadius = mWorldView.getPreferredRadius();
+		
+		mWorldView.setSize(preferredWorldViewRadius, preferredWorldViewRadius);		
+
 		mPlayerView = new PlayerView(inApplet, aPlayer);
-		mPlayerView.setSize(150, 300);
+		mPlayerView.setSize(150, preferredWorldViewRadius);
 
 		mMissionView = new MissionView(inApplet, aPlayer.getMission());
 		mMissionView.setSize(150, 200);		
-
-		// Create a world  and a view of the world
-		mWorldView = new WorldView(inApplet, mWorld, inEvent.getLocation());
-		mWorldView.setSize(300, 300);		
 
 		// create a button pointing back to the index card
 		mEndMessage = new Panel();
@@ -71,7 +74,7 @@ public class EndMissionCard extends AppletCard implements ActionListener
 		endButton.addActionListener(this);
 		mEndMessage.add(endButton);
 		mEndMessage.add(new Label(mEvent.getMessage()), BorderLayout.CENTER);
-		mEndMessage.setSize(300, 200);
+		mEndMessage.setSize(preferredWorldViewRadius, 200);
 	}
 	
 	/**

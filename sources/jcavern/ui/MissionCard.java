@@ -73,22 +73,33 @@ public class MissionCard extends AppletCard implements Observer
 		mPlayer.setMission(MonsterFactory.createMission(mPlayer));
 		mMissionView = new MissionView(inApplet, mPlayer.getMission());
 
+		
 		// Create a world  and a view of the world
 		mWorld = new World();
 		mWorldView = new WorldView(inApplet, mWorld, null);
 
+		// compute preferred width of worldView
+		int preferredWorldViewWidth = mWorldView.getPreferredRadius();
+
 		mLogView = new LogView(inApplet, mPlayer);
-		mLogView.setSize(300, 200);
+		mLogView.setSize(preferredWorldViewWidth, 200);
 		
-		mWorldView.setSize(300, 320);		
+		mWorldView.setSize(preferredWorldViewWidth, preferredWorldViewWidth);		
 		mWorld.addObserver(mWorldView);
 		mWorld.addObserver(mLogView);
 		mWorld.addObserver(this);
 		
-		mPlayerView.setSize(150, 300);
+		mPlayerView.setSize(150, preferredWorldViewWidth);
 		
 		mMissionView.setSize(150, 200);		
 		mPlayer.getMission().addObserver(mMissionView);
+		
+		System.out.println("mission card is " +
+				preferredWorldViewWidth + " + 150 = " +
+				(preferredWorldViewWidth + 150) + " wide");
+		System.out.println("mission card is " +
+				preferredWorldViewWidth + " + 200 = " +
+				(preferredWorldViewWidth + 200) + " tall");
 	}
 	
 	/**
