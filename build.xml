@@ -1,0 +1,86 @@
+
+<project name="jcavern" default="compile" basedir="." >
+
+	<!-- locations of external tools -->
+
+	<property name="jdk_home" value="c:/jdk1.2.2" />
+
+	<property name="ant_home" value="c:/jakarta-ant" />
+	
+	<property name="vm_run_args" value="" />
+	
+	<!-- folders within the jcavern module  -->
+
+	<property name="binaries" value="bin" />
+	<property name="sources" value="sources" />
+	<property name="documentation" value="docs" />
+	<property name="libraries" value="lib" />
+	
+	<!-- java classpaths -->
+	
+	<path id="buildpath">
+		<pathelement location="${binaries}" />
+		<pathelement location="${libraries}/junit.jar" />
+	</path>
+
+	<path id="runpath">
+		<pathelement location="${binaries}" />
+		<pathelement location="${jdk_home}/lib/tools.jar" />
+		<pathelement location="${libraries}/junit.jar" />
+	</path>
+	
+	<path id="testpath">
+		<pathelement location="${binaries}" />
+		<pathelement location="${jdk_home}/lib/tools.jar" />
+		<pathelement location="${libraries}/junit.jar" />
+		<pathelement location="${ant_home}/lib/ant.jar" />
+		<pathelement location="${ant_home}/lib/optional.jar" />
+	</path>
+	
+	<!-- targets for compiling jcavern -->
+
+	<target name="prepare">
+		<mkdir dir="${binaries}" />
+	</target>
+	
+	<target name="clean">
+		<delete dir="${binaries}" />
+	</target>
+	
+	<target name="compile" depends="prepare" >
+		<javac srcdir="${sources}" destdir="${binaries}">
+			<classpath refid="buildpath"/>
+		</javac>
+	</target>
+	
+	<target name="runapplet" depends="compile" >
+		<exec executable="appletviewer">
+			<arg value="JCavernApplet.html" />
+		</exec>
+	</target>
+
+	<!-- target for creating javadoc documentation -->
+
+	<target name="javadoc">
+		<mkdir dir="${documentation}" />
+
+		<javadoc sourcepath="${sources}" destdir="${documentation}" packagenames="
+			jcavern.*,
+			jcaverntest.*" >
+			<classpath refid="buildpath"/>
+		</javadoc>
+	</target>
+
+	<!-- targets for doing unit testing -->
+	
+	<target name="junit" depends="compile" >
+		<junit fork="true" haltonerror="true" printsummary="true">
+			<test name="jcaverntest.WorldTest" />
+			
+			<classpath refid="testpath" />
+			<jvmarg value="${vm_run_args}" />
+		</junit>
+	</target>
+
+</project>
+
