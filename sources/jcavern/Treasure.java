@@ -21,14 +21,27 @@ import java.io.*;
  */
 public abstract class Treasure implements Cloneable
 {
+	/** * The global list of all the possible Treasures. */
 	private static Vector	gTreasures;
 	
-	
+	/** * The name of this Treasure. */
 	private String			mName;
 	
 	public Treasure(String aName)
 	{
 		mName = aName;	
+	}
+	
+	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
+	{
+		aPlayer.startUsing(this);
+		JCavernApplet.current().log(aPlayer.getName() + " begins using " + getName());
+	}
+	
+	public void stopUseBy(Player aPlayer, World aWorld)
+	{
+		aPlayer.stopUsing(this);
+		JCavernApplet.current().log(aPlayer.getName() + " stops using " + getName());
 	}
 	
 	public abstract Object clone();
