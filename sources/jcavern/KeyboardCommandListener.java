@@ -96,9 +96,12 @@ public class KeyboardCommandListener extends KeyAdapter
 	 * @param	e	a non-null KeyEvent
 	 */
 	public void keyTyped(KeyEvent e)
-	{
-		mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.TURN_START));
-		
+	{	
+		if (mCurrentMode == NORMAL_MODE)
+		{
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.TURN_START));
+		}
+			
 	    try
 		{
 			switch (mCurrentMode)
@@ -115,6 +118,7 @@ public class KeyboardCommandListener extends KeyAdapter
 			if (mCurrentMode == NORMAL_MODE)
 			{
 				mWorld.doTurn();
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.TURN_STOP));
 			}
 		}
 		catch(JCavernInternalError jcie)
@@ -122,7 +126,6 @@ public class KeyboardCommandListener extends KeyAdapter
 			System.out.println("internal error " + jcie);
 		}
 
-		mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.TURN_STOP));
 	}
 
 	/**
@@ -148,11 +151,11 @@ public class KeyboardCommandListener extends KeyAdapter
 				break;
 			case 's' :
 				mCurrentMode = SWORD_MODE;
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Normal attack, direction?"));
+				//mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Normal attack, direction?"));
 				break;
 			case 'b' :
 				mCurrentMode = RANGED_ATTACK_MODE;
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Ranged attack, direction?"));
+				//mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Ranged attack, direction?"));
 				break;
 			case 'v' :
 				if (mPlayer.getCastle() != null)
@@ -166,18 +169,18 @@ public class KeyboardCommandListener extends KeyAdapter
 				}
 				break;
 			case '.' :
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Sit"));
+				//mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Sit"));
 				break;
 			case 'o' :
 				doOpen();
 				break;
 			case 'u' :
 				mCurrentMode = USE_MODE;
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Start using which item?"));
+				//mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Start using which item?"));
 				break;
 			case 'U' :
 				mCurrentMode = UNUSE_MODE;
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Stop using which item?"));
+				//mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Stop using which item?"));
 				break;
 			default  :
 				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.ERROR_MESSAGE, "Unknown command"));
