@@ -2,6 +2,7 @@
 package jcaverntest;
 
 import junit.framework.*;
+import java.net.*;
 
 import jcavern.*;
 
@@ -20,9 +21,9 @@ public class MissionTest extends TestCase
 		super(name);
 	}
 
-	public void testQuota()
+	public void testQuota() throws MalformedURLException
 	{
-		MonsterFactory.loadPrototypes(null);
+		MonsterFactory.loadPrototypes(new URL("file:bin/monster.dat"));
 		
 		Player		aPlayer = new Player("Mr. Test");
 		Mission		aMission = MonsterFactory.createMission(aPlayer);
