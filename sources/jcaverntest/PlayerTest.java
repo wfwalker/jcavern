@@ -56,6 +56,36 @@ public class PlayerTest extends TestCase
 		mWorld = null;
 		mPlayer = null;
 	}
+
+	/**
+	 * Tests whether you can convert a Player to and from a data String.
+	 *
+	 * @exception JCavernInternalError	had internal problem
+	 */
+	public void testSaveLoad() throws JCavernInternalError
+	{
+		Treasure anItem = new Sword("Fred", 1);
+		
+		mPlayer.receiveItem(anItem);
+
+		byte[]		theBytes = ThingUtils.thingToByteArray(mPlayer);
+		String		dataString = ThingUtils.byteArrayToDataString(theBytes);
+		byte[]		moreBytes = ThingUtils.dataStringToByteArray(dataString);
+		
+		assert("bytes the same length", theBytes.length == moreBytes.length);
+
+		for (int index = 0; index < theBytes.length; index++)
+		{
+			assert("byte " + index + " the same", theBytes[index]== moreBytes[index]);
+		}
+		
+		Player newPlayer = (Player) ThingUtils.byteArrayToThing(moreBytes);
+
+		assert("rehydrated name matches", newPlayer.getName().equals(mPlayer.getName()));
+		assert("rehydrated points matches", newPlayer.getPoints() == mPlayer.getPoints());
+		assert("rehydrated gold matches", newPlayer.getGold() == mPlayer.getGold());
+		assert("rehydrated sword matches", newPlayer.getSword().getName().equals(mPlayer.getSword().getName()));
+	}
 	
 	/**
 	 * Tests whether you can use and unuse items.
