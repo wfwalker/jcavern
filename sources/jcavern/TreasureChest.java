@@ -24,7 +24,7 @@ public class TreasureChest extends Thing
 	
 	public TreasureChest(Treasure aTreasure, int howManyGold)
 	{
-		super("Treasure Chest");
+		super("Treasure Chest", "chest");
 		
 		mContents = aTreasure;
 		mGoldPieces = howManyGold;
@@ -85,11 +85,11 @@ public class TreasureChest extends Thing
 		}
 	}
 	
-	public void paint(Graphics g, int plotX, int plotY)
+	/*public void paint(Graphics g, int plotX, int plotY)
 	{
 		Image theImage = JCavernApplet.current().getBoardImage("chest");
 		
 		g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
-	}
+	}*/
 }
 

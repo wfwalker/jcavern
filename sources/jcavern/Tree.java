@@ -67,20 +67,10 @@ public class Tree extends Combatant
 	
 	public void gainExperience(Combatant opponent) { }
 	
-	public void decrementRangedAttackCount() { }
-	
 	public int computeDamageTo(Combatant opponent) { return 0; }
 	
 	public int computeRangedDamageTo(Combatant opponent) { return 0; }
 	
 	public int getWorth() { return 1; }
-	
-	public void paint(Graphics g, int plotX, int plotY)
-	{
-		Image theImage = JCavernApplet.current().getBoardImage("tree");
-		
-		g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
-	}
-
 }
 
