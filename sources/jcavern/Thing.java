@@ -71,13 +71,14 @@ public abstract class Thing extends Observable implements Cloneable
 		return mInvisible;
 	}
 
-	public Image getImage()
+	public Image getImage() throws JCavernInternalError
 	{
-		if ((mImage == null) && (JCavernApplet.current() != null))
+		if (mImage == null)
 		{
-			mImage = JCavernApplet.current().getBoardImage(mImageName);
+			mImage = JCavernApplet.getBoardImage(mImageName);
 		}
 		
+		System.out.println("got image for " + getName() + ", " + mImage);
 		return mImage;
 	}
 	
@@ -99,7 +100,7 @@ public abstract class Thing extends Observable implements Cloneable
 	/**
 	 * Returns the name of this thing.
 	 */
-	protected String getName()
+	public String getName()
 	{
 		return mName;
 	}
@@ -111,7 +112,7 @@ public abstract class Thing extends Observable implements Cloneable
 	
 	public abstract Object clone();
 	
-	public void paint(Graphics g, int plotX, int plotY)
+	public void paint(Graphics g, int plotX, int plotY) throws JCavernInternalError
 	{
 		if (! getInvisible())
 		{
@@ -144,6 +145,16 @@ public abstract class Thing extends Observable implements Cloneable
 		{
 			return " ";
 		}
+	}
+	
+	public void thingRemoved(World aWorld, Location aLocation) throws JCavernInternalError
+	{
+	
+	}
+	
+	public void thingPlaced(World aWorld, Location aLocation) throws JCavernInternalError
+	{
+	
 	}
 }
 
