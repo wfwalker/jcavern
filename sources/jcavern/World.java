@@ -15,13 +15,14 @@ import java.awt.Rectangle;
  * a World is a rectangular grid of Locations, some of which contain Things.
  *
  * @author	Bill Walker
+ * @version	$Id$
  */
 public class World extends Observable
 {
 	/** * The usual fraction of trees in the world. */
 	private static final double		kTreeFraction = 17.0 / 100.0;
 	
-	/** * The usual fraction of trees in the world. */
+	/** * The usual fraction of castles in the world. */
 	private static final double		kCastleFraction = 0.4 / 100.0;
 	
 	/** * The bounds of the world */
@@ -41,6 +42,9 @@ public class World extends Observable
 		removeAll();
 	}
 	
+	/**
+	 * Empties out the dictionaries that map things to locations and locations to things.
+	 */
 	public void removeAll()
 	{
 		mLocationsToThings = new Hashtable();
@@ -61,7 +65,7 @@ public class World extends Observable
 			placeRandomTrees();
 			
 			// Place castles
-			placeRandomCastles();
+			int castles = placeRandomCastles();
 			
 			// Place treasure chests
 			placeRandomTreasureChests(aPlayer);
@@ -75,7 +79,9 @@ public class World extends Observable
 			placeWorthyOpponents(aPlayer, desiredPopulation - quota);
 		
 			// Put the player in the world
-			place(getRandomEmptyLocation(), aPlayer);			
+			place(getRandomEmptyLocation(), aPlayer);
+			
+			JCavernApplet.log("You will have " + castles + " magic castles to help you");
 		}
 		catch (ThingCollisionException tce)
 		{
@@ -86,24 +92,24 @@ public class World extends Observable
 	/**
 	 * Places random trees using the default fraction.
 	 */
-	public void placeRandomTrees() throws ThingCollisionException
+	public int placeRandomTrees() throws ThingCollisionException
 	{
-		placeRandom(new Tree(), kTreeFraction);
+		return placeRandom(new Tree(), kTreeFraction);
 	}
 	
 	/**
 	 * Places random trees using the default fraction.
 	 */
-	public void placeRandomCastles() throws ThingCollisionException
+	public int placeRandomCastles() throws ThingCollisionException
 	{
-		placeRandom(new Castle(), kCastleFraction);
+		return placeRandom(new Castle(), kCastleFraction);
 	}
 	
 	/**
 	 * Places random TreasureChests. The number of TreasureChests is based on the
 	 * number of monsters to be killed in the given Players mission quota.
 	 */
-	public void placeRandomTreasureChests(Player aPlayer) throws ThingCollisionException
+	public int placeRandomTreasureChests(Player aPlayer) throws ThingCollisionException
 	{
 		int chestCount = aPlayer.getMission().getQuota() / 2;
 
@@ -113,18 +119,22 @@ public class World extends Observable
 		{
 			place(getRandomEmptyLocation(), TreasureChest.createRandom());
 		}
+		
+		return chestCount;
 	}
 	
 	/**
 	 * Places random trees according to the fraction passed in.
 	 */
-	public void placeRandom(Thing aThingPrototype, double fraction) throws ThingCollisionException
+	public int placeRandom(Thing aThingPrototype, double fraction) throws ThingCollisionException
 	{
 		int	numberOfThings = (int) (getBounds().width * getBounds().height * fraction);
 		
 		System.out.println("Place fraction " + fraction + " Random " + aThingPrototype);
 		
 		placeRandom(aThingPrototype, numberOfThings);
+		
+		return numberOfThings;
 	}
 	
 	/**
@@ -190,7 +200,9 @@ public class World extends Observable
 	}
 	
 	/**
-	 * Processes an attack by the given combatant in the given direction.
+	 * Returns the Thing in the given direction from the given Thing.
+	 * The seearch proceeds outward from the given Thing, until it encounters another Thing,
+	 * or the edge of the world.
 	 */
 	public Thing getThingToward(Thing attacker, int aDirection) throws JCavernInternalError, IllegalLocationException
 	{
@@ -200,10 +212,6 @@ public class World extends Observable
 		{
 			throw new JCavernInternalError("There's no " + attacker + " to attack");
 		}
-		
-		Combatant 	theAttacker = (Combatant) attacker;
-		
-		theAttacker.decrementRangedAttackCount();
 		
 		Location	attackerLocation = (Location) mThingsToLocations.get(attacker);
 		Location	attackeeLocation = attackerLocation.getNeighbor(aDirection);
