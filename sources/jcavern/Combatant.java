@@ -8,6 +8,8 @@
 
 package jcavern;
 
+import java.awt.*;
+
 /**
  * Represents a Thing that can participate in combat.
  *
@@ -16,10 +18,13 @@ package jcavern;
  */
 public abstract class Combatant extends Thing
 {
+	/** * Denotes one Combatant successfully hitting another Combatant. */
 	protected static final int	HIT = 1;
 	
+	/** * Denotes one Combatant unable to hit another Combatant. */
 	protected static final int	MISS = 2;
 	
+	/** * Denotes one Combatant killing another Combatant. */
 	protected static final int	KILL = 3;
 	
 	/** * How many points does this Combatant have now. */
@@ -126,6 +131,8 @@ public abstract class Combatant extends Thing
 		if (this.canAttack(opponent))
 		{
 			finishAttack(aWorld, computeDamageTo(opponent), opponent);
+			
+			aWorld.combatantSufferedDamage(opponent);
 		}
 		else
 		{
@@ -163,6 +170,8 @@ public abstract class Combatant extends Thing
 		if (this.canRangedAttack(opponent))
 		{
 			finishAttack(aWorld, computeRangedDamageTo(opponent), opponent);
+			
+			aWorld.combatantSufferedDamage(opponent);
 		}
 		else
 		{
@@ -182,9 +191,9 @@ public abstract class Combatant extends Thing
 	{
 		switch (outcome)
 		{
-			case Combatant.MISS: JCavernApplet.current().log(getName() + " misses " + opponent.getName()); break;
-			case Combatant.HIT: JCavernApplet.current().log(getName() + " hits " + opponent.getName() + " for " + damage); break;
-			case Combatant.KILL: JCavernApplet.current().log(getName() + " kills " + opponent.getName()); break;
+			case Combatant.MISS: JCavernApplet.log(getName() + " cannot attack " + opponent.getName()); break;
+			case Combatant.HIT: JCavernApplet.log(getName() + " hits " + opponent.getName() + " for " + damage); break;
+			case Combatant.KILL: JCavernApplet.log(getName() + " kills " + opponent.getName()); break;
 		}
 	}
 
@@ -216,29 +225,62 @@ public abstract class Combatant extends Thing
 		}
 	}
 	
+	/**
+	 * Gain points from a victory.
+	 * Augments this Combatant's points by the number of points the loser was worth.
+	 */
 	public void gainPoints(Combatant theVictim)
 	{
 		mPoints += theVictim.getWorth();
 		mMaximumPoints = Math.max(mMaximumPoints, mPoints);
 	}
 	
+	/**
+	 * Returns the number of points this Combatant is worth when it loses a battle.
+	 */
 	public abstract int getWorth();
 	
+	/**
+	 * Returns whether this Combatant is dead.
+	 * 
+	 * @return	<CODE>true</CODE> if this Combatant has fewer than zero points, <CODE>false</CODE> otherwise.
+	 */
 	public boolean isDead()
 	{
 		return mPoints < 0;
 	}
 	
+	/**
+	 * Returns the current number of points for this Combatant.
+	 */
 	public int getPoints()
 	{
 		return mPoints;
 	}
 	
+	/**
+	 * Returns the maximum number of points this Combatant has ever had.
+	 *
+	 * @return	Combatant's lifetime maximum points.
+	 */
 	public int getMaximumPoints()
 	{
 		return mMaximumPoints;
 	}
 	
+	public void paint(Graphics g, int plotX, int plotY)
+	{
+		final int gaugeThickness = 4;
+		final int gaugeLength = 32;
+		
+		super.paint(g, plotX, plotY);
+		
+		double percent = 1.0 * getPoints() / getMaximumPoints();
+		
+		g.fillRect(plotX - gaugeLength / 2, plotY - 20, (int) (gaugeLength * percent), gaugeThickness);
+		g.drawLine(plotX - gaugeLength / 2, plotY - (20 - gaugeThickness / 2), plotX + gaugeLength / 2, plotY - (20 - gaugeThickness / 2));
+	}
+
 	public Combatant(String name, String imageName, int points)
 	{
 		super(name, imageName);		
