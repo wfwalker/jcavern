@@ -55,28 +55,28 @@ public class MagicItem extends Treasure
 	
 	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
 	{
-		MissionCard.log(aPlayer.getName() + " uses magic item " + getName());
+		aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + " starts using " + getName()));
 		
 		switch (mPower)
 		{
 			case MAGIC_NOTHING:
-					MissionCard.log(getName() + ": nothing happens"); break;
+					aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, getName() + ": nothing happens")); break;
 					
 			case MAGIC_REVEAL_INVISIBILITY:
-					MissionCard.log(getName() + ": reveal invisibility");
+					aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, getName() + ": reveal invisibility"));
 					doRevealInvisibility(aPlayer, aWorld);
 					break;
 					
 			case MAGIC_TELEPORTATION:
-					MissionCard.log(getName() + ": teleportation"); 
+					aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, getName() + ": teleportation")); 
 					doTeleportation(aPlayer, aWorld); break;
 					
 			case MAGIC_DETECT_TREASURE:
-					MissionCard.log(getName() + ": detect treasure"); 
+					aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, getName() + ": detect treasure")); 
 					doDetectTreasure(aPlayer, aWorld); break;
 					
 			case MAGIC_DETECT_MAGIC_CASTLE:
-					MissionCard.log(getName() + ": detect magic castle"); 
+					aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, getName() + ": detect magic castle")); 
 					doDetectMagicCastle(aPlayer, aWorld); break;
 			
 			default:
@@ -124,9 +124,9 @@ public class MagicItem extends Treasure
 
 			if (detectee.getInvisible())
 			{
-				MissionCard.log("There is an invisible " + detectee.getName());
+				aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, detectee, "There is an invisible " + detectee.getName()));
 				detectee.setInvisible(false);
-				aWorld.thingChanged(detectee);
+				aWorld.eventHappened(new WorldEvent(detectee, WorldEvent.REVEALED, aPlayer));
 			}
 		}
 	}
@@ -140,10 +140,14 @@ public class MagicItem extends Treasure
 			Thing	detectee = (Thing) theThings.elementAt(index);
 			int		direction = aWorld.getDirectionToward(seeker, detectee);
 			
-			MissionCard.log("There is a " +
+			aWorld.eventHappened(new WorldEvent(
+					seeker,
+					WorldEvent.INFO_MESSAGE,
+					detectee,
+					"There is a " +
 					aPrototype.getName() + " " +
 					aWorld.getDistanceBetween(seeker, detectee) + " moves " + 
-					Location.directionToString(direction) + " of " + seeker.getName());
+					Location.directionToString(direction) + " of " + seeker.getName()));
 		}
 	}
 	

@@ -127,7 +127,7 @@ public class Monster extends Combatant implements Cloneable
 	 */	
 	public boolean canRangedAttack(Combatant aCombatant)
 	{
-		System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
+		//System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
 		return aCombatant.vulnerableToMonsterRangedAttack(this);
 	}
 	
@@ -166,14 +166,6 @@ public class Monster extends Combatant implements Cloneable
 		return 0;
 	}
 	
-	protected void reportResultAgainst(Combatant opponent, int outcome, int damage)
-	{
-		if (opponent instanceof Player)
-		{
-			super.reportResultAgainst(opponent, outcome, damage);
-		}
-	}
-
 	/**
 	 * Gains experience points when this monster kills a combatant.
 	 * Not currently in use.

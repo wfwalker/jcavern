@@ -49,12 +49,12 @@ public class Mission extends Observable
 		return mKills >= mQuota;
 	}
 	
-	public void adjustQuota(Thing theVictim)
+	public void adjustQuota(World aWorld, Player aPlayer, Thing theVictim)
 	{
 		if (theVictim.getName().equals(mTarget.getName()))
 		{
 			mKills++;
-			MissionCard.log("You mission is now " + this);
+			aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, "Your mission is now " + this));
 			
 			setChanged();
 			notifyObservers();		

@@ -19,15 +19,6 @@ import jcavern.ui.*;
  */
 public abstract class Combatant extends Thing
 {
-	/** * Denotes one Combatant successfully hitting another Combatant. */
-	protected static final int	HIT = 1;
-	
-	/** * Denotes one Combatant unable to hit another Combatant. */
-	protected static final int	MISS = 2;
-	
-	/** * Denotes one Combatant killing another Combatant. */
-	protected static final int	KILL = 3;
-	
 	/** * How many points does this Combatant have now. */
 	private int					mPoints;
 
@@ -147,12 +138,10 @@ public abstract class Combatant extends Thing
 		if (this.canAttack(opponent))
 		{
 			finishAttack(aWorld, computeDamageTo(opponent), opponent);
-			
-			aWorld.thingChanged(opponent);
 		}
 		else
 		{
-			reportResultAgainst(opponent, Combatant.MISS, 0);
+			reportResultAgainst(aWorld, opponent, WorldEvent.ATTACKED_MISSED, 0);
 		}
 	}
 	
@@ -186,12 +175,10 @@ public abstract class Combatant extends Thing
 		if (this.canRangedAttack(opponent))
 		{
 			finishAttack(aWorld, computeRangedDamageTo(opponent), opponent);
-			
-			aWorld.thingChanged(opponent);
 		}
 		else
 		{
-			reportResultAgainst(opponent, Combatant.MISS, 0);
+			reportResultAgainst(aWorld, opponent, WorldEvent.ATTACKED_MISSED, 0);
 		}
 	}
 		
@@ -203,7 +190,7 @@ public abstract class Combatant extends Thing
 		rangedAttack(aWorld, potentialOpponent);
 	}
 	
-	protected void reportResultAgainst(Combatant opponent, int outcome, int damage)
+	protected void reportResultAgainst(World aWorld, Combatant opponent, int outcome, int damage)
 	{
 		StringBuffer	theBuffer = new StringBuffer();
 		
@@ -211,15 +198,17 @@ public abstract class Combatant extends Thing
 		
 		switch (outcome)
 		{
-			case Combatant.MISS:
+			case WorldEvent.ATTACKED_MISSED:
 					theBuffer.append("cannot attack" + " " + opponent.getNounPhrase()); break;
-			case Combatant.HIT:
+			case WorldEvent.ATTACKED_HIT:
 					theBuffer.append(opponent.getHitVerb() + " " + opponent.getNounPhrase() + " for " + damage); break;
-			case Combatant.KILL:
+			case WorldEvent.ATTACKED_KILLED:
 					theBuffer.append(opponent.getKilledVerb() + " " + opponent.getNounPhrase()); break;
+			default:
+					theBuffer.append("no such outcome " + outcome);
 		}
 		
-		MissionCard.log(theBuffer.toString());
+		aWorld.eventHappened(new WorldEvent(opponent, outcome, this, theBuffer.toString()));
 	}
 	
 	protected String getHitVerb()
@@ -262,13 +251,13 @@ public abstract class Combatant extends Thing
 		{
 			if (opponent.isDead())
 			{
-				reportResultAgainst(opponent, Combatant.KILL, damage);
-				gainPoints(opponent);
+				reportResultAgainst(aWorld, opponent, WorldEvent.ATTACKED_KILLED, damage);
+				gainPoints(aWorld, opponent);
 				aWorld.remove(opponent);
 			}
 			else
 			{
-				reportResultAgainst(opponent, Combatant.HIT, damage);
+				reportResultAgainst(aWorld, opponent, WorldEvent.ATTACKED_HIT, damage);
 			}
 		}
 		catch (JCavernInternalError jcie)
@@ -281,7 +270,7 @@ public abstract class Combatant extends Thing
 	 * Gain points from a victory.
 	 * Augments this Combatant's points by the number of points the loser was worth.
 	 */
-	public void gainPoints(Combatant theVictim)
+	public void gainPoints(World aWorld, Combatant theVictim)
 	{
 		mPoints += theVictim.getWorth();
 		mMaximumPoints = Math.max(mMaximumPoints, mPoints);

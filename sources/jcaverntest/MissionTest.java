@@ -13,7 +13,10 @@ import jcavern.*;
  * @version	$Id$
  */
 public class MissionTest extends TestCase
-{	
+{
+	private World	mWorld;
+	private Player	mPlayer;
+	
 	/**
 	 * Creates a suite of tests.
 	 *
@@ -22,6 +25,9 @@ public class MissionTest extends TestCase
 	public MissionTest(String name)
 	{
 		super(name);
+		
+		mWorld = new World();
+		mPlayer= new Player("Mr. Test");
 	}
 
 	/**
@@ -42,7 +48,7 @@ public class MissionTest extends TestCase
 			
 			assert("mission not complete", ! aMission.getCompleted());
 			assert("mission name says not complete", aMission.toString().indexOf("completed") == -1);
-			aMission.adjustQuota((Thing) aMission.getTarget().clone());
+			aMission.adjustQuota(mWorld, mPlayer, (Thing) aMission.getTarget().clone());
 		}
 			
 		// System.out.println("MissionTest.testQuota() " + aMission);

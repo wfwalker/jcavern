@@ -120,22 +120,44 @@ public class KeyboardCommandListener extends KeyAdapter
 			case 'd' :
 			case 'z' :
 			case 'x' :
-			case 'c' : doMove(parseDirectionKey(e)); break;
-			case 's' : mCurrentMode = SWORD_MODE; MissionCard.log("Normal attack, direction?"); break;
-			case 'b' : mCurrentMode = RANGED_ATTACK_MODE; MissionCard.log("Ranged attack, direction?"); break;
-			case 'v' : if (mPlayer.getCastle() != null)						{
-							mCurrentMode = CASTLE_MODE; MissionCard.log("Visiting Castle, command?");
-						}
-						else
-						{
-							MissionCard.log("No castle to visit");
-						}
-						break;
-			case '.' : MissionCard.log("Sit"); break;
-			case 'o' : doOpen(); break;
-			case 'u' : mCurrentMode = USE_MODE; MissionCard.log("Start using which item?"); break;
-			case 'U' : mCurrentMode = UNUSE_MODE; MissionCard.log("Stop using which item?"); break;
-			default  : MissionCard.log("Unknown command");
+			case 'c' :
+				doMove(parseDirectionKey(e));
+				break;
+			case 's' :
+				mCurrentMode = SWORD_MODE;
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Normal attack, direction?"));
+				break;
+			case 'b' :
+				mCurrentMode = RANGED_ATTACK_MODE;
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Ranged attack, direction?"));
+				break;
+			case 'v' :
+				if (mPlayer.getCastle() != null)
+				{
+					mCurrentMode = CASTLE_MODE;
+					mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Visiting Castle, command?"));
+				}
+				else
+				{
+					mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "No castle to visit"));
+				}
+				break;
+			case '.' :
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Sit"));
+				break;
+			case 'o' :
+				doOpen();
+				break;
+			case 'u' :
+				mCurrentMode = USE_MODE;
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Start using which item?"));
+				break;
+			case 'U' :
+				mCurrentMode = UNUSE_MODE;
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Stop using which item?"));
+				break;
+			default  :
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.ERROR_MESSAGE, "Unknown command"));
 		}
 	}
 
@@ -143,12 +165,20 @@ public class KeyboardCommandListener extends KeyAdapter
 	{
 		switch (e.getKeyChar())
 		{
-			case 'q' : doEndMission(); break;
-			case 'a' : mPlayer.receiveGold(-1); mPlayer.receiveArrows(1); break;
-			case 'A' : mPlayer.receiveGold(-10); mPlayer.receiveArrows(10); break;
+			case 'q' :
+				doEndMission();
+				break;
+			case 'a' :
+				mPlayer.receiveGold(-1);
+				mPlayer.receiveArrows(1);
+				break;
+			case 'A' :
+				mPlayer.receiveGold(-10);
+				mPlayer.receiveArrows(10);
+				break;
 			default  :
-						MissionCard.log("Unknown castle visit command");
-						MissionCard.log("q = quit mission, a = buy an arrow, A = buy 10 arrows");
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Unknown castle visit command"));
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "q = quit mission, a = buy an arrow, A = buy 10 arrows"));
 		}
 	}
 	
@@ -164,8 +194,11 @@ public class KeyboardCommandListener extends KeyAdapter
 			case 'd' :
 			case 'z' :
 			case 'x' :
-			case 'c' : doAttack(parseDirectionKey(e)); break;
-			default  : MissionCard.log("Unknown attack direction");
+			case 'c' :
+				doAttack(parseDirectionKey(e));
+				break;
+			default  :
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Unknown attack direction"));
 		}
 	}
 	
@@ -182,7 +215,7 @@ public class KeyboardCommandListener extends KeyAdapter
 			case 'z' :
 			case 'x' :
 			case 'c' : doRangedAttack(parseDirectionKey(e)); break;
-			default  : MissionCard.log("Unknown attack direction");
+			default  : mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Unknown attack direction"));
 		}
 	}
 	
@@ -232,7 +265,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch (IllegalArgumentException iae)
 		{
-			MissionCard.log("There's no item " + anIndex + " to use!");
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "There's no item " + anIndex + " to use!"));
 		}
 	}
 
@@ -244,7 +277,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch (IllegalArgumentException iae)
 		{
-			MissionCard.log("There's no item " + anIndex + " to stop using!");
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "There's no item " + anIndex + " to stop using!"));
 		}
 	}
 	
@@ -257,7 +290,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		else
 		{
-			MissionCard.log("Sorry, " + mPlayer.getName() + ", you have not completed your mission");
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Sorry, " + mPlayer.getName() + ", you have not completed your mission"));
 		}		
 	}
 	
@@ -271,16 +304,16 @@ public class KeyboardCommandListener extends KeyAdapter
 			}
 			catch(NonCombatantException nce)
 			{
-				MissionCard.log(mPlayer.getName() + " can't attack that!");
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " can't attack that!"));
 			}
 			catch(IllegalLocationException ile)
 			{
-				MissionCard.log(mPlayer.getName() + " shot arrow of the edge of the world!"); 
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " shot arrow of the edge of the world!")); 
 			}
 		}
 		else
 		{
-			MissionCard.log(mPlayer.getName() + " has no more arrows!"); 
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " has no more arrows!")); 
 		}
 				
 		mCurrentMode = NORMAL_MODE;
@@ -294,15 +327,15 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch(IllegalLocationException nce)
 		{
-			MissionCard.log(mPlayer.getName() + " can't attack off the edge of the world!");
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " can't attack off the edge of the world!"));
 		}
 		catch(EmptyLocationException nce)
 		{
-			MissionCard.log(mPlayer.getName() + " has nothing to attack!");
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " has nothing to attack!"));
 		}
 		catch(NonCombatantException nce)
 		{
-			MissionCard.log(mPlayer.getName() + " can't attack that!");
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " can't attack that!"));
 		}
 
 		mCurrentMode = NORMAL_MODE;
@@ -315,7 +348,7 @@ public class KeyboardCommandListener extends KeyAdapter
 			TreasureChest aChest = (TreasureChest) mWorld.getNeighboring(mWorld.getLocation(mPlayer), new TreasureChest(null, 0));
 	
 			mWorld.remove(aChest);
-			MissionCard.log(mPlayer.getName() + " found " + aChest);
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " found " + aChest));
 			
 			if (aChest.getGold() > 0)
 			{
@@ -329,7 +362,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch(IllegalArgumentException iae)
 		{
-			MissionCard.log(mPlayer.getName() + " has no neighboring treasure chest to open!");
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " has no neighboring treasure chest to open!"));
 		}
 	}
 	
@@ -349,16 +382,16 @@ public class KeyboardCommandListener extends KeyAdapter
 				mWorld.remove(theCastle);
 				doMove(direction);
 				mPlayer.setCastle(theCastle);
-				MissionCard.log(mPlayer.getName() + " entered " + tce.getMovee().getName());
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " entered " + tce.getMovee().getName()));
 			}
 			else
 			{
-				MissionCard.log(mPlayer.getName() + " collided with " + tce.getMovee().getName());
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " collided with " + tce.getMovee().getName()));
 			}
 		}
 		catch (IllegalLocationException tce)
 		{
-			MissionCard.log(mPlayer.getName() + " can't move off the edge of the world!");
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " can't move off the edge of the world!"));
 		}
 	}
 }

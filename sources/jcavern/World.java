@@ -85,8 +85,8 @@ public class World extends Observable
 			// Put the player in the world
 			place(getRandomEmptyLocation(), aPlayer);
 			
-			MissionCard.log(aPlayer.getName() + "'s mission is " + aPlayer.getMission());
-			MissionCard.log(aPlayer.getName() + " can seek safety in " + castles + " magic castles");
+			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + "'s mission is " + aPlayer.getMission()));
+			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + " can seek safety in " + castles + " magic castles"));
 		}
 		catch (ThingCollisionException tce)
 		{
@@ -194,10 +194,12 @@ public class World extends Observable
 		return emptyLocation;
 	}
 
-	public void thingChanged(Thing aThing)
+	public void eventHappened(WorldEvent anEvent)
 	{
+		//System.out.println("\n\nWorld.eventHappened(" + anEvent + ")\n\n");
+		
 		setChanged();
-		notifyObservers();	
+		notifyObservers(anEvent);
 	}
 
 	/**
@@ -242,7 +244,7 @@ public class World extends Observable
 				throw new IllegalLocationException("Ranged attack hit nothing");
 			}
 			
-			MissionCard.log(attackeeLocation.toString());
+			eventHappened(new WorldEvent(attacker, WorldEvent.INFO_MESSAGE, attackeeLocation.toString()));
 			attackeeLocation = attackeeLocation.getNeighbor(aDirection);
 		}
 		
@@ -474,8 +476,7 @@ public class World extends Observable
 		
 		aThing.thingPlaced(this, aLocation);
 		
-		setChanged();
-		notifyObservers();
+		eventHappened(new WorldEvent(aThing, WorldEvent.PLACED));
 	}
 	
 	/**
@@ -508,7 +509,6 @@ public class World extends Observable
 		
 		thingToRemove.thingRemoved(this, locationToRemove);
 
-		setChanged();
-		notifyObservers();
+		eventHappened(new WorldEvent(thingToRemove, WorldEvent.REMOVED));
 	}
 }
