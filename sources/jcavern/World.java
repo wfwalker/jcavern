@@ -259,7 +259,7 @@ public class World extends Observable
 	 *
 	 * @return	a non-null Rectangle describing the bounds of this world.
 	 */
-	private Rectangle getBounds()
+	public Rectangle getBounds()
 	{
 		return kBounds;
 	}
@@ -661,6 +661,7 @@ public class World extends Observable
 	 * Remove the given thing from the world. Also used for moving things.
 	 *
 	 * @param		thingToRemove				a non-null Thing to remove
+	 * @return									the non-null Location from which the given Thing was removed
 	 * @exception	JCavernInternalError		could not remove the Thing.
 	 */
 	private Location privateRemove(Thing thingToRemove) throws JCavernInternalError
