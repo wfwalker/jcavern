@@ -11,15 +11,24 @@ package jcavern;
 /**
  * Represents a situation in which an asked-for thing was not found.
  */
-public interface Combatant
+public abstract class Combatant extends Thing
 {
-	public int computeDamage();
+	public abstract int computeDamage();
 	
-	public void sufferDamage(int theDamage);
+	public abstract int computeRangedDamage();
 	
-	public void gainExperience(int theExperience);
+	public abstract void decrementRangedAttackCount();
 	
-	public int getWorth();
+	public abstract void sufferDamage(int theDamage);
 	
-	public boolean isDead();
+	public abstract void gainExperience(Combatant theVictim);
+	
+	public abstract int getWorth();
+	
+	public abstract boolean isDead();
+	
+	public Combatant(String name)
+	{
+		super(name);
+	}
 }
