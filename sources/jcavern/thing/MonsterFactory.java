@@ -72,8 +72,6 @@ public class MonsterFactory
 	 */
 	public static Mission createMission(Player aPlayer)
 	{
-		System.out.println("Create Mission");
-		
 		/*
 		{setup the mission completion variables}
 		Mis_done := false; Mis_quota := round(ln(exp)) + Random(3);
