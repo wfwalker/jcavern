@@ -67,9 +67,6 @@ public class WorldView extends Canvas implements Observer
 		{
 			Location	theLocation = mModel.enforceMinimumInset(mModel.getLocation(thePlayer), 3);
 		
-			System.out.println("Player at " + mModel.getLocation(thePlayer));
-			System.out.println("Painting at " + theLocation);
-			
 			for (int yIndex = -3; yIndex <= 3; yIndex++)
 			{
 				for (int xIndex = -3; xIndex <= 3; xIndex++)
@@ -77,8 +74,6 @@ public class WorldView extends Canvas implements Observer
 					Location	aLocation = new Location(xIndex + theLocation.getX(), yIndex + theLocation.getY());
 					int			plotX = (kSpacing / 2) + kSpacing * (xIndex + 3);
 					int			plotY = (kSpacing / 2) + kSpacing * (yIndex + 3);
-					
-					System.out.print(aLocation + " ");
 					
 					if (mModel.inBounds(aLocation))
 					{
@@ -94,8 +89,6 @@ public class WorldView extends Canvas implements Observer
 						}
 					}
 				}
-				
-				System.out.println();
 			}
 		}
 		catch (JCavernInternalError jcie)
