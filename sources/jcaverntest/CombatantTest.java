@@ -21,6 +21,8 @@ public class CombatantTest extends TestCase
 
 	/**
 	 * Creates a suite of tests.
+	 *
+	 * @param	name	the name of the suite of tests.
 	 */
 	public CombatantTest(String name)
 	{
@@ -52,9 +54,13 @@ public class CombatantTest extends TestCase
 	}
 	
 	/**
-	 * Tests whether you can attack with a tree that ain't there.
+	 * Tests whether you can attack with a player that hasn't been placed in the world.
+	 *
+	 * @exception	NonCombatantException		bogus attacker or attackee
+	 * @exception	EmptyLocationException		nothing to attack
+	 * @exception	IllegalLocationException	attacking off the edge of the world
 	 */
-	public void testBogusAttacker() throws NonCombatantException
+	public void testBogusAttacker() throws NonCombatantException, IllegalLocationException, EmptyLocationException
 	{
 		Player		aPlayer = new Player("bogus");
 		
@@ -66,29 +72,21 @@ public class CombatantTest extends TestCase
 		catch(JCavernInternalError e)
 		{
 		}
-		catch(IllegalLocationException ile)
-		{
-		}
-		catch(EmptyLocationException ile)
-		{
-		}
 	}
 	
 	/**
 	 * Tests whether you can attack an empty square
+	 *
+	 * @exception	NonCombatantException		bogus attacker or attackee
+	 * @exception	IllegalLocationException	attacking off the edge of the world
+	 * @exception	JCavernInternalError		some kind of internal error
 	 */
-	public void testAttackNothing() throws NonCombatantException
+	public void testAttackNothing() throws NonCombatantException, IllegalLocationException, JCavernInternalError
 	{
 		try
 		{
 			mPlayer.attack(mWorld, Location.WEST);
 			fail("testAttackNothing failed exception");
-		}
-		catch(JCavernInternalError e)
-		{
-		}
-		catch(IllegalLocationException ile)
-		{
 		}
 		catch(EmptyLocationException ile)
 		{
@@ -97,6 +95,12 @@ public class CombatantTest extends TestCase
 	
 	/**
 	 * Tests whether you can attack and remove a tree.
+	 *
+	 * @exception	ThingCollisionException		placed two things in the same place
+	 * @exception	NonCombatantException		bogus attacker or attackee
+	 * @exception	EmptyLocationException		nothing to attack
+	 * @exception	IllegalLocationException	attacking off the edge of the world
+	 * @exception	JCavernInternalError		some kind of internal error
 	 */
 	public void testAttackTree() throws ThingCollisionException, NonCombatantException, EmptyLocationException, IllegalLocationException, JCavernInternalError
 	{
@@ -113,6 +117,12 @@ public class CombatantTest extends TestCase
 	
 	/**
 	 * Tests whether you can attack and remove a tree without a sword!
+	 *
+	 * @exception	ThingCollisionException		placed two things in the same place
+	 * @exception	NonCombatantException		bogus attacker or attackee
+	 * @exception	EmptyLocationException		nothing to attack
+	 * @exception	IllegalLocationException	attacking off the edge of the world
+	 * @exception	JCavernInternalError		some kind of internal error
 	 */
 	public void testAttackTreeWithoutSword() throws ThingCollisionException, NonCombatantException, EmptyLocationException, IllegalLocationException, JCavernInternalError
 	{
@@ -129,9 +139,12 @@ public class CombatantTest extends TestCase
 		assert("testAttackTreeWithoutSword removed tree", ! mWorld.isEmpty(treeLocation));
 	}
 	
+	/**
+	 * Tests whether players, monsters, and trees are appropriately vulnerable to each other.
+	 */
 	public void testVulnerability()
 	{
-		Monster aMonster = new Monster("Bogus", "monster", 1, 1, false);
+		Monster aMonster = new Monster("Bogus", "monster", "hit", "killed", 1, 1, false);
 		Tree	aTree = new Tree();
 		
 		assert("player attacks monster", mPlayer.canAttack(aMonster));
@@ -142,9 +155,12 @@ public class CombatantTest extends TestCase
 		assert("tree NOT attacks monster", ! aTree.canAttack(aMonster));
 	}
 	
+	/**
+	 * Tests whether a player in a castle is vulnerable or not.
+	 */
 	public void testPlayerInCastleVulnerability()
 	{
-		Monster aMonster = new Monster("Bogus", "monster", 1, 1, false);
+		Monster aMonster = new Monster("Bogus", "monster", "hit", "killed", 1, 1, false);
 		Tree	aTree = new Tree();
 		
 		mPlayer.setCastle(new Castle());
