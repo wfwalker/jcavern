@@ -123,17 +123,17 @@ public class Player extends Combatant
 	/**
 	 * Retrieves an unused Treasure by index.
 	 *
-	 * @param	unusedIndex		index of an unused Treasure
+	 * @param	unusedIndex		<B>ONE-based</B> index of an unused Treasure
 	 * @return					a non-null Treasure
 	 */
 	public Treasure getUnusedTreasureAt(int unusedIndex)
 	{
-		if ((unusedIndex < 0) || (unusedIndex >= mUnusedItems.size()))
+		if ((unusedIndex < 1) || (unusedIndex > mUnusedItems.size()))
 		{
 			throw new IllegalArgumentException("No such item to start using");
 		}
 		
-		return (Treasure) mUnusedItems.elementAt(unusedIndex);
+		return (Treasure) mUnusedItems.elementAt(unusedIndex - 1);
 	}
 	
 	/**
@@ -153,17 +153,17 @@ public class Player extends Combatant
 	/**
 	 * Retrives an in use item by index.
 	 *
-	 * @param	inUseIndex		index of an in-use Treasure
+	 * @param	inUseIndex		<B>ONE-based</B> index of an in-use Treasure
 	 * @return					a non-null Treasure
 	 */
 	public Treasure getInUseTreasureAt(int inUseIndex)
 	{
-		if ((inUseIndex < 0) || (inUseIndex >= mInUseItems.size()))
+		if ((inUseIndex < 1) || (inUseIndex > mInUseItems.size()))
 		{
 			throw new IllegalArgumentException("No such item to stop using");
 		}
 		
-		return (Treasure) mInUseItems.elementAt(inUseIndex);
+		return (Treasure) mInUseItems.elementAt(inUseIndex - 1);
 	}
 
 	/**
@@ -318,6 +318,16 @@ public class Player extends Combatant
 	protected boolean hasProperName()
 	{
 		return true;
+	}
+	
+	/**
+	 * Returns a noun phrase for this Thing
+	 *
+	 * @return	<CODE>"you"</CODE>
+	 */
+	public String getNounPhrase()
+	{
+		return "you";
 	}
 
 	/**
