@@ -1,6 +1,7 @@
 package jcavern;
 
 import java.util.Observable;
+import java.awt.Graphics;
 
 /**
  * Parent class for players, monsters, and trees.
@@ -39,6 +40,11 @@ public abstract class Thing extends Observable implements Cloneable
 	}
 	
 	public abstract Object clone();
+	
+	public void paint(Graphics g, int plotX, int plotY)
+	{
+		g.drawString(getAppearance(), plotX, plotY);
+	}
 	
 	/**
 	 * Returns the one character string that is the appearance of this thing.
