@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Observable;
 import java.awt.*;
 
+import jcavern.ui.WorldView;
+
 /**
  * Parent class for players, monsters, treasure chests, castles, and trees.
  *
@@ -29,17 +31,7 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	
 	/** * Is this Thing invisible? */
 	private boolean		mInvisible;
-	
-	/**
-	 * Creates a new thing with the given name.
-	 *
-	 * @param	aName	a non-null String name
-	 */
-	public Thing(String aName)
-	{
-		this(aName, "none", false);
-	}
-	
+		
 	/**
 	 * Creates a new thing with the given name and image name.
 	 *
@@ -172,8 +164,10 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	 * @param		plotY					offset within the current Graphics for painting this Thing
 	 * @exception	JCavernInternalError	couldn't acquire the necessary to paint this Thing
 	 */
-	public void paint(Graphics g, int plotX, int plotY) throws JCavernInternalError
+	public void paint(Graphics g, int plotX, int plotY, boolean highlight) throws JCavernInternalError
 	{
+		//System.out.println("(Thing) " + getName() + ".paint(g, " + plotX + ", " + plotY + ", " + highlight + ")");
+
 		if (! getInvisible())
 		{
 			if (getImage() == null)
@@ -185,8 +179,8 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 				Image theImage = getImage();
 				//g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
 				g.drawImage(theImage,
-								plotX - JCavernApplet.kPreferredImageSize / 2, plotY - JCavernApplet.kPreferredImageSize / 2,
-								JCavernApplet.kPreferredImageSize, JCavernApplet.kPreferredImageSize, null);
+								plotX - WorldView.kPreferredImageSize / 2, plotY - WorldView.kPreferredImageSize / 2,
+								WorldView.kPreferredImageSize, WorldView.kPreferredImageSize, null);
 			}
 		}
 		else
