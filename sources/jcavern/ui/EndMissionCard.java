@@ -1,73 +1,109 @@
 package jcavern.ui;
 
 import jcavern.*;
+import jcavern.ui.*;
+import jcavern.thing.*;
+
 import java.awt.*;
 import java.awt.event.*;
-import java.applet.*;
+import java.util.*;
+import java.applet.Applet;
 
 /**
- * Creates an AppletCard that informs the user about the end of a Mission.
+ * Displays an AppletCard informing the player that the mission ended.
  */
 public class EndMissionCard extends AppletCard implements ActionListener
 {
-	/** * The message to be displayed to the user. */
-	Label	mMessage;
+	/** * The official PLATO orange color, as used in jcavern. */
+	public static final Color		CavernOrange = new Color(0xFF, 0x66, 0x00);
 	
-	/** * The button pressed by the user after reading the message. */
-    Button	mOKButton;
-
+	/** * A view of the game world */
+	private WorldView				mWorldView;
+	
+	/** * A view of the player statistics */
+	private PlayerView				mPlayerView;
+	
+	/** * A view of the player statistics */
+	private MissionView				mMissionView;
+	
+	/** * A model of the game world */
+	private World					mWorld;
+	
+	/** * A model of the game world */
+	private Panel					mEndMessage;
+	
+	/** * The representation of the mission end event */
+	private WorldEvent					mEvent;
+	
     /**
-     * Creates a new EndMissionCard for the given Applet and message.
+     * Creates a new EndMissionCard for the given Applet and Player.
      *
-     * @param	anApplet	a non-null Applet in which to display the message
-     * @param	aMessage	a non-null String containing a message to display
+     * @param	inApplet	a non-null Applet in which to display the message
+     * @param	inEvent		a non-null Event that triggered the end of the mission
+     * @param	inWorld		a non-null World in which the mission ended
      */
-    public EndMissionCard(JCavernApplet anApplet, String aMessage)
-    {
-    	super(anApplet);
-    	
-    	mMessage = new Label(aMessage);
-    	
-		mOKButton = new Button("OK");
-		mOKButton.setForeground(Color.black);
-		mOKButton.addActionListener(this);
-    }
+	public EndMissionCard(JCavernApplet inApplet, WorldEvent inEvent, World inWorld)
+	{
+		super(inApplet);
 
+		System.out.println("new end mission card " + inApplet + " " + inEvent + " " + inWorld);
+		System.out.println("location " + inEvent.getLocation());
+			
+		mEvent = inEvent;
+		mWorld = inWorld;
+		Player aPlayer = (Player) inEvent.getSubject();
+		
+		mPlayerView = new PlayerView(inApplet, aPlayer);
+		mPlayerView.setSize(150, 300);
+
+		mMissionView = new MissionView(inApplet, aPlayer.getMission());
+		mMissionView.setSize(150, 200);		
+
+		// Create a world  and a view of the world
+		mWorldView = new WorldView(inApplet, mWorld);
+		mWorldView.setSize(300, 300);		
+
+		// create a button pointing back to the index card
+		mEndMessage = new Panel();
+		mEndMessage.setLayout(new FlowLayout(FlowLayout.LEFT));
+		mEndMessage.add(new ImageCanvas(10, 200));
+		Button endButton = new Button("OK");
+		endButton.addActionListener(this);
+		mEndMessage.add(endButton);
+		mEndMessage.add(new Label(mEvent.getMessage()), BorderLayout.CENTER);
+		mEndMessage.setSize(300, 200);
+	}
+	
 	/**
 	 * Displays this AppletCard in its Applet.
 	 */
-    public void show()
-    {
-    	try
-    	{
-	    	super.show();
-	    	
-	    	mApplet.setLayout(new GridLayout(8, 1));
-	    	
-			// add spacer panels, so the dialog shows up where
-			// the new mission button was.		
-			mApplet.add(createLabelledButtonPanel(new ImageCanvas(JCavernApplet.getBoardImage("tree")), "End of mission"));
-			mApplet.add(createLabelledButtonPanel(new Button("Load Player"), "Load player from database", false));
-			mApplet.add(createLabelledButtonPanel(new Button("Save Player"), "Save player to database", false));
-			
-			//Create middle section.
-			Panel alertPanel = new Panel();
-			alertPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-			alertPanel.add(mMessage);
-			alertPanel.add(mOKButton);
-			
-			mApplet.add(alertPanel);
-			
-			mApplet.add(createLabelledButtonPanel(new Button("New Player"), "Create a new player", false));
-	
-			//Initialize this dialog to its preferred size.
-			mApplet.validate();
-		}
-		catch (JCavernInternalError jcie)
-		{
-			System.out.println("can't show end of mission card " + jcie);
-		}
-    }
+	public void show()
+	{
+		super.show();
+		
+		mApplet.setBackground(Color.black);
+		mApplet.setForeground(CavernOrange);
+		
+		mApplet.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+		
+		
+		Panel leftPanel = new Panel();
+		leftPanel.setLayout(new BorderLayout());
+		leftPanel.setSize(300, 500);
+		leftPanel.add(mWorldView, BorderLayout.NORTH);
+		leftPanel.add(mEndMessage, BorderLayout.SOUTH);
+		
+		Panel rightPanel = new Panel();
+		rightPanel.setLayout(new BorderLayout());
+		rightPanel.setSize(150, 500);
+		rightPanel.add(mPlayerView, BorderLayout.NORTH);
+		rightPanel.add(mMissionView, BorderLayout.SOUTH);
+		
+		mApplet.add(leftPanel);
+		mApplet.add(rightPanel);
+		
+		mApplet.validate();
+	}
 
 	/**
 	 * Responds to ActionEvents from the OK Button by returning to the IndexCard.
@@ -76,7 +112,14 @@ public class EndMissionCard extends AppletCard implements ActionListener
 	 */
     public void actionPerformed(ActionEvent event)
     {
-		Object source = event.getSource();
-		mApplet.displayHomeCard();
+    	try
+    	{
+			Object source = event.getSource();
+			mApplet.displayHomeCard((Player) mEvent.getSubject());
+		}
+		catch (JCavernInternalError jcie)
+		{
+			System.out.println("Can't display home card " + jcie);
+		}
     }
 }
