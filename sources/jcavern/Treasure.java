@@ -49,7 +49,7 @@ public abstract class Treasure implements Cloneable, Serializable
 	public void startUseBy(Player inPlayer, World inWorld) throws JCavernInternalError
 	{
 		inPlayer.startUsing(this);
-		inWorld.eventHappened(new WorldEvent(inPlayer, WorldEvent.USE_INVENTORY, inPlayer.getName() + " begins using " + getName()));
+		inWorld.eventHappened(new WorldEvent(inPlayer, WorldEvent.USE_INVENTORY, "you begin using " + getName()));
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public abstract class Treasure implements Cloneable, Serializable
 	public void stopUseBy(Player inPlayer, World inWorld)
 	{
 		inPlayer.stopUsing(this);
-		inWorld.eventHappened(new WorldEvent(inPlayer, WorldEvent.USE_INVENTORY, inPlayer.getName() + " stops using " + getName()));
+		inWorld.eventHappened(new WorldEvent(inPlayer, WorldEvent.USE_INVENTORY, "you stop using " + getName()));
 	}
 	
 	/**

@@ -94,8 +94,8 @@ public class World extends Observable
 			place(getRandomEmptyLocation(), aPlayer);
 
 			// Display the opening info messages			
-			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + "'s mission is " + aPlayer.getMission()));
-			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + " can seek safety in " + castles + " magic castles"));
+			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, "your mission is " + aPlayer.getMission()));
+			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, "you can seek safety in " + castles + " magic castles"));
 		}
 		catch (ThingCollisionException tce)
 		{

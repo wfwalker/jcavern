@@ -271,7 +271,6 @@ public class KeyboardCommandListener extends KeyAdapter
 	{
 		switch (e.getKeyChar())
 		{
-			case '0' :
 			case '1' :
 			case '2' :
 			case '3' :
@@ -294,7 +293,6 @@ public class KeyboardCommandListener extends KeyAdapter
 	{
 		switch (e.getKeyChar())
 		{
-			case '0' :
 			case '1' :
 			case '2' :
 			case '3' :
@@ -379,16 +377,16 @@ public class KeyboardCommandListener extends KeyAdapter
 			}
 			catch(NonCombatantException nce)
 			{
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " can't attack that!"));
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you can't attack that!"));
 			}
 			catch(IllegalLocationException ile)
 			{
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " shot arrow of the edge of the world!")); 
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you shot arrow of the edge of the world!")); 
 			}
 		}
 		else
 		{
-			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " has no more arrows!")); 
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you has no more arrows!")); 
 		}
 				
 		mCurrentMode = NORMAL_MODE;
@@ -408,15 +406,15 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch(IllegalLocationException nce)
 		{
-			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " can't attack off the edge of the world!"));
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you can't attack off the edge of the world!"));
 		}
 		catch(EmptyLocationException nce)
 		{
-			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " has nothing to attack!"));
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you have nothing to attack!"));
 		}
 		catch(NonCombatantException nce)
 		{
-			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " can't attack that!"));
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you can't attack that!"));
 		}
 
 		mCurrentMode = NORMAL_MODE;
@@ -434,7 +432,7 @@ public class KeyboardCommandListener extends KeyAdapter
 			TreasureChest aChest = (TreasureChest) mWorld.getNeighboring(mWorld.getLocation(mPlayer), new TreasureChest(null, 0));
 	
 			mWorld.remove(aChest);
-			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " found " + aChest));
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you found " + aChest));
 			
 			if (aChest.getGold() > 0)
 			{
@@ -448,7 +446,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch(IllegalArgumentException iae)
 		{
-			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " has no neighboring treasure chest to open!"));
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you have no neighboring treasure chest to open!"));
 		}
 	}
 	
@@ -462,7 +460,7 @@ public class KeyboardCommandListener extends KeyAdapter
 	{
 		if (mPlayer.getGold() < numberOfArrows)
 		{
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " doesn't have " + numberOfArrows + " gold to buy arrows"));
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you doesn't have " + numberOfArrows + " gold to buy arrows"));
 		}
 		else
 		{
@@ -493,16 +491,24 @@ public class KeyboardCommandListener extends KeyAdapter
 				mWorld.remove(theCastle);
 				doMove(direction);
 				mPlayer.setCastle(theCastle);
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " entered " + tce.getMovee().getName()));
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you entered " + tce.getMovee().getName()));
+			}
+			else if (tce.getMovee() instanceof Combatant)
+			{
+				doAttack(direction);
+			}
+			else if (tce.getMovee() instanceof TreasureChest)
+			{
+				doOpen();
 			}
 			else
 			{
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " collided with " + tce.getMovee().getName()));
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you collided with " + tce.getMovee().getName()));
 			}
 		}
 		catch (IllegalLocationException tce)
 		{
-			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " can't move off the edge of the world!"));
+			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you can't move off the edge of the world!"));
 		}
 	}
 }
