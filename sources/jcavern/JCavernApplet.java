@@ -50,6 +50,19 @@ public class JCavernApplet extends Applet
 
 	private static JCavernApplet	gApplet;
 	
+	public static JCavernApplet current()
+	{
+		return gApplet;
+	}
+
+	public static void log(String aString)
+	{
+		if (gApplet != null)
+		{
+			gApplet.privateLog(aString);
+		}
+	}
+
 
 	/**
 	 * Creates game world, player, viewers.
@@ -60,7 +73,7 @@ public class JCavernApplet extends Applet
 		gApplet = this;
 	}
 	
-	public void log(String aString)
+	private void privateLog(String aString)
 	{
 		if (mLogView != null)
 		{
@@ -69,11 +82,6 @@ public class JCavernApplet extends Applet
 		}
 	}
 	
-	public static JCavernApplet current()
-	{
-		return gApplet;
-	}
-
 	public Image getBoardImage(String aName)
 	{
 		return (Image) mImages.get(aName);

@@ -103,7 +103,7 @@ public class KeyboardCommandListener extends KeyAdapter
 			
 			if (mPlayer.isDead())
 			{
-				JCavernApplet.current().log("Sorry, " + mPlayer.getName() + ", your game is over.");
+				JCavernApplet.log("Sorry, " + mPlayer.getName() + ", your game is over.");
 			}
 		}
 		catch(JCavernInternalError jcie)
@@ -125,22 +125,22 @@ public class KeyboardCommandListener extends KeyAdapter
 			case 'z' :
 			case 'x' :
 			case 'c' : doMove(parseDirectionKey(e)); break;
-			case 's' : mCurrentMode = SWORD_MODE; JCavernApplet.current().log(mPlayer.getSword().getName() + " attack, direction?"); break;
-			case 'b' : mCurrentMode = RANGED_ATTACK_MODE; JCavernApplet.current().log("Ranged attack, direction?"); break;
+			case 's' : mCurrentMode = SWORD_MODE; JCavernApplet.log("Normal attack, direction?"); break;
+			case 'b' : mCurrentMode = RANGED_ATTACK_MODE; JCavernApplet.log("Ranged attack, direction?"); break;
 			case 'v' : if (mPlayer.getCastle() != null)
 						{
-							mCurrentMode = CASTLE_MODE; JCavernApplet.current().log("Visiting Castle, command?");
+							mCurrentMode = CASTLE_MODE; JCavernApplet.log("Visiting Castle, command?");
 						}
 						else
 						{
-							JCavernApplet.current().log("No castle to visit");
+							JCavernApplet.log("No castle to visit");
 						}
 						break;
-			case '.' : JCavernApplet.current().log("Sit"); break;
+			case '.' : JCavernApplet.log("Sit"); break;
 			case 'o' : doOpen(); break;
-			case 'u' : mCurrentMode = USE_MODE; JCavernApplet.current().log("Start using which item?"); break;
-			case 'U' : mCurrentMode = UNUSE_MODE; JCavernApplet.current().log("Stop using which item?"); break;
-			default  : JCavernApplet.current().log("Unknown command");
+			case 'u' : mCurrentMode = USE_MODE; JCavernApplet.log("Start using which item?"); break;
+			case 'U' : mCurrentMode = UNUSE_MODE; JCavernApplet.log("Stop using which item?"); break;
+			default  : JCavernApplet.log("Unknown command");
 		}
 	}
 
@@ -149,7 +149,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		switch (e.getKeyChar())
 		{
 			case 'q' : doEndMission(); break;
-			default  : JCavernApplet.current().log("Unknown castle visit command");
+			default  : JCavernApplet.log("Unknown castle visit command");
 		}
 	}
 	
@@ -166,7 +166,7 @@ public class KeyboardCommandListener extends KeyAdapter
 			case 'z' :
 			case 'x' :
 			case 'c' : doAttack(parseDirectionKey(e)); break;
-			default  : JCavernApplet.current().log("Unknown attack direction");
+			default  : JCavernApplet.log("Unknown attack direction");
 		}
 	}
 	
@@ -183,7 +183,7 @@ public class KeyboardCommandListener extends KeyAdapter
 			case 'z' :
 			case 'x' :
 			case 'c' : doRangedAttack(parseDirectionKey(e)); break;
-			default  : JCavernApplet.current().log("Unknown attack direction");
+			default  : JCavernApplet.log("Unknown attack direction");
 		}
 	}
 	
@@ -233,7 +233,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch (IllegalArgumentException iae)
 		{
-			JCavernApplet.current().log("There's no item " + anIndex + " to use!");
+			JCavernApplet.log("There's no item " + anIndex + " to use!");
 		}
 	}
 
@@ -245,7 +245,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch (IllegalArgumentException iae)
 		{
-			JCavernApplet.current().log("There's no item " + anIndex + " to stop using!");
+			JCavernApplet.log("There's no item " + anIndex + " to stop using!");
 		}
 	}
 	
@@ -253,7 +253,7 @@ public class KeyboardCommandListener extends KeyAdapter
 	{
 		if (mPlayer.getMission().getCompleted())
 		{
-			JCavernApplet.current().log("Congratulations, " + mPlayer.getName() + ".");
+			JCavernApplet.log("Congratulations, " + mPlayer.getName() + ".");
 			
 			// let's do it again!
 			mPlayer.setMission(MonsterFactory.createMission(mPlayer));
@@ -264,7 +264,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		else
 		{
-			JCavernApplet.current().log("Sorry, " + mPlayer.getName() + ", you have not completed your mission");
+			JCavernApplet.log("Sorry, " + mPlayer.getName() + ", you have not completed your mission");
 		}		
 	}
 	
@@ -278,16 +278,16 @@ public class KeyboardCommandListener extends KeyAdapter
 			}
 			catch(NonCombatantException nce)
 			{
-				JCavernApplet.current().log(mPlayer.getName() + " can't attack that!");
+				JCavernApplet.log(mPlayer.getName() + " can't attack that!");
 			}
 			catch(IllegalLocationException ile)
 			{
-				JCavernApplet.current().log(mPlayer.getName() + " shot arrow of the edge of the world!"); 
+				JCavernApplet.log(mPlayer.getName() + " shot arrow of the edge of the world!"); 
 			}
 		}
 		else
 		{
-			JCavernApplet.current().log(mPlayer.getName() + " has no more arrows!"); 
+			JCavernApplet.log(mPlayer.getName() + " has no more arrows!"); 
 		}
 				
 		mCurrentMode = NORMAL_MODE;
@@ -301,15 +301,15 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch(IllegalLocationException nce)
 		{
-			JCavernApplet.current().log(mPlayer.getName() + " can't attack off the edge of the world!");
+			JCavernApplet.log(mPlayer.getName() + " can't attack off the edge of the world!");
 		}
 		catch(EmptyLocationException nce)
 		{
-			JCavernApplet.current().log(mPlayer.getName() + " has nothing to attack!");
+			JCavernApplet.log(mPlayer.getName() + " has nothing to attack!");
 		}
 		catch(NonCombatantException nce)
 		{
-			JCavernApplet.current().log(mPlayer.getName() + " can't attack that!");
+			JCavernApplet.log(mPlayer.getName() + " can't attack that!");
 		}
 
 		mCurrentMode = NORMAL_MODE;
@@ -320,7 +320,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		TreasureChest aChest = (TreasureChest) mWorld.getNeighboring(mWorld.getLocation(mPlayer), new TreasureChest(null, 0));
 
 		mWorld.remove(aChest);
-		JCavernApplet.current().log(mPlayer.getName() + " found " + aChest);
+		JCavernApplet.log(mPlayer.getName() + " found " + aChest);
 		
 		if (aChest.getGold() > 0)
 		{
@@ -356,16 +356,16 @@ public class KeyboardCommandListener extends KeyAdapter
 				mWorld.remove(theCastle);
 				doMove(direction);
 				mPlayer.setCastle(theCastle);
-				JCavernApplet.current().log(mPlayer.getName() + " entered " + tce.getMovee().getName());
+				JCavernApplet.log(mPlayer.getName() + " entered " + tce.getMovee().getName());
 			}
 			else
 			{
-				JCavernApplet.current().log(mPlayer.getName() + " collided with " + tce.getMovee().getName());
+				JCavernApplet.log(mPlayer.getName() + " collided with " + tce.getMovee().getName());
 			}
 		}
 		catch (IllegalLocationException tce)
 		{
-			JCavernApplet.current().log(mPlayer.getName() + " can't move off the edge of the world!");
+			JCavernApplet.log(mPlayer.getName() + " can't move off the edge of the world!");
 		}
 	}
 }
