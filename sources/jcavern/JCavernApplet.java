@@ -116,7 +116,7 @@ public class JCavernApplet extends Applet
 	public void init()
 	{
 		setBackground(Color.black);
-		setForeground(Color.orange);
+		setForeground(CavernOrange);
 		setFont(new Font("Monospaced", Font.PLAIN, 12));
 		
 		mTracker = new MediaTracker(this);
@@ -146,7 +146,9 @@ public class JCavernApplet extends Applet
 			Treasure.loadPrototypes(new URL(getDocumentBase(), "bin/treasure.dat"));
 	
 			// Create a player and a view of the player
-			mPlayer  = new Player("Bill");
+			String playerName = doStringDialog("What is your name, player?");
+			
+			mPlayer  = new Player(playerName);
 			mPlayerView = new PlayerView(mPlayer);
 			mPlayer.setMission(MonsterFactory.createMission(mPlayer));
 			mMissionView = new MissionView(mPlayer.getMission());
@@ -190,4 +192,45 @@ public class JCavernApplet extends Applet
 		}
 	}
 
+	public String doStringDialog(String prompt)
+	{
+		final Dialog	theStringDialog = new Dialog(new Frame(), prompt, true);
+		Button			theButton = new Button("OK");
+		final TextField	theField = new TextField("Name", 40);
+		final TextField	thePrompt = new TextField(prompt, 40);
+
+		thePrompt.setEditable(false);
+		
+		theStringDialog.setForeground(CavernOrange);
+		theButton.setForeground(CavernOrange);
+		theField.setForeground(CavernOrange);
+		thePrompt.setForeground(CavernOrange);
+		
+		theStringDialog.setBackground(Color.black);
+		theButton.setBackground(Color.black);
+		theField.setBackground(Color.black);
+		thePrompt.setBackground(Color.black);
+
+		theField.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		theButton.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		thePrompt.setFont(new Font("Monospaced", Font.PLAIN, 12));
+
+		ActionListener	theListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				theStringDialog.hide();
+			}
+		};
+		
+		theButton.addActionListener(theListener);
+		
+		theStringDialog.add(thePrompt, BorderLayout.NORTH);
+		theStringDialog.add(theField, BorderLayout.CENTER);
+		theStringDialog.add(theButton, BorderLayout.SOUTH);
+		theStringDialog.pack();
+		theStringDialog.show();
+		
+		return theField.getText();
+	}
 }
