@@ -33,6 +33,16 @@ public abstract class Thing extends Observable implements Cloneable
 		return mName;
 	}
 	
+	public void doTurn(World aWorld) throws NoSuchThingException
+	{
+	
+	}
+	
+	public boolean isCombatant()
+	{
+		return false;
+	}
+	
 	/**
 	 * Returns the one character string that is the appearance of this thing.
 	 */
