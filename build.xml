@@ -97,6 +97,23 @@
 		</javadoc>
 	</target>
 
+	<target name="javadoc-xml" >
+		<mkdir dir="${documentation}" />
+
+		<javadoc
+			sourcepath="${sources}"
+			destdir="${documentation}"
+            doclet="com.sun.xml.XmlDoclet"
+            docletPath="lib/XmlDoclet.jar"
+			Private="true"
+			packagenames="jcavern.*" >
+
+			<classpath refid="buildpath" />
+
+		</javadoc>
+	</target>
+
+
 	<target name="doxygen" >
 		<exec executable="c:/doxygen-1.2.6/bin/doxygen" >
 			<arg value="c:/doxygen-1.2.6/doxy-jcavern-config" />
