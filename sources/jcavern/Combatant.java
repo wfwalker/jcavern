@@ -22,7 +22,12 @@ public abstract class Combatant extends Thing
 	
 	protected static final int	KILL = 3;
 	
+	/** * How many points does this Combatant have now. */
 	private int					mPoints;
+
+	/** * How many points has this player ever had. */
+	private int					mMaximumPoints;
+	
 	
 	// Combatants can compute and suffer damage they cause
 	
@@ -177,9 +182,9 @@ public abstract class Combatant extends Thing
 	{
 		switch (outcome)
 		{
-			case Combatant.MISS: JCavernApplet.log(getName() + " misses " + opponent.getName()); break;
-			case Combatant.HIT: JCavernApplet.log(getName() + " hits " + opponent.getName() + " for " + damage); break;
-			case Combatant.KILL: JCavernApplet.log(getName() + " kills " + opponent.getName()); break;
+			case Combatant.MISS: JCavernApplet.current().log(getName() + " misses " + opponent.getName()); break;
+			case Combatant.HIT: JCavernApplet.current().log(getName() + " hits " + opponent.getName() + " for " + damage); break;
+			case Combatant.KILL: JCavernApplet.current().log(getName() + " kills " + opponent.getName()); break;
 		}
 	}
 
@@ -197,7 +202,7 @@ public abstract class Combatant extends Thing
 			if (opponent.isDead())
 			{
 				reportResultAgainst(opponent, Combatant.KILL, damage);
-				gainExperience(opponent);
+				gainPoints(opponent);
 				aWorld.remove(opponent);
 			}
 			else
@@ -211,9 +216,10 @@ public abstract class Combatant extends Thing
 		}
 	}
 	
-	public void gainExperience(Combatant theVictim)
+	public void gainPoints(Combatant theVictim)
 	{
 		mPoints += theVictim.getWorth();
+		mMaximumPoints = Math.max(mMaximumPoints, mPoints);
 	}
 	
 	public abstract int getWorth();
@@ -228,9 +234,15 @@ public abstract class Combatant extends Thing
 		return mPoints;
 	}
 	
+	public int getMaximumPoints()
+	{
+		return mMaximumPoints;
+	}
+	
 	public Combatant(String name, String imageName, int points)
 	{
 		super(name, imageName);		
 		mPoints = points;
+		mMaximumPoints = points;
 	}
 }
