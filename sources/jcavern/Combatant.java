@@ -203,7 +203,7 @@ public abstract class Combatant extends Thing
 					theBuffer.append(opponent.getKilledVerb() + " " + opponent.getNounPhrase()); break;
 		}
 		
-		JCavernApplet.log(theBuffer.toString());
+		JCavernWindow.log(theBuffer.toString());
 	}
 	
 	protected String getHitVerb()
@@ -311,17 +311,23 @@ public abstract class Combatant extends Thing
 	
 	public void paint(Graphics g, int plotX, int plotY, boolean drawGauge)
 	{
-		final int gaugeThickness = 4;
+		final int gaugeThickness = 3;
 		final int gaugeLength = 32;
 		
 		super.paint(g, plotX, plotY);
 		
 		if (drawGauge && (! getInvisible()))
 		{
-			double percent = 1.0 * getPoints() / getMaximumPoints();
+			double	percent = 1.0 * getPoints() / getMaximumPoints();
+			int		point = (int) (percent * gaugeLength);
 			
-			g.fillRect(plotX - gaugeLength / 2, plotY - 20, (int) (gaugeLength * percent), gaugeThickness);
-			g.drawLine(plotX - gaugeLength / 2, plotY - (20 - gaugeThickness / 2), plotX + gaugeLength / 2, plotY - (20 - gaugeThickness / 2));
+			g.fillRect(
+				plotX - gaugeLength / 2, plotY + 20, 
+				point, gaugeThickness);
+				
+			g.drawLine(
+				plotX - gaugeLength / 2 + point + 2, plotY + (20 + gaugeThickness / 2),
+				plotX + gaugeLength / 2, plotY + (20 + gaugeThickness / 2));
 		}
 	}
 
