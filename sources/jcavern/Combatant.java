@@ -117,7 +117,7 @@ public abstract class Combatant extends Thing
 	}
 	
 	// Combatants can attack things
-	
+
 	/**
 	 * Performs an attack on a potential opponent, if appropriate.
 	 *
@@ -131,24 +131,26 @@ public abstract class Combatant extends Thing
 			throw new NonCombatantException(potentialOpponent + " is not a combatant!");
 		}
 		
-		Combatant opponent = (Combatant) potentialOpponent;
+		Combatant	opponent = (Combatant) potentialOpponent;
+		Location	aLocation = aWorld.getLocation(potentialOpponent);
 
 		decrementAttackCount();
 		
 		if (this.canAttack(opponent))
 		{
-			finishAttack(aWorld, computeDamageTo(opponent), opponent);
+			finishAttack(aWorld, aLocation, computeDamageTo(opponent), opponent);
 		}
 		else
 		{
-			reportResultAgainst(aWorld, opponent, WorldEvent.ATTACKED_MISSED, 0);
+			reportResultAgainst(aWorld, aLocation, opponent, WorldEvent.ATTACKED_MISSED, 0);
 		}
 	}
 	
 	// this method can go up to Combatant
 	public void attack(World aWorld, int aDirection) throws JCavernInternalError, EmptyLocationException, IllegalLocationException, NonCombatantException
 	{
-		Thing	potentialOpponent = aWorld.getThing(aWorld.getLocation(this).getNeighbor(aDirection));
+		Location	aLocation = aWorld.getLocation(this).getNeighbor(aDirection);
+		Thing		potentialOpponent = aWorld.getThing(aLocation);
 	
 		attack(aWorld, potentialOpponent);
 	}
@@ -159,9 +161,9 @@ public abstract class Combatant extends Thing
 	 * @param	aWorld				a non-null World in which the attack occurs
 	 * @param	potentialOpponent	a non-null Thing that the receiver will try to attack
 	 */
-	public void rangedAttack(World aWorld, Thing potentialOpponent) throws JCavernInternalError, NonCombatantException
+	public void rangedAttack(World aWorld, Location aLocation, Thing potentialOpponent) throws JCavernInternalError, NonCombatantException
 	{
-		System.out.println(this + " ranged attack " + potentialOpponent);
+		//System.out.println(this + " ranged attack " + potentialOpponent);
 		
 		if (! (potentialOpponent instanceof Combatant))
 		{
@@ -174,23 +176,26 @@ public abstract class Combatant extends Thing
 
 		if (this.canRangedAttack(opponent))
 		{
-			finishAttack(aWorld, computeRangedDamageTo(opponent), opponent);
+			finishAttack(aWorld, aLocation, computeRangedDamageTo(opponent), opponent);
 		}
 		else
 		{
-			reportResultAgainst(aWorld, opponent, WorldEvent.ATTACKED_MISSED, 0);
+			reportResultAgainst(aWorld, aLocation, opponent, WorldEvent.ATTACKED_MISSED, 0);
 		}
 	}
 		
-	// this method can go up to Combatant
+	/**
+	 * Makes a ranged attack in a particular direction.
+	 */
 	public void rangedAttack(World aWorld, int aDirection) throws JCavernInternalError, NonCombatantException, IllegalLocationException
 	{
-		Thing	potentialOpponent = aWorld.getThingToward(this, aDirection);
+		Thing		potentialOpponent = aWorld.getThingToward(this, aDirection);
+		Location	aLocation = aWorld.getLocation(potentialOpponent);
 	
-		rangedAttack(aWorld, potentialOpponent);
+		rangedAttack(aWorld, aLocation, potentialOpponent);
 	}
 	
-	protected void reportResultAgainst(World aWorld, Combatant opponent, int outcome, int damage)
+	protected void reportResultAgainst(World aWorld, Location aLocation, Combatant opponent, int outcome, int damage)
 	{
 		StringBuffer	theBuffer = new StringBuffer();
 		
@@ -208,7 +213,7 @@ public abstract class Combatant extends Thing
 					theBuffer.append("no such outcome " + outcome);
 		}
 		
-		aWorld.eventHappened(new WorldEvent(opponent, outcome, this, theBuffer.toString()));
+		aWorld.eventHappened(new WorldEvent(aLocation, opponent, outcome, this, theBuffer.toString()));
 	}
 	
 	protected String getHitVerb()
@@ -243,7 +248,7 @@ public abstract class Combatant extends Thing
 	 *
 	 * @param	opponent	a non-null Combatant who was attacked by the receiver.
 	 */
-	private void finishAttack(World aWorld, int damage, Combatant opponent) throws JCavernInternalError
+	private void finishAttack(World aWorld, Location aLocation, int damage, Combatant opponent) throws JCavernInternalError
 	{
 		opponent.sufferDamage(damage);
 
@@ -251,13 +256,13 @@ public abstract class Combatant extends Thing
 		{
 			if (opponent.isDead())
 			{
-				reportResultAgainst(aWorld, opponent, WorldEvent.ATTACKED_KILLED, damage);
+				reportResultAgainst(aWorld, aLocation, opponent, WorldEvent.ATTACKED_KILLED, damage);
 				gainPoints(aWorld, opponent);
 				aWorld.remove(opponent);
 			}
 			else
 			{
-				reportResultAgainst(aWorld, opponent, WorldEvent.ATTACKED_HIT, damage);
+				reportResultAgainst(aWorld, aLocation, opponent, WorldEvent.ATTACKED_HIT, damage);
 			}
 		}
 		catch (JCavernInternalError jcie)

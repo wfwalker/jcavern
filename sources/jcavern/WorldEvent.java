@@ -50,6 +50,9 @@ public class WorldEvent
 	/** * Used to indicate the kind of change that happened to a thing. */
 	public static final int		TURN_STOP = 13;
 	
+	/** * Used to indicate the kind of change that happened to a thing. */
+	public static final int		RANGED_ATTACK = 14;
+	
 	/** * One of the codes above. */
 	private int					mEventCode;
 	
@@ -59,14 +62,18 @@ public class WorldEvent
 	/** * The Thing that caused the subject to experience the event, or <CODE>null</CODE> if none. */
 	private Thing				mCause;
 	
+	/** * The Location where the event occurred */
+	private Location			mLocation;
+	
 	/** * A message describing what happened. */
 	private String				mMessage;
 	
 	/**
 	 * Creates a new WorldEvent.
 	 */
-	public WorldEvent(Thing subject, int code, Thing cause, String message)
+	public WorldEvent(Location aLocation, Thing subject, int code, Thing cause, String message)
 	{
+		mLocation = aLocation;
 		mSubject = subject;
 		mEventCode = code;
 		mCause = cause;
@@ -76,9 +83,25 @@ public class WorldEvent
 	/**
 	 * Creates a new WorldEvent.
 	 */
+	public WorldEvent(Thing subject, int code, Thing cause, String message)
+	{
+		this(null, subject, code, cause, message);
+	}
+	
+	/**
+	 * Creates a new WorldEvent
+	 */
+	public WorldEvent(Location aLocation, int code)
+	{
+		this(aLocation, null, code, null, null);
+	}
+
+	/**
+	 * Creates a new WorldEvent.
+	 */
 	public WorldEvent(Thing subject, int code)
 	{
-		this(subject, code, null, null);
+		this(null, subject, code, null, null);
 	}
 	
 	/**
@@ -86,7 +109,7 @@ public class WorldEvent
 	 */
 	public WorldEvent(Thing subject, int code, String message)
 	{
-		this(subject, code, null, message);
+		this(null, subject, code, null, message);
 	}
 	
 	/**
@@ -94,7 +117,7 @@ public class WorldEvent
 	 */
 	public WorldEvent(Thing subject, int code, Thing cause)
 	{
-		this(subject, code, cause, null);
+		this(null, subject, code, cause, null);
 	}
 	
 	public String toString()
@@ -142,6 +165,16 @@ public class WorldEvent
 			
 			return theEventString.toString();
 		}
+	}
+	
+	public void setLocation(Location aLocation)
+	{
+		mLocation = aLocation;
+	}
+	
+	public Location getLocation()
+	{
+		return mLocation;
 	}
 	
 	public Thing getSubject()

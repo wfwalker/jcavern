@@ -196,8 +196,6 @@ public class World extends Observable
 
 	public void eventHappened(WorldEvent anEvent)
 	{
-		//System.out.println("\n\nWorld.eventHappened(" + anEvent + ")\n\n");
-		
 		setChanged();
 		notifyObservers(anEvent);
 	}
@@ -244,7 +242,7 @@ public class World extends Observable
 				throw new IllegalLocationException("Ranged attack hit nothing");
 			}
 			
-			eventHappened(new WorldEvent(attacker, WorldEvent.INFO_MESSAGE, attackeeLocation.toString()));
+			eventHappened(new WorldEvent(attackeeLocation, attacker, WorldEvent.RANGED_ATTACK, attacker, "*"));
 			attackeeLocation = attackeeLocation.getNeighbor(aDirection);
 		}
 		
