@@ -37,6 +37,21 @@ public class MonsterFactory
 	}
 	
 	/**
+	 * Retrieves the first opponent tougher than this Player.
+	 */	
+	public static Monster getMostWorthyOpponent(Player aPlayer)
+	{
+		int monsterIndex = 0;
+		
+		while (((Monster) gMonsters.elementAt(monsterIndex)).getPoints() <= aPlayer.getPoints())
+		{
+			monsterIndex++;
+		}
+		
+		return (Monster) ((Monster) gMonsters.elementAt(monsterIndex)).clone();
+	}
+	
+	/**
 	 * Creates an appropriate Mission for this player.
 	 */
 	public static Mission createMission(Player aPlayer)
@@ -55,7 +70,7 @@ public class MonsterFactory
 		
 		int quota = (int) (Math.log(aPlayer.getPoints()) + 3 * Math.random());
 		
-		return new Mission(getWorthyOpponent(aPlayer), quota);
+		return new Mission(getMostWorthyOpponent(aPlayer), quota);
 	}
 	
 	/**
@@ -69,8 +84,8 @@ public class MonsterFactory
 		
 		try
 		{
-			InputStream		aStream = MonsterFactory.class.getResourceAsStream("/monster.dat");
-			//InputStream		aStream = aURL.openStream();
+			//InputStream		aStream = MonsterFactory.class.getResourceAsStream("/monster.dat");
+			InputStream		aStream = aURL.openStream();
 			BufferedReader	aReader = new BufferedReader(new InputStreamReader(aStream));
 			String			aMessageLine;
 
