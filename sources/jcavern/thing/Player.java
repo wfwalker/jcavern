@@ -41,6 +41,8 @@ public class Player extends Combatant
 	
 	/**
 	 * Moves an item from the unused list to the in use list.
+	 *
+	 * @param	anItem		a non-null Treasure to start using.
 	 */
 	public void startUsing(Treasure anItem)
 	{
@@ -53,6 +55,8 @@ public class Player extends Combatant
 	
 	/**
 	 * Drop an item.
+	 *
+	 * @param	anItem		a non-null Treasure to drop
 	 */
 	public void drop(Treasure anItem)
 	{
@@ -64,7 +68,10 @@ public class Player extends Combatant
 	}
 	
 	/**
-	 * Retrieves an unused item by index.
+	 * Retrieves an unused Treasure by index.
+	 *
+	 * @param	unusedIndex		index of an unused Treasure
+	 * @return					a non-null Treasure
 	 */
 	public Treasure getUnusedTreasureAt(int unusedIndex)
 	{
@@ -78,6 +85,8 @@ public class Player extends Combatant
 	
 	/**
 	 * Stops using the given item.
+	 *
+	 * @param	anItem		a non-null Treasure to stop using
 	 */
 	public void stopUsing(Treasure anItem)
 	{
@@ -90,6 +99,9 @@ public class Player extends Combatant
 	
 	/**
 	 * Retrives an in use item by index.
+	 *
+	 * @param	inUseIndex		index of an in-use Treasure
+	 * @return					a non-null Treasure
 	 */
 	public Treasure getInUseTreasureAt(int inUseIndex)
 	{
@@ -103,6 +115,8 @@ public class Player extends Combatant
 
 	/**
 	 * Retrieves the Vector of in use items.
+	 *
+	 * @return	a Vector of Treasures currently in use
 	 */
 	public Vector getInUseItems()
 	{
@@ -111,6 +125,8 @@ public class Player extends Combatant
 	
 	/**
 	 * Retrieves sthe Vector of items not in use.
+	 *
+	 * @return	a Vector of Treasures not currently in use
 	 */
 	public Vector getUnusedItems()
 	{
@@ -140,6 +156,10 @@ public class Player extends Combatant
 		receiveItem(aSword);
 		startUsing(aSword);
 		
+		// set the player up with a compass
+		MagicItem acompass = new MagicItem("Compass", 5);
+		receiveItem(acompass);
+		
 		// and give him some arrows
 		mArrows = 20;
 	}
@@ -149,7 +169,8 @@ public class Player extends Combatant
 	 *
 	 * @param	name		a non-null String containing the name of the player.
 	 * @param	gold		how many gold pieces the player has
-	 * @param	sword		what kind of sword does this player have
+	 * @param	inUseItems	the Vector of items currently in use
+	 * @param	unusedItems	the Vector of items not currently in use
 	 * @param	arrows		how many arrows does this player have
 	 * @param	points		how many points does this player have
 	 * @param	mission		a non-null Mission this player must complete
@@ -167,38 +188,62 @@ public class Player extends Combatant
 	
 	/**
 	 * Returns a clone of this player. This also requires cloning the player's Swords and other items.
+	 *
+	 * @return		a non-null Player
 	 */
 	public Object clone()
 	{
-		return new Player(getName(), mGold, (Vector) mInUseItems.clone(), (Vector) mUnusedItems.clone(), mArrows, getPoints(), mMission);
+		return new Player(getName(), mGold, (Vector) mInUseItems.clone(),
+				(Vector) mUnusedItems.clone(), mArrows, getPoints(), mMission);
 	}
 	
+	/**
+	 * Sets the current mission for this player.
+	 *
+	 * @param	aMission	a non-null Mission.
+	 */
 	public void setMission(Mission aMission)
 	{
 		mMission = aMission;
 	}
 	
-	public void sufferDamage(int theDamage)
+	/**
+	 * Causes the player to suffer combat damage.
+	 * Damage points are mitigated by any armour the player is wearing.
+	 *
+	 * @param		inWorld					a non-null World in which the combat takes place.
+	 * @param		inDamage				how much damage was done (not taking armour points into account)
+	 * @return								how much damage was actually done, taking armour into account
+	 * @exception	JCavernInternalError	a mission end event could not be created.
+	 */
+	public int sufferDamage(World inWorld, int inDamage) throws JCavernInternalError
 	{
-		int adjustedDamage = theDamage - getArmourPoints();
+		int adjustedDamage = inDamage - getArmourPoints();
 		
 		if (adjustedDamage < 0)
 		{
 			adjustedDamage = 0;
 		}
 		
-		super.sufferDamage(adjustedDamage);
+		super.sufferDamage(inWorld, adjustedDamage);
 		
 		if (isDead())
 		{
-			MissionCard.endMissionAlert("Sorry, " + getName() + ", your game is over.");
-			JCavernApplet.setPlayer(this);
+			inWorld.eventHappened(WorldEvent.missionEnd(inWorld.getLocation(this), this, "Sorry, you died!"));
 		}
 
 		setChanged();
 		notifyObservers();
+		
+		return adjustedDamage;
 	}
 	
+	/**
+	 * Causes the player to receive points as credit for vanquishing an opponent.
+	 *
+	 * @param	aWorld		a non-null World in which the combat occurred.
+	 * @param	theVictim	the now-vanquished opponent.
+	 */
 	public void gainPoints(World aWorld, Combatant theVictim)
 	{
 		super.gainPoints(aWorld, theVictim);
@@ -212,32 +257,71 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
+	/**
+	 * Returns true if this Combatant has a proper name.
+	 *
+	 * @return	<CODE>true</CODE>, all Players have proper names.
+	 */
 	protected boolean hasProperName()
 	{
 		return true;
 	}
 
+	/**
+	 * Returns how many points this Combatant is worth when vanquished.
+	 *
+	 * @return	0, not used since Monsters don't stick around after players die.
+	 */
 	public int getWorth()
 	{
 		return 0;
 	}
-	
+
+	/**
+	 * Returns whether this Player can attack a given Combatant.
+	 * Depends on whether this player has a sword, and whether the opponent is vulnerable to
+	 * player attack.
+	 *
+	 * @param	aCombatant		a non-null Combatant.
+	 * @return	<CODE>true</CODE> if this Player can attack the given combatant, <CODE>false</CODE> otherwise
+	 */
 	public boolean canAttack(Combatant aCombatant)
 	{
 		return (getSword() != null) && aCombatant.vulnerableToPlayerAttack(this);
 	}
 	
+	/**
+	 * Returns whether this Combatant can make a ranged attack on a given Combatant.
+	 * Depends on whether this player has arrows, and whether the opponent is vulnerable to
+	 * ranged player attack.
+	 *
+	 * @param	aCombatant		a non-null Combatant.
+	 * @return	<CODE>true</CODE> if this Player can attack the given combatant, <CODE>false</CODE> otherwise
+	 */
 	public boolean canRangedAttack(Combatant aCombatant)
 	{
 		//System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
 		return (mArrows > 0) && aCombatant.vulnerableToPlayerRangedAttack(this);
 	}
 	
+	/**
+	 * Returns whether this combatant is vulnerable to attack from a given Monster.
+	 *
+	 * @param		aMonster		a non-null Monster
+	 * @return						<CODE>false</CODE> if the Player is in a castle, CODE>true</CODE> otherwise
+	 */
 	public boolean vulnerableToMonsterAttack(Monster aMonster)
 	{
 		return getCastle() == null;
 	}
 	
+	/**
+	 * Computes the damage this combatant does to a given opponent in a sword attack.
+	 * Depends on the current health of the player and the prowess of the sword currently in use.
+	 *
+	 * @param	opponent	a non-null Combatant on whom the receiver will inflict damage
+	 * @return				damage points
+	 */
 	public int computeDamageTo(Combatant opponent)
 	{
 	/*
@@ -267,6 +351,10 @@ public class Player extends Combatant
 		}
 	}
 	
+	/**
+	 * Decrements the number of ranged attacks this Combatant can perform.
+	 * This simulates using up a supply of arrows.
+	 */
 	public void decrementRangedAttackCount()
 	{
 		mArrows--;
@@ -274,6 +362,12 @@ public class Player extends Combatant
 		notifyObservers();	
 	}
 	
+	/**
+	 * Decrements the number of attacks this Combatant can perform.
+	 * This simulates wearing out a sword.
+	 *
+	 * @param	aWorld	the world in which the attack took place.
+	 */
 	public void decrementAttackCount(World aWorld)
 	{
 		Sword theSword = getSword();
@@ -295,6 +389,12 @@ public class Player extends Combatant
 	
 	}
 	
+	/**
+	 * Computes the damage this combatant does to a given opponent in a ranged attack.
+	 *
+	 * @param	opponent	a non-null Combatant on whom the receiver will inflict damage
+	 * @return				how much damage this player would do in a ranged attack
+	 */
 	public int computeRangedDamageTo(Combatant opponent)
 	{
 	/*
@@ -307,11 +407,21 @@ public class Player extends Combatant
 		return (int) (4 + getPoints() / 10.0);
 	}
 
+	/**
+	 * Returns the text-only appearance for this Player.
+	 *
+	 * @return		"P"
+	 */
 	public String getAppearance()
 	{
 		return "P";
 	}	
 	
+	/**
+	 * Returns the Player's current bank balance
+	 *
+	 * @return	how much gold the player has.
+	 */
 	public int getGold()
 	{
 		return mGold;
@@ -319,6 +429,9 @@ public class Player extends Combatant
 	
 	/**
 	 * Increments this player's gold account by the given amount.
+	 *
+	 * @param		delta					how much gold the Player received
+	 * @exception	JCavernInternalError	delta was negative
 	 */
 	public void receiveGold(int delta) throws JCavernInternalError
 	{
@@ -335,6 +448,9 @@ public class Player extends Combatant
 	
 	/**
 	 * Decrements this player's gold account by the given amount.
+	 *
+	 * @param		delta					how much gold the Player spent
+	 * @exception	JCavernInternalError	delta was negative
 	 */
 	public void spendGold(int delta) throws JCavernInternalError
 	{
@@ -351,6 +467,8 @@ public class Player extends Combatant
 	
 	/**
 	 * Increments this player's number of arrows.
+	 *
+	 * @param	delta	how many arrows the Player received
 	 */
 	public void receiveArrows(int delta)
 	{
@@ -360,6 +478,11 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
+	/**
+	 * Returns the player's current sword, or null if none.
+	 *
+	 * @return the player's current sword, or <CODE>null</CODE> if none.
+	 */
 	public Sword getSword()
 	{
 		for (int index = 0; index < mInUseItems.size(); index++)
@@ -375,6 +498,11 @@ public class Player extends Combatant
 		return null;
 	}
 	
+	/**
+	 * Returns the player's current armour points.
+	 *
+	 * @return the player's current armour points, or 0 if none.
+	 */
 	private int getArmourPoints()
 	{
 		int armourPoints = 0;
@@ -392,11 +520,21 @@ public class Player extends Combatant
 		return armourPoints;
 	}
 	
+	/**
+	 * Returns how many arrows the player has.
+	 *
+	 * @return	how many arrows the player has.
+	 */
 	public int getArrows()
 	{
 		return mArrows;
 	}
 	
+	/**
+	 * Adds a Treasure to the Player's list of not-in-use items.
+	 *
+	 * @param	anItem		a non-null Treasure
+	 */
 	public void receiveItem(Treasure anItem)
 	{
 		//System.out.println(getName() + " received " + anItem);
@@ -409,6 +547,8 @@ public class Player extends Combatant
 	
 	/**
 	 * Returns this player's current Mission.
+	 *
+	 * @return		this player's current Mission.
 	 */
 	public Mission getMission()
 	{
@@ -428,7 +568,7 @@ public class Player extends Combatant
 	/**
 	 * Sets the castle currently occupied by the player, if any.
 	 *
-	 * @return	aCastle		a Castle to occupy, or <CODE>null</CODE> if none.
+	 * @param	aCastle		a Castle to occupy, or <CODE>null</CODE> if none.
 	 */
 	public void setCastle(Castle aCastle)
 	{
@@ -437,16 +577,25 @@ public class Player extends Combatant
 	
 	/**
 	 * Paints the player, and any castles the Player is currently sitting in.
+	 *
+	 * @param		inApplet				the Applet (used for loading images)
+	 * @param		g						the non-null Graphics object for painting
+	 * @param		plotX					x coordinate of the Player relative to the View
+	 * @param		plotY					y coordinate of the Player relative to the View
+	 * @param		anEvent					the non-null Event used to decide on highlighting
+	 * @exception	JCavernInternalError	could not paint the player
 	 */
-	public void paint(Graphics g, int plotX, int plotY, WorldEvent anEvent) throws JCavernInternalError
+
+	public void paint(JCavernApplet inApplet, Graphics g, int plotX,
+						int plotY, WorldEvent anEvent) throws JCavernInternalError
 	{
 		//System.out.println("Player.paint(g, " + plotX + ", " + plotY + ")");
 		
-		super.paint(g, plotX, plotY, anEvent);
+		super.paint(inApplet, g, plotX, plotY, anEvent);
 
 		if (getCastle() != null)
 		{
-			getCastle().paint(g, plotX, plotY, anEvent);
+			getCastle().paint(inApplet, g, plotX, plotY, anEvent);
 		}
 	}
 	
@@ -464,6 +613,14 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 
+	/**
+	 * Informs the player that it was removed from the world.
+	 * If the player is in a Castle, put the Castle back where the player was.
+	 *
+	 * @param		aWorld					the world in which the action takes place
+	 * @param		aLocation				the Location from which the Player was removed
+	 * @exception	JCavernInternalError	trouble putting the Castle back
+	 */
 	public void thingRemoved(World aWorld, Location aLocation) throws JCavernInternalError
 	{
 		if (getCastle() != null)

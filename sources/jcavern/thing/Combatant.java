@@ -31,16 +31,25 @@ public abstract class Combatant extends Thing
 	
 	/**
 	 * Returns whether this Combatant can attack a given Combatant.
+	 *
+	 * @param	aCombatant	a potential opponent
+	 * @return				<CODE>true</CODE> if this Combatant can attack the given opponent, <CODE>false</CODE> otherwise
 	 */
 	public abstract boolean canAttack(Combatant aCombatant);
 	
 	/**
 	 * Returns whether this Combatant can make a ranged attack on a given Combatant.
+	 *
+	 * @param	aCombatant	a potential opponent
+	 * @return				<CODE>true</CODE> if this Combatant can attack the given opponent, <CODE>false</CODE> otherwise
 	 */
 	public abstract boolean canRangedAttack(Combatant aCombatant);
 	
 	/**
 	 * Returns whether this combatant is vulnerable to attack from a given Monster.
+	 *
+	 * @param	aMonster	a potential opponent
+	 * @return				<CODE>true</CODE> if the Monster can attack this component, <CODE>false</CODE> otherwise
 	 */
 	public boolean vulnerableToMonsterAttack(Monster aMonster)
 	{
@@ -50,6 +59,9 @@ public abstract class Combatant extends Thing
 	
 	/**
 	 * Returns whether this combatant is vulnerable to attack from a given Player.
+	 *
+	 * @param	aPlayer		a potential opponent
+	 * @return				<CODE>true</CODE> if the Player can attack this component, <CODE>false</CODE> otherwise
 	 */
 	public boolean vulnerableToPlayerAttack(Player aPlayer)
 	{
@@ -58,7 +70,10 @@ public abstract class Combatant extends Thing
 	}
 	
 	/**
-	 * Returns whether this combatant is vulnerable to attack from a given Monster.
+	 * Returns whether this combatant is vulnerable to ranged attack from a given Monster.
+	 *
+	 * @param	aMonster	a potential opponent
+	 * @return				<CODE>true</CODE> if the Monster can ranged attack this component, <CODE>false</CODE> otherwise
 	 */
 	public boolean vulnerableToMonsterRangedAttack(Monster aMonster)
 	{
@@ -67,7 +82,10 @@ public abstract class Combatant extends Thing
 	}
 	
 	/**
-	 * Returns whether this combatant is vulnerable to attack from a given Player.
+	 * Returns whether this combatant is vulnerable to ranged attack from a given Player.
+	 *
+	 * @param	aPlayer		a potential opponent
+	 * @return				<CODE>true</CODE> if the Player can ranged attack this component, <CODE>false</CODE> otherwise
 	 */
 	public boolean vulnerableToPlayerRangedAttack(Player aPlayer)
 	{
@@ -78,25 +96,31 @@ public abstract class Combatant extends Thing
 	/**
 	 * Computes the damage this combatant does to a given opponent in a sword attack.
 	 *
-	 * @param	opponent	a non-null Combatant on whom the receiver will inflict damage
+	 * @param	opponent	a non-null Combatant on whom this Combatant will inflict damage
+	 * @return				how much damage this combatant does
 	 */
 	public abstract int computeDamageTo(Combatant opponent);
 	
 	/**
 	 * Computes the damage this combatant does to a given opponent in a ranged attack.
 	 *
-	 * @param	opponent	a non-null Combatant on whom the receiver will inflict damage
+	 * @param	opponent	a non-null Combatant on whom this Combatant will inflict damage
+	 * @return				how much damage this combatant does
 	 */
 	public abstract int computeRangedDamageTo(Combatant opponent);
 
 	/**
 	 * Causes this combatant to suffer damage.
 	 *
-	 * @param	theDamage	how much damage this combatant suffers.
+	 * @param		inWorld					a non-null World in which the action takes place.
+	 * @param		inDamage				how much damage this combatant suffers (not accounting for armour)
+	 * @return								how much damage the combatant actually suffers (after accounting for armour)
+	 * @exception	JCavernInternalError	trouble send notification that mission ended when Combatant died
 	 */
-	public void sufferDamage(int theDamage)
+	public int sufferDamage(World inWorld, int inDamage) throws JCavernInternalError
 	{
-		mPoints -= theDamage;
+		mPoints -= inDamage;
+		return inDamage;
 	}
 	
 	/**
@@ -122,8 +146,10 @@ public abstract class Combatant extends Thing
 	/**
 	 * Performs an attack on a potential opponent, if appropriate.
 	 *
-	 * @param	aWorld				a non-null World in which the attack occurs
-	 * @param	potentialOpponent	a non-null Thing that the receiver will try to attack
+	 * @param		aWorld						a non-null World in which the attack occurs
+	 * @param		potentialOpponent			a non-null Thing that the receiver will try to attack
+	 * @exception	JCavernInternalError 		could not perform the attack
+	 * @exception	NonCombatantException 		tried to attack a non-combatant (i. e., treasure chest, castle)
 	 */
 	public void attack(World aWorld, Thing potentialOpponent) throws JCavernInternalError, NonCombatantException
 	{
@@ -147,7 +173,16 @@ public abstract class Combatant extends Thing
 		}
 	}
 	
-	// this method can go up to Combatant
+	/**
+	 * Makes an attack in a location adjacent to the combatant's current location.
+	 *
+	 * @param		aWorld						a non-null World in which the attack occurs
+	 * @param		aDirection					one of the direction codes in class Location
+	 * @exception	JCavernInternalError 		could not perform the attack
+	 * @exception	EmptyLocationException 		tried to attack an empty Location
+	 * @exception	NonCombatantException 		tried to attack a non-combatant (i. e., treasure chest, castle)
+	 * @exception	IllegalLocationException 	tried to attack an illegal location (i. e., off the edge of the world)
+	 */
 	public void attack(World aWorld, int aDirection) throws JCavernInternalError, EmptyLocationException, IllegalLocationException, NonCombatantException
 	{
 		Location	aLocation = aWorld.getLocation(this).getNeighbor(aDirection);
@@ -159,8 +194,11 @@ public abstract class Combatant extends Thing
 	/**
 	 * Performs a ranged attack on a potential opponent, if appropriate.
 	 *
-	 * @param	aWorld				a non-null World in which the attack occurs
-	 * @param	potentialOpponent	a non-null Thing that the receiver will try to attack
+	 * @param		aWorld						a non-null World in which the attack occurs
+	 * @param		aLocation					a non-null Location containing the attackee
+	 * @param		potentialOpponent			a non-null Thing to attack
+	 * @exception	JCavernInternalError 		could not perform the attack
+	 * @exception	NonCombatantException 		tried to attack a non-combatant (i. e., treasure chest, castle)
 	 */
 	public void rangedAttack(World aWorld, Location aLocation, Thing potentialOpponent) throws JCavernInternalError, NonCombatantException
 	{
@@ -187,6 +225,12 @@ public abstract class Combatant extends Thing
 		
 	/**
 	 * Makes a ranged attack in a particular direction.
+	 *
+	 * @param		aWorld						a non-null World in which the attack occurs
+	 * @param		aDirection					one of the direction codes in class Location
+	 * @exception	JCavernInternalError 		could not perform the attack
+	 * @exception	NonCombatantException 		tried to attack a non-combatant (i. e., treasure chest, castle)
+	 * @exception	IllegalLocationException 	tried to attack an illegal location (i. e., off the edge of the world)
 	 */
 	public void rangedAttack(World aWorld, int aDirection) throws JCavernInternalError, NonCombatantException, IllegalLocationException
 	{
@@ -196,21 +240,41 @@ public abstract class Combatant extends Thing
 		rangedAttack(aWorld, aLocation, potentialOpponent);
 	}
 		
+	/**
+	 * Returns the verb for attacking this combatant.
+	 *
+	 * @return	a non-null string containing a singular, transitive, past-tense verb
+	 */
 	public String getHitVerb()
 	{
 		return "hit"; 
 	}
 	
+	/**
+	 * Returns the verb for killing this combatant.
+	 *
+	 * @return		a non-null string containing a singular, transitive, past-tense verb.
+	 */
 	public String getKilledVerb()
 	{
 		return "killed";
 	}
 	
+	/**
+	 * Returns whether this combatant has a proper name
+	 *
+	 * @return	<CODE>true</CODE> if this combatant has a proper name, <CODE>false</CODE> otherwise.
+	 */
 	protected boolean hasProperName()
 	{
 		return false;
 	}
 	
+	/**
+	 * Returns a noun phrase for this combatant.
+	 *
+	 * @return		a non-null string containing a noun phrase, with articles as appropriate.
+	 */
 	public String getNounPhrase()
 	{
 		if (hasProperName())
@@ -226,23 +290,30 @@ public abstract class Combatant extends Thing
 	/**
 	 * Concludes an attack by removing dead opponents and awarding experience, if appropriate.
 	 *
-	 * @param	opponent	a non-null Combatant who was attacked by the receiver.
+	 * @param		aWorld					a non-null World in which the fight takes place.
+	 * @param		aLocation				a non-null Location where the attack took place.
+	 * @param		damage					how much damage was inflicted
+	 * @param		opponent				who suffered that damage
+	 * @exception	JCavernInternalError	could not perform the attack
 	 */
 	private void finishAttack(World aWorld, Location aLocation, int damage, Combatant opponent) throws JCavernInternalError
 	{
-		opponent.sufferDamage(damage);
+		int actualDamage = opponent.sufferDamage(aWorld, damage);
 
 		try
 		{
 			if (opponent.isDead())
 			{
-				aWorld.eventHappened(CombatEvent.killed(aLocation, opponent, this, damage));
-				gainPoints(aWorld, opponent);
 				aWorld.remove(opponent);
+				aWorld.eventHappened(CombatEvent.killed(aLocation, opponent, this, actualDamage));
+
+				gainPoints(aWorld, opponent);
+				aWorld.eventHappened(CombatEvent.gained(aLocation, this, opponent.getWorth()));				
 			}
 			else
 			{
-				aWorld.eventHappened(CombatEvent.hit(aLocation, opponent, this, damage));
+				aWorld.eventHappened(CombatEvent.hit(aLocation, opponent, this, actualDamage));
+				aWorld.eventHappened(CombatEvent.lost(aLocation, opponent, actualDamage));		
 			}
 		}
 		catch (JCavernInternalError jcie)
@@ -254,6 +325,9 @@ public abstract class Combatant extends Thing
 	/**
 	 * Gain points from a victory.
 	 * Augments this Combatant's points by the number of points the loser was worth.
+	 *
+	 * @param	aWorld		a non-null World in which the action takes place
+	 * @param	theVictim	a non-null Combatant, freshly killed
 	 */
 	public void gainPoints(World aWorld, Combatant theVictim)
 	{
@@ -263,6 +337,8 @@ public abstract class Combatant extends Thing
 	
 	/**
 	 * Returns the number of points this Combatant is worth when it loses a battle.
+	 *
+	 * @return		the number of points this Combatant is worth when it loses a battle.
 	 */
 	public abstract int getWorth();
 	
@@ -278,6 +354,8 @@ public abstract class Combatant extends Thing
 	
 	/**
 	 * Returns the current number of points for this Combatant.
+	 *
+	 * @return		the current number of points for this Combatant.
 	 */
 	public int getPoints()
 	{
@@ -294,17 +372,47 @@ public abstract class Combatant extends Thing
 		return mMaximumPoints;
 	}
 	
-	public void paint(Graphics g, int plotX, int plotY, WorldEvent anEvent) throws JCavernInternalError
+	/**
+	 * Decides whether a particular Combatant should be highlighted,
+	 * in the context of a particular event.
+	 *
+	 * @param	anEvent		the event that could trigger highlighting
+	 * @return				<CODE>true</CODE> if this combatant should be highlighted, <CODE>false</CODE> otherwise
+	 */
+	public boolean shouldHighlight(WorldEvent anEvent)
+	{
+		System.out.println(getNounPhrase() + ".shouldHighlight(" + anEvent + ")");
+		
+		return
+			(anEvent != null) &&
+			(anEvent instanceof CombatEvent) &&
+			(anEvent.getSubject() == this) && 
+			(! getInvisible());
+	}
+	
+	/**
+	 * Paints the Combatant in the WorldView, with optional highlighting.
+	 *
+	 * @param		inApplet				the current Applet (used to retrieve images)
+	 * @param		g						the non-null Graphics on which to paint
+	 * @param		plotX					the x location for plotting
+	 * @param		plotY					the y location for plotting
+	 * @param		anEvent					the event, if any, relevant to this Combatant
+	 * @exception	JCavernInternalError	could not retrieve an image
+	 */
+	public void paint(JCavernApplet inApplet, Graphics g, int plotX, int plotY, WorldEvent anEvent) throws JCavernInternalError
 	{
 		// System.out.println("(Combatant) " + getName() + ".paint(g, " + plotX + ", " + plotY + ", " + drawGauge + ")");
 
 		final int gaugeThickness = 3;
 		final int gaugeLength = 32;
 		
-		super.paint(g, plotX, plotY, null);
+		super.paint(inApplet, g, plotX, plotY, null);
 		
-		if ((anEvent != null) && (anEvent instanceof CombatEvent) && (! getInvisible()))
+		if (shouldHighlight(anEvent))
 		{
+			System.out.println("\n\n Combatant " + getName() + " painting highlight due to " + anEvent);
+			
 			double	percent = 1.0 * getPoints() / getMaximumPoints();
 			int		point = (int) (percent * gaugeLength);
 			
@@ -318,11 +426,27 @@ public abstract class Combatant extends Thing
 		}
 	}
 
+	/**
+	 * Creates a new, visible combatant.
+	 *
+	 * @param	name		a non-null Name for this combatant
+	 * @param	imageName	a non-null filename for the image that represents this combatant
+	 * @param	points		how many points this Combatant has.
+	 */
 	public Combatant(String name, String imageName, int points)
 	{
 		this(name, imageName, points, false);
 	}
 	
+
+	/**
+	 * Creates a new, possibly invisible combatant.
+	 *
+	 * @param	name		a non-null Name for this combatant
+	 * @param	imageName	a non-null filename for the image that represents this combatant
+	 * @param	points		how many points this Combatant has.
+	 * @param	invisible	<CODE>true</CODE> if this Combatant is invisible, <CODE>false</CODE> otherwise.
+	 */
 	public Combatant(String name, String imageName, int points, boolean invisible)
 	{
 		super(name, imageName, invisible);		

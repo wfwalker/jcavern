@@ -85,14 +85,15 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	/**
 	 * Returns the Image used to depict this thing.
 	 *
+	 * @param		inApplet				the current applet (used to retrieve images)
 	 * @return								a non-null Image
 	 * @exception	JCavernInternalError	could not retrieve the image from the dictionary.
 	 */
-	public Image getImage() throws JCavernInternalError
+	public Image getImage(JCavernApplet inApplet) throws JCavernInternalError
 	{
 		if (mImage == null)
 		{
-			mImage = JCavernApplet.getBoardImage(mImageName);
+			mImage = inApplet.getBoardImage(mImageName);
 		}
 		
 		return mImage;
@@ -160,25 +161,25 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	/**
 	 * Paints this thing by drawing its image, but only if it is not invisible.
 	 *
+	 * @param		inApplet				the current applet (used to retrieve images)
 	 * @param		g						a non-null Graphics object used for painting
 	 * @param		plotX					offset within the current Graphics for painting this Thing
 	 * @param		plotY					offset within the current Graphics for painting this Thing
+	 * @param		anEvent					a non-null WorldEvent that may trigger highlighting
 	 * @exception	JCavernInternalError	couldn't acquire the necessary to paint this Thing
 	 */
-	public void paint(Graphics g, int plotX, int plotY, WorldEvent anEvent) throws JCavernInternalError
+	public void paint(JCavernApplet inApplet, Graphics g, int plotX, int plotY, WorldEvent anEvent) throws JCavernInternalError
 	{
-		//System.out.println("(Thing) " + getName() + ".paint(g, " + plotX + ", " + plotY + ", " + highlight + ")");
-
 		if (! getInvisible())
 		{
-			if (getImage() == null)
+			Image theImage = getImage(inApplet);
+						
+			if (theImage == null)
 			{
 				g.drawString(getTextSymbol(), plotX, plotY);
 			}
 			else
 			{
-				Image theImage = getImage();
-
 				g.drawImage(theImage,
 								plotX - WorldView.kPreferredImageSize / 2, plotY - WorldView.kPreferredImageSize / 2,
 								WorldView.kPreferredImageSize, WorldView.kPreferredImageSize, null);
