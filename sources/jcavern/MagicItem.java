@@ -8,6 +8,7 @@
 
 package jcavern;
 
+import jcavern.ui.*;
 import java.util.Vector;
 
 /**
@@ -22,19 +23,19 @@ public class MagicItem extends Treasure
 	private int					mPower;
 	
 	/** * Indicates the power to do nothing.*/
-	private static final int	MAGIC_NOTHING = 0;
+	public static final int		MAGIC_NOTHING = 0;
 	
 	/** * Indicates the power to permanently reveal invisiblet Things. */
-	private static final int	MAGIC_REVEAL_INVISIBILITY = 1;
+	public static final int		MAGIC_REVEAL_INVISIBILITY = 1;
 
 	/** * Indicates the power to teleport the player randomly within the world. */
-	private static final int	MAGIC_TELEPORTATION = 2;
+	public static final int		MAGIC_TELEPORTATION = 2;
 
 	/** * Indicates the power to locate all trasure chests, regardless of location. */
-	private static final int	MAGIC_DETECT_TREASURE = 3;
+	public static final int		MAGIC_DETECT_TREASURE = 3;
 
 	/** * Indicates the poiwer to location all magic castles, reguardless of location */
-	private static final int	MAGIC_DETECT_MAGIC_CASTLE = 4;
+	public static final int		MAGIC_DETECT_MAGIC_CASTLE = 4;
 	
 	/**
 	 * Creates a new MagicItem with the given power.
@@ -54,28 +55,28 @@ public class MagicItem extends Treasure
 	
 	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
 	{
-		JCavernWindow.log(aPlayer.getName() + " uses magic item " + getName());
+		MissionCard.log(aPlayer.getName() + " uses magic item " + getName());
 		
 		switch (mPower)
 		{
 			case MAGIC_NOTHING:
-					JCavernWindow.log(getName() + ": nothing happens"); break;
+					MissionCard.log(getName() + ": nothing happens"); break;
 					
 			case MAGIC_REVEAL_INVISIBILITY:
-					JCavernWindow.log(getName() + ": reveal invisibility");
+					MissionCard.log(getName() + ": reveal invisibility");
 					doRevealInvisibility(aPlayer, aWorld);
 					break;
 					
 			case MAGIC_TELEPORTATION:
-					JCavernWindow.log(getName() + ": teleportation"); 
+					MissionCard.log(getName() + ": teleportation"); 
 					doTeleportation(aPlayer, aWorld); break;
 					
 			case MAGIC_DETECT_TREASURE:
-					JCavernWindow.log(getName() + ": detect treasure"); 
+					MissionCard.log(getName() + ": detect treasure"); 
 					doDetectTreasure(aPlayer, aWorld); break;
 					
 			case MAGIC_DETECT_MAGIC_CASTLE:
-					JCavernWindow.log(getName() + ": detect magic castle"); 
+					MissionCard.log(getName() + ": detect magic castle"); 
 					doDetectMagicCastle(aPlayer, aWorld); break;
 			
 			default:
@@ -123,7 +124,7 @@ public class MagicItem extends Treasure
 
 			if (detectee.getInvisible())
 			{
-				JCavernWindow.log("There is an invisible " + detectee.getName());
+				MissionCard.log("There is an invisible " + detectee.getName());
 				detectee.setInvisible(false);
 				aWorld.thingChanged(detectee);
 			}
@@ -139,7 +140,7 @@ public class MagicItem extends Treasure
 			Thing	detectee = (Thing) theThings.elementAt(index);
 			int		direction = aWorld.getDirectionToward(seeker, detectee);
 			
-			JCavernWindow.log("There is a " +
+			MissionCard.log("There is a " +
 					aPrototype.getName() + " " +
 					aWorld.getDistanceBetween(seeker, detectee) + " moves " + 
 					Location.directionToString(direction) + " of " + seeker.getName());
