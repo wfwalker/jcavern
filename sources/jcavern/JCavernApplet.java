@@ -26,6 +26,9 @@ public class JCavernApplet extends Applet
 	/** * A view of the player statistics */
 	private PlayerView			mPlayerView;
 	
+	/** * A view of the player statistics */
+	private MissionView			mMissionView;
+	
 	/** * A model of the game world */
 	private World				mWorld;
 	
@@ -56,7 +59,7 @@ public class JCavernApplet extends Applet
 	public void start()
 	{
 		mWorldView.requestFocus();
-        mWorldView.addKeyListener(new KeyboardCommandListener(mWorld, mPlayer));
+        mWorldView.addKeyListener(new KeyboardCommandListener(mWorld, mWorldView, mPlayer, mMissionView));
 	}
 
 	// Get applet information
@@ -72,31 +75,40 @@ public class JCavernApplet extends Applet
 		setForeground(Color.orange);
 		setFont(new Font("Monospaced", Font.PLAIN, 12));
 
+		System.out.println("jcavern applet document base " + getDocumentBase());
+
 		try
 		{
 			MonsterFactory.loadPrototypes(new URL(getDocumentBase(), "./monster.dat"));
+			Treasure.loadPrototypes(new URL(getDocumentBase(), "./treasure.dat"));
 	
 			// Create a player and a view of the player
 			mPlayer  = new Player("Bill");
 			mPlayerView = new PlayerView(mPlayer);
 			mPlayer.setMission(MonsterFactory.createMission(mPlayer));
+			mMissionView = new MissionView(mPlayer.getMission());
 	
 			// Create a world  and a view of the world
-			mWorld = World.createWorld(mPlayer);
+			mWorld = new World();
+			mWorld.populateFor(mPlayer);
 			mWorldView = new WorldView(mWorld);
 	
-			gLogView = new TextArea(5, 60);
+			gLogView = new TextArea("Welome to JCavern", 5, 60, TextArea.SCROLLBARS_NONE);
 			gLogView.setEditable(false);
 			gLogView.setBackground(Color.black);
 			gLogView.setForeground(Color.orange);
 			
-			mWorldView.setSize(500, 200);		
+			mWorldView.setSize(500, 220);		
 			add(mWorldView);
 			mWorld.addObserver(mWorldView);
 			
-			mPlayerView.setSize(500, 150);		
+			mPlayerView.setSize(500, 50);		
 			add(mPlayerView);
 			mPlayer.addObserver(mPlayerView);
+			
+			mMissionView.setSize(500, 50);		
+			add(mMissionView);
+			mPlayer.getMission().addObserver(mMissionView);
 			
 			add(gLogView);
 			
