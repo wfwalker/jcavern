@@ -137,8 +137,6 @@ public class World extends Observable
 	{
 		int chestCount = aPlayer.getMission().getQuota() / 2;
 
-		System.out.println("Place " + chestCount + " Random Treasure Chests");
-		
 		try
 		{
 			for (int index = 0; index < chestCount; index++)
@@ -166,8 +164,6 @@ public class World extends Observable
 	{
 		int	numberOfThings = (int) (getBounds().width * getBounds().height * fraction);
 		
-		System.out.println("Place fraction " + fraction + " Random " + aThingPrototype);
-		
 		placeRandom(aThingPrototype, numberOfThings);
 		
 		return numberOfThings;
@@ -182,8 +178,6 @@ public class World extends Observable
 	 */
 	public void placeRandom(Thing aThingPrototype, int numberOfThings) throws JCavernInternalError
 	{
-		System.out.println("Place " + numberOfThings + " Random " + aThingPrototype);
-		
 		try
 		{
 			for (int index = 0; index < numberOfThings; index++)
@@ -206,8 +200,6 @@ public class World extends Observable
 	 */
 	public void placeWorthyOpponents(Player aPlayer, int numberOfMonsters) throws JCavernInternalError
 	{
-		System.out.println("Place " + numberOfMonsters + " Worthy Opponents");
-
 		try
 		{		
 			for (int index = 0; index < numberOfMonsters; index++)
@@ -403,8 +395,9 @@ public class World extends Observable
 		
 		if (isEmpty(newLocation)) // no collision on move
 		{
-			remove(aThing);
-			place(newLocation, aThing);
+			privateRemove(aThing);
+			privatePlace(newLocation, aThing);
+			eventHappened(WorldContentsEvent.moved(oldLocation, aThing));		
 		}
 		else // collision on move, find out what's currently there
 		{
@@ -598,29 +591,6 @@ public class World extends Observable
 	}
 	
 	/**
-	 * Places a Thing at the given location.
-	 *
-	 * @param		aLocation					a non-null Location
-	 * @param		aThing						a non-null Thing to place at that location
-	 * @exception	ThingCollisionException		there's already a Thing at that location
-	 * @exception	JCavernInternalError		could not place the Thing.
-	 */
-	public void place(Location aLocation, Thing aThing) throws ThingCollisionException, JCavernInternalError
-	{
-		if (mLocationsToThings.containsKey(aLocation))
-		{
-			throw new ThingCollisionException(aThing, "There's already " + aThing + " at " + aLocation);
-		}
-		
-		mLocationsToThings.put(aLocation, aThing);
-		mThingsToLocations.put(aThing, aLocation);
-		
-		aThing.thingPlaced(this, aLocation);
-		
-		eventHappened(WorldContentsEvent.placed(aLocation, aThing));
-	}
-	
-	/**
 	 * Retrieves the location of the given thing.
 	 *
 	 * @param		aThing					a non-null Thing
@@ -638,12 +608,62 @@ public class World extends Observable
 	}
 	
 	/**
-	 * Remove the given thing from the world.
+	 * Places a Thing at the given location and sends a WorldContentsEvent.
+	 *
+	 * @param		aLocation					a non-null Location
+	 * @param		aThing						a non-null Thing to place at that location
+	 * @exception	ThingCollisionException		there's already a Thing at that location
+	 * @exception	JCavernInternalError		could not place the Thing.
+	 */
+	public void place(Location aLocation, Thing aThing) throws ThingCollisionException, JCavernInternalError
+	{
+		privatePlace(aLocation, aThing);
+		addObserver(aThing.getGraphicalThingView());
+		eventHappened(WorldContentsEvent.placed(aLocation, aThing));
+	}
+	
+	/**
+	 * Places a Thing at the given location.
+	 *
+	 * @param		aLocation					a non-null Location
+	 * @param		aThing						a non-null Thing to place at that location
+	 * @exception	ThingCollisionException		there's already a Thing at that location
+	 * @exception	JCavernInternalError		could not place the Thing.
+	 */
+	private void privatePlace(Location aLocation, Thing aThing) throws ThingCollisionException, JCavernInternalError
+	{
+		if (mLocationsToThings.containsKey(aLocation))
+		{
+			throw new ThingCollisionException(aThing, "There's already " + aThing + " at " + aLocation);
+		}
+		
+		mLocationsToThings.put(aLocation, aThing);
+		mThingsToLocations.put(aThing, aLocation);
+		
+		aThing.thingPlaced(this, aLocation);
+	}
+	
+
+	/**
+	 * Remove the given thing from the world and send a WorldContentsEvent.
 	 *
 	 * @param		thingToRemove				a non-null Thing to remove
 	 * @exception	JCavernInternalError		could not remove the Thing.
 	 */
 	public void remove(Thing thingToRemove) throws JCavernInternalError
+	{
+		Location locationToRemove = privateRemove(thingToRemove);
+		deleteObserver(thingToRemove.getGraphicalThingView());
+		eventHappened(WorldContentsEvent.removed(locationToRemove, thingToRemove));
+	}
+
+	/**
+	 * Remove the given thing from the world. Also used for moving things.
+	 *
+	 * @param		thingToRemove				a non-null Thing to remove
+	 * @exception	JCavernInternalError		could not remove the Thing.
+	 */
+	private Location privateRemove(Thing thingToRemove) throws JCavernInternalError
 	{
 		Location	locationToRemove = (Location) mThingsToLocations.get(thingToRemove);
 		
@@ -656,7 +676,7 @@ public class World extends Observable
 		mThingsToLocations.remove(thingToRemove);
 		
 		thingToRemove.thingRemoved(this, locationToRemove);
-
-		eventHappened(WorldContentsEvent.removed(locationToRemove, thingToRemove));
+		
+		return locationToRemove;
 	}
 }
