@@ -34,6 +34,37 @@ public class MagicItem extends Treasure
 	{
 		return getName();
 	}
+	
+	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
+	{
+		JCavernApplet.current().log(aPlayer.getName() + " uses magic item " + getName());
+		
+		switch (mPower)
+		{
+			case MAGIC_NOTHING:
+					JCavernApplet.current().log(getName() + ": nothing happens"); break;
+					
+			case MAGIC_REVEAL_INVISIBILITY:
+					JCavernApplet.current().log(getName() + ": reveal invisibility"); break;
+					
+			case MAGIC_TELEPORTATION:
+					doTeleportation(aPlayer, aWorld);
+					JCavernApplet.current().log(getName() + ": teleportation"); break;
+					
+			case MAGIC_DETECT_TREASURE:
+					JCavernApplet.current().log(getName() + ": detect treasure"); break;
+					
+			case MAGIC_DETECT_MAGIC_CASTLE:
+					JCavernApplet.current().log(getName() + ": detect magic castle"); break;
+			
+			default:
+					throw new JCavernInternalError("MagicItem.startUseBy(), known power");
+		}
+	}
+	
+	public void stopUseBy(Player aPlayer)
+	{
+	}
 
 	public Object clone()
 	{
