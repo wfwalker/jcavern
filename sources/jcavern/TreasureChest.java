@@ -83,13 +83,6 @@ public class TreasureChest extends Thing
 		{
 			return new TreasureChest(Treasure.getRandom(), 0);
 		}
-	}
-	
-	/*public void paint(Graphics g, int plotX, int plotY)
-	{
-		Image theImage = JCavernApplet.current().getBoardImage("chest");
-		
-		g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
-	}*/
+	}	
 }
 
