@@ -8,6 +8,7 @@
 
 package jcavern;
 
+import jcavern.ui.*;
 import java.util.Observable;
 
 /**
@@ -53,7 +54,7 @@ public class Mission extends Observable
 		if (theVictim.getName().equals(mTarget.getName()))
 		{
 			mKills++;
-			JCavernWindow.log("You mission is now " + this);
+			MissionCard.log("You mission is now " + this);
 			
 			setChanged();
 			notifyObservers();		

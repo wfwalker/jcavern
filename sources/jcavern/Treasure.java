@@ -8,6 +8,7 @@
 
 package jcavern;
 
+import jcavern.ui.*;
 import java.util.*;
 import java.net.*;
 import java.io.*;
@@ -35,13 +36,13 @@ public abstract class Treasure implements Cloneable
 	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
 	{
 		aPlayer.startUsing(this);
-		JCavernWindow.log(aPlayer.getName() + " begins using " + getName());
+		MissionCard.log(aPlayer.getName() + " begins using " + getName());
 	}
 	
 	public void stopUseBy(Player aPlayer, World aWorld)
 	{
 		aPlayer.stopUsing(this);
-		JCavernWindow.log(aPlayer.getName() + " stops using " + getName());
+		MissionCard.log(aPlayer.getName() + " stops using " + getName());
 	}
 	
 	public abstract Object clone();
@@ -105,5 +106,4 @@ public abstract class Treasure implements Cloneable
 
 		System.out.println("STOP " + gTreasures);
 	}
-
 }
