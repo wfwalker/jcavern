@@ -8,12 +8,19 @@
 
 package jcavern;
 
+import java.awt.Graphics;
+
+/**
+ * The Player class represents the current state of the player.
+ */
 public class Player extends Combatant
 {
 	private int			mGold;
 	private Sword		mSword;
 	private int			mArrows;
 	private Mission		mMission;
+	
+	private	Castle		mCastle;
 	
 	public Player(String name)
 	{
@@ -75,7 +82,23 @@ public class Player extends Combatant
 		return 0;
 	}
 	
-	public int computeDamage(Combatant opponent)
+	public boolean canAttack(Combatant aCombatant)
+	{
+		return aCombatant.vulnerableToPlayerAttack(this);
+	}
+	
+	public boolean canRangedAttack(Combatant aCombatant)
+	{
+		System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
+		return (mArrows > 0) && aCombatant.vulnerableToPlayerRangedAttack(this);
+	}
+	
+	public boolean vulnerableToMonsterAttack(Monster aMonster)
+	{
+		return getCastle() == null;
+	}
+	
+	public int computeDamageTo(Combatant opponent)
 	{
 	/*
 	     if exp>1.0 then
@@ -109,7 +132,7 @@ public class Player extends Combatant
 		notifyObservers();	
 	}
 	
-	public int computeRangedDamage(Combatant opponent)
+	public int computeRangedDamageTo(Combatant opponent)
 	{
 	/*
 		Message(' Arrow hit the '+Q[xx,yy].m.name,FALSE);
@@ -118,20 +141,13 @@ public class Player extends Combatant
 		if Q[xx,yy].m.points<0 then Monster_died(xx,yy);
 	*/
 
-		if (opponent instanceof Tree)
-		{
-			return 0;
-		}
-		else
-		{
-			return (int) (4 + getPoints() / 10.0);
-		}
+		return (int) (4 + getPoints() / 10.0);
 	}
 	
 	public String getAppearance()
 	{
 		return "P";
-	}
+	}	
 	
 	public int getGold()
 	{
@@ -151,5 +167,25 @@ public class Player extends Combatant
 	public Mission getMission()
 	{
 		return mMission;
+	}
+	
+	public Castle getCastle()
+	{
+		return mCastle;
+	}
+	
+	public void setCastle(Castle aCastle)
+	{
+		mCastle = aCastle;
+	}
+	
+	public void paint(Graphics g, int plotX, int plotY)
+	{
+		super.paint(g, plotX, plotY);
+		
+		if (getCastle() != null)
+		{
+			getCastle().paint(g, plotX, plotY);
+		}
 	}
 }
