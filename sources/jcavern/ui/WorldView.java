@@ -21,11 +21,16 @@ import java.util.*;
  */
 public class WorldView extends Canvas implements Observer
 {
+	/** * Preferred size of images */
+	public static final int		kPreferredImageSize = 32;
+	
 	/** * Number of pixels between board pictures. */
-	private static final int	kSpacing = 40;
+	private static final int	kSpacing = 5 * kPreferredImageSize / 4;
 	
 	/** * The World being viewed by this View. */
 	private World				mModel;
+	
+	private Hashtable			mEvents;
 	
 	/**
 	 * Creates a new WorldView for the given World.
@@ -37,6 +42,7 @@ public class WorldView extends Canvas implements Observer
 		System.out.println("Create WorldView");
 		
 		mModel = aWorld;
+		mEvents = new Hashtable();
 		
 		setBackground(Color.black);
 		setForeground(JCavernApplet.CavernOrange);
@@ -47,7 +53,26 @@ public class WorldView extends Canvas implements Observer
 	 */
 	public void update(Observable a, Object b)
 	{
-		repaint();
+		// System.out.println("WorldView.update(" + a + ", " + b + ")");
+		
+		WorldEvent anEvent = (WorldEvent) b;
+		
+		switch (anEvent.getEventCode())
+		{
+			case WorldEvent.TURN_START:
+				mEvents = new Hashtable();
+				break;
+				
+			case WorldEvent.ATTACKED_HIT:
+			case WorldEvent.ATTACKED_KILLED:
+			case WorldEvent.REVEALED:
+				mEvents.put(anEvent.getSubject(), anEvent);
+				break;
+				
+			case WorldEvent.TURN_STOP:
+				repaint();
+				break;
+		}
 	}
 	
 	/**
@@ -55,6 +80,8 @@ public class WorldView extends Canvas implements Observer
 	 */
 	public void paint(Graphics g)
 	{
+		//System.out.println("--- WorldView.paint()");
+		
 		Player		thePlayer = mModel.getPlayer();
 
 		g.drawRect(0, 0, getSize().width - 1, getSize().height - 1);
@@ -73,24 +100,40 @@ public class WorldView extends Canvas implements Observer
 				for (int xIndex = -3; xIndex <= 3; xIndex++)
 				{
 					Location	aLocation = new Location(xIndex + theLocation.getX(), yIndex + theLocation.getY());
-					int			plotX = (kSpacing / 2) + kSpacing * (xIndex + 3);
-					int			plotY = (kSpacing / 2) + kSpacing * (yIndex + 3);
 					
 					if (mModel.inBounds(aLocation))
 					{
+						int		plotX = (kSpacing / 2) + kSpacing * (xIndex + 3);
+						int		plotY = (kSpacing / 2) + kSpacing * (yIndex + 3);
+
 						if (! mModel.isEmpty(aLocation))
 						{
-							Thing theThing = mModel.getThing(aLocation);
+							Thing	theThing = mModel.getThing(aLocation);
+							boolean	highlight = mEvents.containsKey(theThing);
 					
-							theThing.paint(g, plotX, plotY);
+							/*if (mEvents.containsKey(theThing))
+							{
+								WorldEvent	anEvent = (WorldEvent) mEvents.get(theThing);
+								
+								if (! anEvent.getSubject().getInvisible())
+								{
+									g.drawOval(plotX - 3 * kSpacing / 4, plotY - 3 * kSpacing / 4, 3 * kSpacing / 2, 3 * kSpacing / 2);
+								}
+							}
+							else
+							{
+								// System.out.println("no events for " + theThing + ", just painting");
+							}*/
+							
+							theThing.paint(g, plotX, plotY, highlight);
 						}
 						else
 						{
 							g.drawString(".", plotX, plotY);
 						}
-					}
-				}
-			}
+					} // end if mModel.isEmpty
+				} // end for xIndex
+			} // end for yIndex			
 		}
 		catch (JCavernInternalError jcie)
 		{
