@@ -9,6 +9,7 @@ import jcavern.*;
  * Tests functionality of jcavern.
  *
  * @author	Bill Walker
+ * @version	$Id$
  */
 public class CombatantTest extends TestCase
 {
@@ -108,5 +109,29 @@ public class CombatantTest extends TestCase
 		mPlayer.attack(mWorld, Location.WEST);
 		
 		assert("testAttackTree removes tree", mWorld.isEmpty(treeLocation));
+	}
+	
+	public void testVulnerability()
+	{
+		Monster aMonster = new Monster("Bogus", "monster", "Bo", 1, 1, false);
+		Tree	aTree = new Tree();
+		
+		assert("player attacks monster", mPlayer.canAttack(aMonster));
+		assert("player attacks tree", mPlayer.canAttack(aTree));
+		assert("monster attacks player", aMonster.canAttack(mPlayer));
+		assert("monster NOT attacks tree", ! aMonster.canAttack(aTree));
+		assert("tree NOT attacks player", ! aTree.canAttack(mPlayer));
+		assert("tree NOT attacks monster", ! aTree.canAttack(aMonster));
+	}
+	
+	public void testPlayerInCastleVulnerability()
+	{
+		Monster aMonster = new Monster("Bogus", "monster", "Bo", 1, 1, false);
+		Tree	aTree = new Tree();
+		
+		mPlayer.setCastle(new Castle());
+		
+		assert("monster NOT attacks player", ! aMonster.canAttack(mPlayer));
+		assert("tree NOT attacks player", ! aTree.canAttack(mPlayer));
 	}
 }
