@@ -68,7 +68,7 @@ public class Tree extends Combatant
 	
 	public int computeRangedDamageTo(Combatant opponent) { return 0; }
 	
-	public int getWorth() { return 0; }
+	public int getWorth() { return 1; }
 	
 	public void paint(Graphics g, int plotX, int plotY)
 	{
