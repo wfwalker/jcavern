@@ -113,6 +113,10 @@ public abstract class Combatant extends Thing
 		{
 			finishAttack(aWorld, computeDamageTo(opponent), opponent);
 		}
+		else
+		{
+			JCavernApplet.log(getName() + " misses.");
+		}
 	}
 	
 	// this method can go up to Combatant
@@ -145,6 +149,10 @@ public abstract class Combatant extends Thing
 		if (this.canRangedAttack(opponent))
 		{
 			finishAttack(aWorld, computeRangedDamageTo(opponent), opponent);
+		}
+		else
+		{
+			JCavernApplet.log(getName() + " misses.");
 		}
 	}
 		
