@@ -21,7 +21,7 @@ import java.io.*;
  */
 public class MonsterFactory
 {
-	private static final String		gImageNames[] = { "monster", "eyeball", "darklord", "chavin", "wahoo", "gobbler", "jackolantern" };
+	private static final String		gImageNames[] = { "monster", "eyeball", "darklord", "chavin", "wahoo", "gobbler", "jackolantern", "snake" };
 	
 	/** * A list of Monsters stored in the order they were read from monsters.dat. */
 	public static Vector			gMonsters;
@@ -97,18 +97,31 @@ public class MonsterFactory
 
 			while ((aMessageLine = aReader.readLine()) != null)
 			{
-				String				aName = aMessageLine.substring(0, 15).trim();
+				StringTokenizer		aTokenizer = new StringTokenizer(aMessageLine, ",");
 				
-				String				theNumbers = aMessageLine.substring(15);
-				StringTokenizer		aTokenizer = new StringTokenizer(theNumbers, " ");
+				String				aName = aTokenizer.nextToken().trim();				
+				Double				points = Double.valueOf(aTokenizer.nextToken().trim());
+				Double				worth = Double.valueOf(aTokenizer.nextToken().trim());
+				Integer				invisible = Integer.valueOf(aTokenizer.nextToken().trim());
+				String				imageName;
 				
-				Double				points = Double.valueOf(aTokenizer.nextToken());
-				Double				worth = Double.valueOf(aTokenizer.nextToken());
-				Integer				invisible = Integer.valueOf(aTokenizer.nextToken());
-				String				imageName = gImageNames[(imageNameIndex++) % gImageNames.length];
-				Monster				theMonster = new Monster(aName, imageName, aName.substring(0, 2), points.doubleValue(), worth.doubleValue(), invisible.intValue() < 0);
-				
-				gMonsters.addElement(new Monster(aName, imageName, aName.substring(0, 2), points.doubleValue(), worth.doubleValue(), invisible.intValue() < 0));
+				if (aName.startsWith("T "))
+				{
+					imageName = "tree2";
+				}
+				else
+				{
+					imageName = gImageNames[(imageNameIndex++) % gImageNames.length];
+				}
+
+				gMonsters.addElement(
+					new Monster(
+						aName,
+						imageName,
+						aName.substring(0, 2),
+						points.doubleValue(),
+						worth.doubleValue(),
+						invisible.intValue() < 0));
 			}
 		}
 		catch (MalformedURLException mue)
