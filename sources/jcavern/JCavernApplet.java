@@ -8,6 +8,7 @@
 
 package jcavern;
 
+import jcavern.ui.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
@@ -25,6 +26,9 @@ public class JCavernApplet extends Applet
 {
 	public static final Color		CavernOrange = new Color(0xFF, 0x66, 0x00);
 	
+	public static final String		MonsterImageNames[] = { "tree2", "snail", "hoplite", "monster", "demon", "wraith", "rajah", "eyeball", "darklord", "chavin", "wahoo", "gobbler", "jackolantern", "snake" };
+	public static final String		OtherImageNames[] = { "player", "chest", "tree" };
+
 	/** * The current player. */
 	private Player					mCurrentPlayer;
 	
@@ -36,16 +40,24 @@ public class JCavernApplet extends Applet
 
 	/** * The current applet */
 	private static JCavernApplet	gApplet;
-	
-	private Button					mNewMissionButton;
-	private Button					mNewPlayerButton;
-	private Button					mLoadPlayerButton;
-	private Button					mSavePlayerButton;
-	private TextField				mLabel;
-	
-	public static JCavernApplet current()
+
+	private static JCavernApplet current()
 	{
 		return gApplet;
+	}
+	
+	public static void displayHomeCard()
+	{
+		if (current() != null)
+		{
+			current().privateDisplayHomeCard();
+		}
+	}
+	
+	private void privateDisplayHomeCard()
+	{
+		IndexCard anIndex = new IndexCard(current(), mCurrentPlayer);
+		anIndex.show();
 	}
 	
 	public static void setPlayer(Player aPlayer)
@@ -61,18 +73,6 @@ public class JCavernApplet extends Applet
 		mCurrentPlayer = aPlayer;
 					
 		System.out.println("current player " + mCurrentPlayer + " is dead " + mCurrentPlayer.isDead());
-		
-		if ((mCurrentPlayer != null) && (! mCurrentPlayer.isDead()))
-		{
-			mNewMissionButton.setEnabled(true);
-			mLabel.setText("Current Player is " + mCurrentPlayer.getName() + " with " + mCurrentPlayer.getPoints() + " points");
-			
-		}
-		else
-		{
-			mNewMissionButton.setEnabled(false);
-			mLabel.setText("Press 'New Player' to create a new Player");
-		}
 	}
 
 	/**
@@ -82,10 +82,27 @@ public class JCavernApplet extends Applet
 	{
 		mImages = new Hashtable();
 		gApplet = this;
+		mTracker = new MediaTracker(this);
 	}
-		
-	public Image getBoardImage(String aName)
+	
+	public static Image getBoardImage(String aName) throws JCavernInternalError
 	{
+		if (current() != null)
+		{
+			return current().privateGetBoardImage(aName);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	private Image privateGetBoardImage(String aName) throws JCavernInternalError
+	{
+		if (! mImages.containsKey(aName))
+		{
+			throw new JCavernInternalError("no such image " + aName + " in dictionary " + mImages);
+		}
 		return (Image) mImages.get(aName);
 	}
 	
@@ -102,120 +119,73 @@ public class JCavernApplet extends Applet
 		return "JCavern 0.0, Bill Walker";
 	}
 
-	Image fetchImageAndWait(URL imageURL) throws InterruptedException
+	private void loadDataFromServer() throws JCavernInternalError
 	{
-		Image image = getImage(imageURL);
-		
-		mTracker.addImage(image, 1);
-		mTracker.waitForID(1);
-		return image;
-	}
-
-	// Initialize the applet
-	public void init()
-	{
-		//setBackground(Color.black);
-		//setForeground(CavernOrange);
-		//setFont(new Font("Monospaced", Font.PLAIN, 12));
-		
-		mTracker = new MediaTracker(this);
-
-		System.out.println("jcavern applet document base " + getDocumentBase());
-
 		try
-		{	
-			// get data from server
-			
-			mImages.put("monster", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/monster.gif")));
-			mImages.put("demon", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/demon.gif")));
-			mImages.put("player", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/player.gif")));
-			mImages.put("tree", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/tree.gif")));
-			mImages.put("tree2", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/tree2.gif")));
-			mImages.put("eyeball", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/eyeball.gif")));
-			mImages.put("chest", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/chest.gif")));
-			mImages.put("chavin", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/chavin.gif")));
-			mImages.put("darklord", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/darklord.gif")));
-			mImages.put("gobbler", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/gobbler.gif")));
-			mImages.put("jackolantern", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/jackolantern.gif")));
-			mImages.put("wahoo", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/wahoo.gif")));
-			mImages.put("snake", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/snake.gif")));
-			mImages.put("rajah", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/rajah.gif")));
-			mImages.put("wraith", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/wraith.gif")));
-
+		{
 			MonsterFactory.loadPrototypes(new URL(getDocumentBase(), "bin/monster.dat"));
 			Treasure.loadPrototypes(new URL(getDocumentBase(), "bin/treasure.dat"));
-
-			// add the text field
-			mLabel = new TextField("Press 'New Player' to create a new Player", 60);
-			add(mLabel);
-			
-			// add the load-player button
-			mLoadPlayerButton = new Button("Load Player");
-			mLoadPlayerButton.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					System.out.println("Load Player ");
-				}
-			});
-			mLoadPlayerButton.setEnabled(false);
-			add(mLoadPlayerButton);
-			
-			mSavePlayerButton = new Button("Save Player");
-			mSavePlayerButton.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					System.out.println("Save Player ");
-				}
-			});
-			mSavePlayerButton.setEnabled(false);
-			add(mSavePlayerButton);
-			
-			mNewMissionButton = new Button("New Mission");
-			mNewMissionButton.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					System.out.println("New Mission ");
-					// build a mission window
-					JCavernWindow	window = new JCavernWindow(mCurrentPlayer);
-					
-					window.setSize(500, 600);
-					window.setTitle("JCavern Mission");
-					window.setVisible(true);
-				}
-			});
-			mNewMissionButton.setEnabled(false);
-			add(mNewMissionButton);
-			
-			// add the create-a-new-player button
-			mNewPlayerButton = new Button("New Player");
-			mNewPlayerButton.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					System.out.println("New Player ");
-					// build a mission window
-					PlayerWindow	window = new PlayerWindow(null);
-					
-					window.setSize(200, 400);
-					window.setTitle("JCavern Player");
-					window.setVisible(true);
-					
-					mCurrentPlayer = window.getPlayer();
-				}
-			});
-			add(mNewPlayerButton);
-		}
-		catch(InterruptedException ie)
-		{
-			System.out.println("JCaverApplet.init interrupted exception " + ie);
 		}
 		catch(MalformedURLException mue)
 		{
 			System.out.println("JCaverApplet.init " + mue);
+			throw new JCavernInternalError("Can't load monster and treasure data");
+		}
+		
+		loadArrayOfImages(MonsterImageNames);
+		loadArrayOfImages(OtherImageNames);
+	}
+	
+	private void loadArrayOfImages(String[] imageNames) throws JCavernInternalError
+	{		
+		for (int index = 0; index < imageNames.length; index++)
+		{
+			try
+			{
+				URL imageURL = new URL(getDocumentBase(), "bin/images/" + imageNames[index] + ".gif");
+	
+				Image image = getImage(imageURL);
+				
+				mTracker.addImage(image, 1);
+				mTracker.waitForID(1);
+				
+				if (mTracker.isErrorID(index))
+				{
+					throw new JCavernInternalError("Can't load image " + mTracker.getErrorsID(index));
+				}
+				
+				//System.out.println("name " + imageNames[index] + " image = " + image);
+
+				mImages.put(new String(imageNames[index]), image);
+			}
+			catch(InterruptedException ie)
+			{
+				System.out.println("JCaverApplet.init interrupted exception " + ie);
+				throw new JCavernInternalError("Can't load monster images");
+			}
+			catch(MalformedURLException mue)
+			{
+				System.out.println("JCaverApplet.init " + mue);
+				throw new JCavernInternalError("Can't load monster images");
+			}
 		}
 	}
-
+	
+	/**
+	 * Initialize the applet
+	 */
+	public void init()
+	{
+		try
+		{
+			loadDataFromServer();
+		
+			IndexCard anIndex = new IndexCard(this, null);
+			anIndex.show();
+		}
+		catch (JCavernInternalError jcie)
+		{
+			System.out.println("Can't initialize applet!");
+		}
+	}
 }
