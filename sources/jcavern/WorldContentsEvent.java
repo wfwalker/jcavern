@@ -64,8 +64,8 @@ public class WorldContentsEvent extends WorldEvent
 	/**
 	 * Creates a WorldContentsEvent for things that move.
 	 *
-	 * @param	aThing		a non-null Thing that was revealed
-	 * @param	aCause		a non-null Thing that did the revealing
+	 * @param	oldLocation	a non-null Location from which the Thing moved
+	 * @param	aThing		a non-null Thing that moved
 	 * @return				a non-null WorldContentsEvent
 	 */
 	public static WorldContentsEvent moved(Location oldLocation, Thing aThing)

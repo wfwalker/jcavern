@@ -29,6 +29,11 @@ public abstract class Combatant extends Thing
 	/** * How many Combatants this Combatant has killed */
 	private int					mKills;
 
+	/**
+	 * GraphicalCombatantView controls how Combatants appear in a WorldView.
+	 * Combatants are highlighted when they are involved in combat.
+	 * Highlighting means displaying a graphical indicator of remaining points underneath the board image.
+	 */
 	public class GraphicalCombatantView extends Thing.GraphicalThingView
 	{
 		/**
@@ -422,7 +427,8 @@ public abstract class Combatant extends Thing
 	/**
 	 * Creates a GraphicalThingView appropriate to this Thing.
 	 *
-	 * @return	a non-nullGraphicalThingView appropriate to this Thing.
+	 * @param	inImageName		a non-null String image name
+	 * @return					a non-null GraphicalThingView appropriate to this Thing.
 	 */
 	public GraphicalThingView createGraphicalThingView(String inImageName)
 	{

@@ -34,6 +34,11 @@ public class Monster extends Combatant
 	/** * Likelihood that this monster wants to move on a given turn */
 	private static int		kMoveRadius = 4;
 	
+	/**
+	 * GraphicalMonsterViews controls how monsters appear in a WorldView.
+	 * Monsters appear very much like any Combatant in a WorldView, except that
+	 * they only hightlight when they are attacking a Player.
+	 */
 	public class GraphicalMonsterView extends Combatant.GraphicalCombatantView
 	{
 		/**
@@ -52,6 +57,11 @@ public class Monster extends Combatant
 				((anEvent.getCause() == Combatant.this) && (anEvent.getSubject() instanceof Player));
 		}
 		
+		/**
+		 * Creates a new GraphicalMonsterView.
+		 *
+		 * @param	inImageName		the non-null String name of the image file
+		 */
 		public GraphicalMonsterView(String inImageName)
 		{
 			super(inImageName);
@@ -61,7 +71,8 @@ public class Monster extends Combatant
 	/**
 	 * Creates a GraphicalThingView appropriate to this Thing.
 	 *
-	 * @return	a non-nullGraphicalThingView appropriate to this Thing.
+	 * @param	inImageName		a non-null String image name
+	 * @return					a non-null GraphicalThingView appropriate to this Thing.
 	 */
 	public GraphicalThingView createGraphicalThingView(String inImageName)
 	{

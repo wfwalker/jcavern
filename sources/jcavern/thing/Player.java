@@ -84,13 +84,13 @@ public class Player extends Combatant
 	/**
 	 * Creates a GraphicalThingView appropriate to this Thing.
 	 *
-	 * @return	a non-nullGraphicalThingView appropriate to this Thing.
+	 * @param	inImageName		a non-null String image name
+	 * @return					a non-null GraphicalThingView appropriate to this Thing.
 	 */
 	public GraphicalThingView createGraphicalThingView(String inImageName)
 	{
 		return new GraphicalPlayerView(inImageName);
 	}
-//-----------------
 
 	/**
 	 * Moves an item from the unused list to the in use list.
