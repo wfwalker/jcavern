@@ -34,7 +34,7 @@ public class PlayerTest extends TestCase
 	 *
 	 * @exception	ThingCollisionException		placed two things in the same place
 	 */
-	public void setUp() throws ThingCollisionException
+	public void setUp() throws ThingCollisionException, JCavernInternalError
 	{
 		// Create a world
 		mWorld = new World();

@@ -32,7 +32,7 @@ public class CombatantTest extends TestCase
 	/**
 	 * Builds a world and a player, puts the player in the world.
 	 */
-	public void setUp() throws ThingCollisionException
+	public void setUp() throws ThingCollisionException, JCavernInternalError
 	{
 		// Create a world
 		mWorld = new World();
