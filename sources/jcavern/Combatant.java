@@ -309,17 +309,14 @@ public abstract class Combatant extends Thing
 		return mMaximumPoints;
 	}
 	
-	public void paint(Graphics g, int plotX, int plotY) throws JCavernInternalError
-	{
-		paint(g, plotX, plotY, false);
-	}
-	
 	public void paint(Graphics g, int plotX, int plotY, boolean drawGauge) throws JCavernInternalError
 	{
+		// System.out.println("(Combatant) " + getName() + ".paint(g, " + plotX + ", " + plotY + ", " + drawGauge + ")");
+
 		final int gaugeThickness = 3;
 		final int gaugeLength = 32;
 		
-		super.paint(g, plotX, plotY);
+		super.paint(g, plotX, plotY, false);
 		
 		if (drawGauge && (! getInvisible()))
 		{
