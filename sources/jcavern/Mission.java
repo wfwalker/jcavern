@@ -53,7 +53,7 @@ public class Mission extends Observable
 		if (theVictim.getName().equals(mTarget.getName()))
 		{
 			mKills++;
-			JCavernApplet.log("You mission is now " + this);
+			JCavernApplet.current().log("You mission is now " + this);
 			
 			setChanged();
 			notifyObservers();		
