@@ -49,6 +49,9 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
+	/**
+	 * Retrieves an unused item by index.
+	 */
 	public Treasure getUnusedTreasureAt(int unusedIndex)
 	{
 		if ((unusedIndex < 0) || (unusedIndex >= mUnusedItems.size()))
@@ -59,6 +62,9 @@ public class Player extends Combatant
 		return (Treasure) mUnusedItems.elementAt(unusedIndex);
 	}
 	
+	/**
+	 * Stops using the given item.
+	 */
 	public void stopUsing(Treasure anItem)
 	{
 		mInUseItems.removeElement(anItem);
@@ -68,6 +74,9 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
+	/**
+	 * Retrives an in use item by index.
+	 */
 	public Treasure getInUseTreasureAt(int inUseIndex)
 	{
 		if ((inUseIndex < 0) || (inUseIndex >= mInUseItems.size()))
@@ -78,11 +87,17 @@ public class Player extends Combatant
 		return (Treasure) mInUseItems.elementAt(inUseIndex);
 	}
 
+	/**
+	 * Retrieves the Vector of in use items.
+	 */
 	public Vector getInUseItems()
 	{
 		return mInUseItems;
 	}
 	
+	/**
+	 * Retrieves sthe Vector of items not in use.
+	 */
 	public Vector getUnusedItems()
 	{
 		return mUnusedItems;
@@ -109,8 +124,8 @@ public class Player extends Combatant
 		Sword aSword = new Sword("Sword", 1);
 		receiveItem(aSword);
 		startUsing(aSword);
-		receiveItem(new Armour("Armour", 5));
-		receiveItem(new MagicItem("Amulet", 2));
+		receiveItem(new MagicItem("Pants", 3));
+		receiveItem(new MagicItem("Shoes", 4));
 		mArrows = 20;
 	}
 	
@@ -145,7 +160,7 @@ public class Player extends Combatant
 	
 	public void setMission(Mission aMission)
 	{
-		JCavernApplet.current().log(getName()+ "'s mission is " + aMission);
+		JCavernApplet.log(getName()+ "'s mission is " + aMission);
 		mMission = aMission;
 	}
 	
@@ -184,7 +199,7 @@ public class Player extends Combatant
 	
 	public boolean canAttack(Combatant aCombatant)
 	{
-		return aCombatant.vulnerableToPlayerAttack(this);
+		return (getSword() != null) && aCombatant.vulnerableToPlayerAttack(this);
 	}
 	
 	public boolean canRangedAttack(Combatant aCombatant)
@@ -344,13 +359,14 @@ public class Player extends Combatant
 	
 	public void paint(Graphics g, int plotX, int plotY)
 	{
-		Image theImage = JCavernApplet.current().getBoardImage("player");
-		
-		g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
-
-		if (getCastle() != null)
+		if (getCastle() == null)
 		{
+			super.paint(g, plotX, plotY);
+		}
+		else
+		{
+			super.paint(g, plotX, plotY);
 			getCastle().paint(g, plotX, plotY);
-		}		
+		}
 	}
 }
