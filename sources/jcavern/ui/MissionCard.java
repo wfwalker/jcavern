@@ -75,7 +75,7 @@ public class MissionCard extends AppletCard implements Observer
 
 		// Create a world  and a view of the world
 		mWorld = new World();
-		mWorldView = new WorldView(inApplet, mWorld);
+		mWorldView = new WorldView(inApplet, mWorld, null);
 
 		mLogView = new LogView(inApplet, mPlayer);
 		mLogView.setSize(300, 200);
@@ -101,6 +101,8 @@ public class MissionCard extends AppletCard implements Observer
 		mWorld.deleteObserver(this);
 		mPlayer.deleteObserver(mPlayerView);
 		mPlayer.getMission().deleteObserver(mMissionView);
+		
+		mWorldView.stopThread();
 		
 		mWorldView = null;
 		mPlayerView = null;
