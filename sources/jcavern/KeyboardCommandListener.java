@@ -491,7 +491,7 @@ public class KeyboardCommandListener extends KeyAdapter
 				mWorld.remove(theCastle);
 				doMove(direction);
 				mPlayer.setCastle(theCastle);
-				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you entered " + tce.getMovee().getName()));
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "you entered the castle"));
 			}
 			else if (tce.getMovee() instanceof Combatant)
 			{
