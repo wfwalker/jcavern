@@ -12,6 +12,13 @@ import java.awt.event.*;
 import java.awt.*;
 import java.util.Enumeration;
 
+/**
+ * KeyboardCommandListener receives keypress events, tracks input modes, and causes the Player
+ * to do the appropriate actions.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
+ */
 public class KeyboardCommandListener extends KeyAdapter
 {
 	/** * A model of the game world */
@@ -29,13 +36,13 @@ public class KeyboardCommandListener extends KeyAdapter
 	/** * In normal command mode (movement, etc) */
 	private static final int	NORMAL_MODE = 1;
 	
-	/** * In normal command mode (movement, etc) */
+	/** * In sword attack mode */
 	private static final int	SWORD_MODE = 2;
 	
-	/** * In normal command mode (movement, etc) */
+	/** * In ranged attack mode */
 	private static final int	RANGED_ATTACK_MODE = 3;
 	
-	/** * In normal command mode (movement, etc) */
+	/** * In castle visiting mode */
 	private static final int	CASTLE_MODE = 4;
 
 
@@ -87,7 +94,15 @@ public class KeyboardCommandListener extends KeyAdapter
 							case 'c' : doMove(parseDirectionKey(e)); break;
 							case 's' : mCurrentMode = SWORD_MODE; JCavernApplet.log(mPlayer.getSword().getName() + " attack, direction?"); break;
 							case 'b' : mCurrentMode = RANGED_ATTACK_MODE; JCavernApplet.log("Ranged attack, direction?"); break;
-							case 'v' : mCurrentMode = CASTLE_MODE; JCavernApplet.log("Visiting Castle, command?"); break;
+							case 'v' : if (mPlayer.getCastle() != null)
+										{
+											mCurrentMode = CASTLE_MODE; JCavernApplet.log("Visiting Castle, command?");
+										}
+										else
+										{
+											JCavernApplet.log("No castle to visit");
+										}
+										break;
 							case '.' : JCavernApplet.log("Sit"); break;
 							case 'o' : doOpen(); break;
 							default  : JCavernApplet.log("Unknown command");
@@ -96,7 +111,7 @@ public class KeyboardCommandListener extends KeyAdapter
 						{
 							// movement commands
 							case 'q' : doEndMission(); mCurrentMode = NORMAL_MODE; break;
-							default  : JCavernApplet.log("Unknown command");
+							default  : JCavernApplet.log("Unknown castle visit command"); mCurrentMode = NORMAL_MODE;
 						} break;
 				case SWORD_MODE: switch (e.getKeyChar())
 						{
@@ -109,7 +124,7 @@ public class KeyboardCommandListener extends KeyAdapter
 							case 'z' :
 							case 'x' :
 							case 'c' : doAttack(parseDirectionKey(e)); break;
-							default  : JCavernApplet.log("Unknown command");
+							default  : JCavernApplet.log("Unknown attack direction"); mCurrentMode = NORMAL_MODE;
 						} break;
 				case RANGED_ATTACK_MODE: switch (e.getKeyChar())
 						{
@@ -122,7 +137,7 @@ public class KeyboardCommandListener extends KeyAdapter
 							case 'z' :
 							case 'x' :
 							case 'c' : doRangedAttack(parseDirectionKey(e)); break;
-							default  : JCavernApplet.log("Unknown command");
+							default  : JCavernApplet.log("Unknown attack direction"); mCurrentMode = NORMAL_MODE;
 						} break;
 			}
 	
