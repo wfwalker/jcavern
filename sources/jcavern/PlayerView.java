@@ -20,7 +20,8 @@ public class PlayerView extends Canvas implements Observer
 	{
 		mModel = aPlayer;
 		
-		setBackground(Color.white);
+		setBackground(Color.black);
+		setForeground(Color.orange);
 	}
 	
 	public void update(Observable a, Object b)
@@ -30,11 +31,14 @@ public class PlayerView extends Canvas implements Observer
 	
 	public void paint(Graphics g)
 	{
+		//g.setFont(new Font("Monospaced", Font.PLAIN, 12));
+
 		String statusString =
-			"Gold " + mModel.getGold() +
-			" Sword " + mModel.getSword() +
-			" Arrows " + mModel.getArrows() +
-			" Experience " + mModel.getPoints();
+			"Gold: " + mModel.getGold() +
+			" Weapon: " + mModel.getSword() +
+			" Arrows: " + mModel.getArrows() +
+			" Experience: " + mModel.getPoints() + 
+			" Mission: " + mModel.getMission();
 			
 		g.drawString(statusString, 10, 20);
 	}
