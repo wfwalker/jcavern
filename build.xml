@@ -70,9 +70,12 @@
 	<target name="javadoc">
 		<mkdir dir="${documentation}" />
 
-		<javadoc sourcepath="${sources}" destdir="${documentation}" packagenames="
-			jcavern.*,
-			jcaverntest.*" >
+		<javadoc
+			sourcepath="${sources}"
+			destdir="${documentation}"
+			Doctitle="JCavern"
+			Windowtitle="JCavern"
+			packagenames="jcavern.*, jcaverntest.*" >
 			<classpath refid="buildpath"/>
 		</javadoc>
 	</target>
