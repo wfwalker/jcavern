@@ -155,14 +155,12 @@ public class World extends Observable
 	 */
 	public void placeWorthyOpponents(Player aPlayer, int numberOfMonsters) throws ThingCollisionException
 	{
-		System.out.println("START placeWorthyOpponents");
+		System.out.println("Place " + numberOfMonsters + " Worthy Opponents");
 		
 		for (int index = 0; index < numberOfMonsters; index++)
 		{
 			place(getRandomEmptyLocation(), MonsterFactory.getWorthyOpponent(aPlayer));
 		}
-
-		System.out.println("STOP placeWorthyOpponents");
 	}
 	
 	/**
