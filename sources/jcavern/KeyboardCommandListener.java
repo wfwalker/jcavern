@@ -84,6 +84,8 @@ public class KeyboardCommandListener extends KeyAdapter
 	 */
 	public void keyTyped(KeyEvent e)
 	{
+		mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.TURN_START));
+		
 	    try
 		{
 			switch (mCurrentMode)
@@ -106,6 +108,8 @@ public class KeyboardCommandListener extends KeyAdapter
 		{
 			System.out.println("internal error " + jcie);
 		}
+
+		mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.TURN_STOP));
 	}
 
 	private void keyTypedNormalMode(KeyEvent e) throws JCavernInternalError
