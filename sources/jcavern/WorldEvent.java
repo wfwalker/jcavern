@@ -35,7 +35,10 @@ public class WorldEvent
 	
 	/** * Used to indicate the kind of change that happened to a thing. */
 	public static final int		RANGED_ATTACK = 14;
-	
+		
+	/** * Used to indicate that the mission ended. */
+	public static final int		MISSION_END = 15;
+
 	/** * One of the codes above. */
 	private int					mEventCode;
 	
@@ -53,6 +56,13 @@ public class WorldEvent
 	
 	/**
 	 * Creates a new WorldEvent.
+	 * The event code field is mandatory; the others are optional.
+	 *
+	 * @param	aLocation	where the event took place
+	 * @param	subject		which Thing the event is focussed on (i. e., who died)
+	 * @param	code		an event code (as defined in this class)
+	 * @param	cause		which Thing caused this event (i. e., who killed the subject)
+	 * @param	message		a description of this event
 	 */
 	public WorldEvent(Location aLocation, Thing subject, int code, Thing cause, String message)
 	{
@@ -64,7 +74,12 @@ public class WorldEvent
 	}
 	
 	/**
-	 * Creates a new WorldEvent.
+	 * Creates a new WorldEvent when the Location isn't known
+	 *
+	 * @param	subject		which Thing the event is focussed on (i. e., who died)
+	 * @param	code		an event code (as defined in this class)
+	 * @param	cause		which Thing caused this event (i. e., who killed the subject)
+	 * @param	message		a description of this event
 	 */
 	public WorldEvent(Thing subject, int code, Thing cause, String message)
 	{
@@ -72,7 +87,10 @@ public class WorldEvent
 	}
 	
 	/**
-	 * Creates a new WorldEvent
+	 * Creates a new WorldEvent when only the Location is known
+	 *
+	 * @param	aLocation	where the event took place
+	 * @param	code		an event code (as defined in this class)
 	 */
 	public WorldEvent(Location aLocation, int code)
 	{
@@ -80,7 +98,10 @@ public class WorldEvent
 	}
 
 	/**
-	 * Creates a new WorldEvent.
+	 * Creates a new WorldEvent when only the subject is known.
+	 *
+	 * @param	subject		which Thing the event is focussed on (i. e., who died)
+	 * @param	code		an event code (as defined in this class)
 	 */
 	public WorldEvent(Thing subject, int code)
 	{
@@ -88,7 +109,11 @@ public class WorldEvent
 	}
 	
 	/**
-	 * Creates a new WorldEvent.
+	 * Creates a new WorldEvent when only the subject and a message are known.
+	 *
+	 * @param	subject		which Thing the event is focussed on (i. e., who died)
+	 * @param	code		an event code (as defined in this class)
+	 * @param	message		a description of this event
 	 */
 	public WorldEvent(Thing subject, int code, String message)
 	{
@@ -96,13 +121,22 @@ public class WorldEvent
 	}
 	
 	/**
-	 * Creates a new WorldEvent.
+	 * Creates a new WorldEvent when only the subject and cause are known
+	 *
+	 * @param	subject		which Thing the event is focussed on (i. e., who died)
+	 * @param	code		an event code (as defined in this class)
+	 * @param	cause		which Thing caused this event (i. e., who killed the subject)
 	 */
 	public WorldEvent(Thing subject, int code, Thing cause)
 	{
 		this(null, subject, code, cause, null);
 	}
 	
+	/**
+	 * Returns a string-based representation of the event.
+	 *
+	 * @return		a string-based representation of the event.
+	 */
 	public String toString()
 	{
 		if (mMessage != null)
@@ -136,6 +170,8 @@ public class WorldEvent
 						theEventString.append(" turn start "); break;
 				case TURN_STOP:
 						theEventString.append(" turn stop "); break;
+				case MISSION_END:
+						theEventString.append(" mission end "); break;
 				default:
 						theEventString.append("no such event code " + mEventCode);
 			}
@@ -150,33 +186,86 @@ public class WorldEvent
 		}
 	}
 	
+	/**
+	 * Sets the message.
+	 *
+	 * @param	aString		the non-null String message
+	 */
 	public void setMessage(String aString)
 	{
 		mMessage = aString;
 	}
 	
+	/**
+	 * Sets the Location
+	 *
+	 * @param	aLocation		the non-null Location
+	 */
 	public void setLocation(Location aLocation)
 	{
 		mLocation = aLocation;
 	}
 	
+	/**
+	 * Returns the Location for this event
+	 *
+	 * @return	the Location for this event
+	 */
 	public Location getLocation()
 	{
 		return mLocation;
 	}
 	
+	/**
+	 * Returns the message for this event
+	 *
+	 * @return	the message for this event
+	 */
+	public String getMessage()
+	{
+		return mMessage;
+	}
+	
+	/**
+	 * Returns the subject for this event
+	 *
+	 * @return	the subject for this event
+	 */
 	public Thing getSubject()
 	{
 		return mSubject;
 	}
 	
+	/**
+	 * Returns the cause for this event
+	 *
+	 * @return	the cause for this event
+	 */
 	public Thing getCause()
 	{
 		return mCause;
 	}
 	
+	/**
+	 * Returns the event code for this event
+	 *
+	 * @return	the event code for this event
+	 */
 	public int getEventCode()
 	{
 		return mEventCode;
+	}
+	
+	/**
+	 * Creates a WorldEvent for end of mission.
+	 *
+	 * @param	inLocation	where the mission ended
+	 * @param	inPlayer	whose mission ended
+	 * @param	inMessage	a description of why the mission ended
+	 * @return				a non-null WorldEvent
+	 */
+	public static WorldEvent missionEnd(Location inLocation, Player inPlayer, String inMessage)
+	{
+		return new WorldEvent(inLocation, inPlayer, MISSION_END, null, inMessage);
 	}
 }
