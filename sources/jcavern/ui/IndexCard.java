@@ -66,7 +66,7 @@ public class IndexCard extends AppletCard
 		}
 		
 		// add the load-player button
-		mLoadPlayerButton = new Button("Load Player");
+		mLoadPlayerButton = new JCavernButton("Load Player");
 		mLoadPlayerButton.setForeground(Color.black);
 		mLoadPlayerButton.addActionListener(new ActionListener()
 		{
@@ -77,7 +77,7 @@ public class IndexCard extends AppletCard
 		});
 		mLoadPlayerButton.setEnabled(false);
 		
-		mSavePlayerButton = new Button("Save Player");
+		mSavePlayerButton = new JCavernButton("Save Player");
 		mSavePlayerButton.setForeground(Color.black);
 		mSavePlayerButton.addActionListener(new ActionListener()
 		{
@@ -101,7 +101,7 @@ public class IndexCard extends AppletCard
 		});
 		mSavePlayerButton.setEnabled((mCurrentPlayer != null) && (! mCurrentPlayer.isDead()));
 
-		mNewMissionButton = new Button("New Mission");
+		mNewMissionButton = new JCavernButton("New Mission");
 		mNewMissionButton.setForeground(Color.black);
 		mNewMissionButton.addActionListener(new ActionListener()
 		{
@@ -117,7 +117,7 @@ public class IndexCard extends AppletCard
 		mNewMissionButton.setEnabled((mCurrentPlayer != null) && (! mCurrentPlayer.isDead()));
 		
 		// add the create-a-new-player button
-		mNewPlayerButton = new Button("New Player");
+		mNewPlayerButton = new JCavernButton("New Player");
 		mNewPlayerButton.setForeground(Color.black);
 		mNewPlayerButton.addActionListener(new ActionListener()
 		{

@@ -30,7 +30,7 @@ public class CreatePlayerCard extends AppletCard implements ActionListener
 		mField = new TextField(30);
 		mField.addActionListener(this);
 		
-		mOKButton = new Button("OK");
+		mOKButton = new JCavernButton("OK");
 		mOKButton.setForeground(Color.black);
 		mOKButton.addActionListener(this);
 	}
@@ -50,9 +50,9 @@ public class CreatePlayerCard extends AppletCard implements ActionListener
 			// in the same place as the "create a player" button
 			// in the IndexCard.
 			mApplet.add(createLabelledButtonPanel(new ImageCanvas(mApplet.getBoardImage("player")), "Create a new player"));
-			mApplet.add(createLabelledButtonPanel(new Button("Load Player"), "Load player from database", false));
-			mApplet.add(createLabelledButtonPanel(new Button("Save Player"), "Save player to database", false));
-			mApplet.add(createLabelledButtonPanel(new Button("New Mission"), "Undertake a new mission", false));
+			mApplet.add(createLabelledButtonPanel(new JCavernButton("Load Player"), "Load player from database", false));
+			mApplet.add(createLabelledButtonPanel(new JCavernButton("Save Player"), "Save player to database", false));
+			mApplet.add(createLabelledButtonPanel(new JCavernButton("New Mission"), "Undertake a new mission", false));
 			
 			//Create middle section.
 			Panel dialogPanel = new Panel();

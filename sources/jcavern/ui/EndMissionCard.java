@@ -67,7 +67,7 @@ public class EndMissionCard extends AppletCard implements ActionListener
 		mEndMessage = new Panel();
 		mEndMessage.setLayout(new FlowLayout(FlowLayout.LEFT));
 		mEndMessage.add(new ImageCanvas(10, 200));
-		Button endButton = new Button("OK");
+		Button endButton = new JCavernButton("OK");
 		endButton.addActionListener(this);
 		mEndMessage.add(endButton);
 		mEndMessage.add(new Label(mEvent.getMessage()), BorderLayout.CENTER);
