@@ -20,13 +20,73 @@ import jcavern.*;
  */
 public abstract class Combatant extends Thing
 {
-	/** * How many points does this Combatant have now. */
+	/** * How many points does this Combatant has now. */
 	private int					mPoints;
 
-	/** * How many points has this player ever had. */
+	/** * How many points has this Combatant ever had. */
 	private int					mMaximumPoints;
+
+	public class GraphicalCombatantView extends Thing.GraphicalThingView
+	{
+		/**
+		 * Creates a new GraphicalCombatantView with the given image name.
+		 *
+		 * @param	inImageName		a non-null String naming the image to use with this View.
+		 */
+		public GraphicalCombatantView(String inImageName)
+		{
+			super(inImageName);
+		}
+		
+		/**
+		 * Decides whether a particular Combatant should be highlighted,
+		 * in the context of a particular event.
+		 *
+		 * @param	anEvent		the event that could trigger highlighting
+		 * @return				<CODE>true</CODE> if this combatant should be highlighted, <CODE>false</CODE> otherwise
+		 */
+		public boolean shouldHighlight(WorldEvent anEvent)
+		{
+			return
+				(anEvent != null) &&
+				(anEvent instanceof CombatEvent) &&
+				((anEvent.getSubject() == Combatant.this) || (anEvent.getCause() == Combatant.this));
+		}
 	
+		/**
+		 * Paints the Combatant in the WorldView, with optional highlighting.
+		 *
+		 * @param		inApplet				the current Applet (used to retrieve images)
+		 * @param		g						the non-null Graphics on which to paint
+		 * @param		plotX					the x location for plotting
+		 * @param		plotY					the y location for plotting
+		 * @exception	JCavernInternalError	could not retrieve an image
+		 */
+		public void paint(JCavernApplet inApplet, Graphics g, int plotX, int plotY) throws JCavernInternalError
+		{
+			g.setColor(JCavernApplet.CavernOrange);
 	
+			final int gaugeThickness = 3;
+			final int gaugeLength = 32;
+			
+			super.paint(inApplet, g, plotX, plotY);
+			
+			if (getHighlightThisTurn())
+			{
+				double	percent = 1.0 * getPoints() / getMaximumPoints();
+				int		point = (int) (percent * gaugeLength);
+				
+				g.fillRect(
+					plotX - gaugeLength / 2, plotY + 20, 
+					point, gaugeThickness);
+					
+				g.drawLine(
+					plotX - gaugeLength / 2 + point + 2, plotY + (20 + gaugeThickness / 2),
+					plotX + gaugeLength / 2, plotY + (20 + gaugeThickness / 2));
+			}
+		}	
+	}
+
 	// Combatants can compute and suffer damage they cause
 	
 	/**
@@ -89,7 +149,7 @@ public abstract class Combatant extends Thing
 	 */
 	public boolean vulnerableToPlayerRangedAttack(Player aPlayer)
 	{
-		System.out.println("Combatant.vulnerableToPlayerRangedAttack(Combatant)");
+		//System.out.println("Combatant.vulnerableToPlayerRangedAttack(Combatant)");
 		return true;
 	}
 	
@@ -261,33 +321,6 @@ public abstract class Combatant extends Thing
 	}
 	
 	/**
-	 * Returns whether this combatant has a proper name
-	 *
-	 * @return	<CODE>true</CODE> if this combatant has a proper name, <CODE>false</CODE> otherwise.
-	 */
-	protected boolean hasProperName()
-	{
-		return false;
-	}
-	
-	/**
-	 * Returns a noun phrase for this combatant.
-	 *
-	 * @return		a non-null string containing a noun phrase, with articles as appropriate.
-	 */
-	public String getNounPhrase()
-	{
-		if (hasProperName())
-		{
-			return getName();
-		}
-		else
-		{
-			return "the " + getName();
-		}
-	}
-
-	/**
 	 * Concludes an attack by removing dead opponents and awarding experience, if appropriate.
 	 *
 	 * @param		aWorld					a non-null World in which the fight takes place.
@@ -304,11 +337,11 @@ public abstract class Combatant extends Thing
 		{
 			if (opponent.isDead())
 			{
-				aWorld.remove(opponent);
 				aWorld.eventHappened(CombatEvent.killed(aLocation, opponent, this, actualDamage));
+				aWorld.remove(opponent);
 
-				gainPoints(aWorld, opponent);
 				aWorld.eventHappened(CombatEvent.gained(aLocation, this, opponent.getWorth()));				
+				gainPoints(aWorld, opponent);
 			}
 			else
 			{
@@ -373,59 +406,15 @@ public abstract class Combatant extends Thing
 	}
 	
 	/**
-	 * Decides whether a particular Combatant should be highlighted,
-	 * in the context of a particular event.
+	 * Creates a GraphicalThingView appropriate to this Thing.
 	 *
-	 * @param	anEvent		the event that could trigger highlighting
-	 * @return				<CODE>true</CODE> if this combatant should be highlighted, <CODE>false</CODE> otherwise
+	 * @return	a non-nullGraphicalThingView appropriate to this Thing.
 	 */
-	public boolean shouldHighlight(WorldEvent anEvent)
+	public GraphicalThingView createGraphicalThingView(String inImageName)
 	{
-		System.out.println(getNounPhrase() + ".shouldHighlight(" + anEvent + ")");
-		
-		return
-			(anEvent != null) &&
-			(anEvent instanceof CombatEvent) &&
-			(anEvent.getSubject() == this) && 
-			(! getInvisible());
+		return new GraphicalCombatantView(inImageName);
 	}
 	
-	/**
-	 * Paints the Combatant in the WorldView, with optional highlighting.
-	 *
-	 * @param		inApplet				the current Applet (used to retrieve images)
-	 * @param		g						the non-null Graphics on which to paint
-	 * @param		plotX					the x location for plotting
-	 * @param		plotY					the y location for plotting
-	 * @param		anEvent					the event, if any, relevant to this Combatant
-	 * @exception	JCavernInternalError	could not retrieve an image
-	 */
-	public void paint(JCavernApplet inApplet, Graphics g, int plotX, int plotY, WorldEvent anEvent) throws JCavernInternalError
-	{
-		// System.out.println("(Combatant) " + getName() + ".paint(g, " + plotX + ", " + plotY + ", " + drawGauge + ")");
-
-		final int gaugeThickness = 3;
-		final int gaugeLength = 32;
-		
-		super.paint(inApplet, g, plotX, plotY, null);
-		
-		if (shouldHighlight(anEvent))
-		{
-			System.out.println("\n\n Combatant " + getName() + " painting highlight due to " + anEvent);
-			
-			double	percent = 1.0 * getPoints() / getMaximumPoints();
-			int		point = (int) (percent * gaugeLength);
-			
-			g.fillRect(
-				plotX - gaugeLength / 2, plotY + 20, 
-				point, gaugeThickness);
-				
-			g.drawLine(
-				plotX - gaugeLength / 2 + point + 2, plotY + (20 + gaugeThickness / 2),
-				plotX + gaugeLength / 2, plotY + (20 + gaugeThickness / 2));
-		}
-	}
-
 	/**
 	 * Creates a new, visible combatant.
 	 *
@@ -449,7 +438,7 @@ public abstract class Combatant extends Thing
 	 */
 	public Combatant(String name, String imageName, int points, boolean invisible)
 	{
-		super(name, imageName, invisible);		
+		super(name, imageName, invisible);
 		mPoints = points;
 		mMaximumPoints = points;
 	}

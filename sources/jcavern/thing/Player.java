@@ -38,7 +38,60 @@ public class Player extends Combatant
 
 	/** * Whether this player is currently inside a castle. */	
 	private	Castle		mCastle;
+
+//-----------------
+
+	/**
+	 * GraphicalPlayerView is a GraphicalThingView for displaying a Player.
+	 * It differs from GraphicalCombatantView only in extending the paint
+	 * method to include painting the Castle the player is standing in, if any.
+	 */
+	public class GraphicalPlayerView extends Combatant.GraphicalCombatantView
+	{
+		/**
+		 * Creates a new GraphicalThingView
+		 *
+		 * @param	inImageName		which image to use
+		 */
+		public GraphicalPlayerView(String inImageName)
+		{
+			super(inImageName);
+		}
+
+		/**
+		 * Paints the player, and any castles the Player is currently sitting in.
+		 *
+		 * @param		inApplet				the Applet (used for loading images)
+		 * @param		g						the non-null Graphics object for painting
+		 * @param		plotX					x coordinate of the Player relative to the View
+		 * @param		plotY					y coordinate of the Player relative to the View
+		 * @exception	JCavernInternalError	could not paint the player
+		 */
+		
+		public void paint(JCavernApplet inApplet, Graphics g, int plotX, int plotY) throws JCavernInternalError
+		{
+			super.paint(inApplet, g, plotX, plotY);
+		
+			if (getCastle() != null)
+			{
+				getCastle().getGraphicalThingView().paint(inApplet, g, plotX, plotY);
+			}
+		}
+		
 	
+	}
+	
+	/**
+	 * Creates a GraphicalThingView appropriate to this Thing.
+	 *
+	 * @return	a non-nullGraphicalThingView appropriate to this Thing.
+	 */
+	public GraphicalThingView createGraphicalThingView(String inImageName)
+	{
+		return new GraphicalPlayerView(inImageName);
+	}
+//-----------------
+
 	/**
 	 * Moves an item from the unused list to the in use list.
 	 *
@@ -408,16 +461,6 @@ public class Player extends Combatant
 	}
 
 	/**
-	 * Returns the text-only appearance for this Player.
-	 *
-	 * @return		"P"
-	 */
-	public String getAppearance()
-	{
-		return "P";
-	}	
-	
-	/**
 	 * Returns the Player's current bank balance
 	 *
 	 * @return	how much gold the player has.
@@ -574,31 +617,7 @@ public class Player extends Combatant
 	{
 		mCastle = aCastle;
 	}
-	
-	/**
-	 * Paints the player, and any castles the Player is currently sitting in.
-	 *
-	 * @param		inApplet				the Applet (used for loading images)
-	 * @param		g						the non-null Graphics object for painting
-	 * @param		plotX					x coordinate of the Player relative to the View
-	 * @param		plotY					y coordinate of the Player relative to the View
-	 * @param		anEvent					the non-null Event used to decide on highlighting
-	 * @exception	JCavernInternalError	could not paint the player
-	 */
-
-	public void paint(JCavernApplet inApplet, Graphics g, int plotX,
-						int plotY, WorldEvent anEvent) throws JCavernInternalError
-	{
-		//System.out.println("Player.paint(g, " + plotX + ", " + plotY + ")");
 		
-		super.paint(inApplet, g, plotX, plotY, anEvent);
-
-		if (getCastle() != null)
-		{
-			getCastle().paint(inApplet, g, plotX, plotY, anEvent);
-		}
-	}
-	
 	/**
 	 * Handles a single turn by incrementing the move counter and notifying observers
 	 *

@@ -34,6 +34,40 @@ public class Monster extends Combatant
 	/** * Likelihood that this monster wants to move on a given turn */
 	private static int		kMoveRadius = 4;
 	
+	public class GraphicalMonsterView extends Combatant.GraphicalCombatantView
+	{
+		/**
+		 * Decides whether a particular Combatant should be highlighted,
+		 * in the context of a particular event.
+		 *
+		 * @param	anEvent		the event that could trigger highlighting
+		 * @return				<CODE>true</CODE> if this combatant should be highlighted, <CODE>false</CODE> otherwise
+		 */
+		public boolean shouldHighlight(WorldEvent anEvent)
+		{
+			return
+				(anEvent != null) &&
+				(anEvent instanceof CombatEvent) &&
+				((anEvent.getSubject() == Combatant.this) && (anEvent.getCause() instanceof Player)) ||
+				((anEvent.getCause() == Combatant.this) && (anEvent.getSubject() instanceof Player));
+		}
+		
+		public GraphicalMonsterView(String inImageName)
+		{
+			super(inImageName);
+		}
+	}
+	
+	/**
+	 * Creates a GraphicalThingView appropriate to this Thing.
+	 *
+	 * @return	a non-nullGraphicalThingView appropriate to this Thing.
+	 */
+	public GraphicalThingView createGraphicalThingView(String inImageName)
+	{
+		return new GraphicalMonsterView(inImageName);
+	}
+	
 	/**
 	 * Creates a new monster with the given parameters.
 	 *
@@ -232,6 +266,6 @@ public class Monster extends Combatant
 	 */
 	public Object clone()
 	{
-		return new Monster(getName(), getImageName(), mHitVerb, mKilledVerb, getPoints(), mWorth, getInvisible());
+		return new Monster(getName(), getGraphicalThingView().getImageName(), mHitVerb, mKilledVerb, getPoints(), mWorth, getInvisible());
 	}
 }

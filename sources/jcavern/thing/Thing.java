@@ -2,9 +2,10 @@ package jcavern.thing;
 
 import java.io.Serializable;
 import java.util.Observable;
+import java.util.Observer;
 import java.awt.*;
 
-import jcavern.ui.WorldView;
+import jcavern.ui.*;
 import jcavern.*;
 
 /**
@@ -16,23 +17,142 @@ import jcavern.*;
 public abstract class Thing extends Observable implements Cloneable, Serializable
 {
 	/** * The name of this thing. */
-	private String		mName;
-	
-	/** * The name of the image to use for this thing. */
-	private Image		mImage;
-
-	/** * The name of the image to use for this thing. */
-	private String		mImageName;
-
-	/** * The textual appearance of the Thing (usually two letters). */
-	private String		mTextSymbol;
+	private String				mName;
 	
 	/** * How many turns has this Thing been in the game? */
-	private int			mMoveCounter;
+	private int					mMoveCounter;
 	
 	/** * Is this Thing invisible? */
-	private boolean		mInvisible;
+	private boolean				mInvisible;
+	
+	/** * How to show this Thing in a graphical view */
+	protected GraphicalThingView	mGraphicalThingView;
+
+	/**
+	 * A Graphical View of a Thing
+	 */
+	public class GraphicalThingView implements Observer
+	{
+		/** * The name of the image to use for this thing. */
+		private Image			mImage;
+	
+		/** * The name of the image to use for this thing. */
+		private String			mImageName;
+	
+		/** * The textual appearance of the Thing (usually two letters). */
+		private String			mTextSymbol;
 		
+		/** * Should a highlight be painted this turn */
+		private	boolean			mHighlightThisTurn;
+		
+		/**
+		 * Creates a new GraphicalThingView for the given image name.
+		 *
+		 * @param	inImageName		the non-null String name of the image for this Thing.
+		 */
+		public GraphicalThingView(String inImageName)
+		{
+			mImageName = inImageName;
+			mImage = null;
+			mHighlightThisTurn = false;
+		}
+		
+		/**
+		 * Receives update notification that the World being viewed has changed.
+		 *
+		 * @param	a	the object that sent the update
+		 * @param	b	information about the update.
+		 */
+		public void update(Observable a, Object b)
+		{
+			//System.out.println("Thing.GraphicalThingView(" + b + ")");
+			WorldEvent anEvent = (WorldEvent) b;
+			
+			if (anEvent.getEventCode() == WorldEvent.TURN_START)
+			{
+				mHighlightThisTurn = false;
+			}
+			else
+			{
+				mHighlightThisTurn = mHighlightThisTurn || shouldHighlight(anEvent);
+			}
+		}
+			
+		
+		/**
+		 * Returns the Image used to depict this thing.
+		 *
+		 * @param		inApplet				the current applet (used to retrieve images)
+		 * @return								a non-null Image
+		 * @exception	JCavernInternalError	could not retrieve the image from the dictionary.
+		 */
+		public Image getImage(JCavernApplet inApplet) throws JCavernInternalError
+		{
+			if (mImage == null)
+			{
+				mImage = inApplet.getBoardImage(mImageName);
+			}
+			
+			return mImage;
+		}
+	
+		/**
+		 * Returns the name of the image used to depict this Thing.
+		 *
+		 * @return	a non-null String containing the name of this Thing's image.
+		 */
+		public String getImageName()
+		{
+			return mImageName;
+		}
+
+		/**
+		 * Returns whether the given event merits highlighting this Thing this turn.
+		 *
+		 * @return	<CODE>true</CODE> if the given event merits highlighting this Thing this turn, <CODE>false</CODE> otherwise
+		 */
+		public boolean shouldHighlight(WorldEvent anEvent)
+		{
+			return false;
+		}
+		
+		/**
+		 * Returns whether this Thing should be highlighted this turn.
+		 *
+		 * @return	<CODE>true</CODE> if this Thing should be highlighted this turn, <CODE>false</CODE> otherwise
+		 */
+		protected boolean getHighlightThisTurn()
+		{
+			return mHighlightThisTurn;
+		}
+
+		/**
+		 * Paints this thing by drawing its image, but only if it is not invisible.
+		 *
+		 * @param		inApplet				the current applet (used to retrieve images)
+		 * @param		g						a non-null Graphics object used for painting
+		 * @param		plotX					offset within the current Graphics for painting this Thing
+		 * @param		plotY					offset within the current Graphics for painting this Thing
+		 * @exception	JCavernInternalError	couldn't acquire the necessary to paint this Thing
+		 */
+		public void paint(JCavernApplet inApplet, Graphics g, int plotX, int plotY) throws JCavernInternalError
+		{
+			if ((! getInvisible()) || (getHighlightThisTurn()))
+			{
+				Image theImage = getImage(inApplet);
+				
+				if (theImage == null)
+				{
+					throw new JCavernInternalError("could not get image");
+				}
+				else
+				{
+					WorldView.paintCenteredImage(g, theImage, plotX, plotY);
+				}
+			}
+		}
+	}
+
 	/**
 	 * Creates a new thing with the given name and image name.
 	 *
@@ -51,15 +171,39 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	 * @param	imageName	a non-null board image name
 	 * @param	invisible	<CODE>true</CODE> if this Thing is invisible, <CODE>false</CODE> otherwise
 	 */
-	public Thing(String aName, String imageName, boolean invisible)
+	public Thing(String aName, String inImageName, boolean invisible)
 	{
 		mName = aName;
-		mTextSymbol = aName.substring(0, 2);
-		mImageName = imageName;
-		mImage = null;
 		mMoveCounter = 0;
 		mInvisible = invisible;
+		mGraphicalThingView = createGraphicalThingView(inImageName);
+	}
 
+	/**
+	 * Returns whether this combatant has a proper name
+	 *
+	 * @return	<CODE>true</CODE> if this combatant has a proper name, <CODE>false</CODE> otherwise.
+	 */
+	protected boolean hasProperName()
+	{
+		return false;
+	}
+
+	/**
+	 * Returns a noun phrase for this Thing.
+	 *
+	 * @return		a non-null string containing a noun phrase, with articles as appropriate.
+	 */
+	public String getNounPhrase()
+	{
+		if (hasProperName())
+		{
+			return getName();
+		}
+		else
+		{
+			return "the " + getName();
+		}
 	}
 
 	/**
@@ -81,34 +225,27 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	{
 		return mInvisible;
 	}
+	
+	/**
+	 * Returns the GraphicalThingView for this thing.
+	 *
+	 * @return	the GraphicalThingView for this thing
+	 */
+	public GraphicalThingView getGraphicalThingView()
+	{
+		return mGraphicalThingView;
+	}
+	
+	/**
+	 * Creates a GraphicalThingView appropriate to this Thing.
+	 *
+	 * @return	a non-nullGraphicalThingView appropriate to this Thing.
+	 */
+	protected GraphicalThingView createGraphicalThingView(String inImageName)
+	{
+		return new GraphicalThingView(inImageName);
+	}
 
-	/**
-	 * Returns the Image used to depict this thing.
-	 *
-	 * @param		inApplet				the current applet (used to retrieve images)
-	 * @return								a non-null Image
-	 * @exception	JCavernInternalError	could not retrieve the image from the dictionary.
-	 */
-	public Image getImage(JCavernApplet inApplet) throws JCavernInternalError
-	{
-		if (mImage == null)
-		{
-			mImage = inApplet.getBoardImage(mImageName);
-		}
-		
-		return mImage;
-	}
-	
-	/**
-	 * Returns the name of the image used to depict this Thing.
-	 *
-	 * @return	a non-null String containing the name of this Thing's image.
-	 */
-	public String getImageName()
-	{
-		return mImageName;
-	}
-	
 	/**
 	 * Returns the number of moves this Thing has been alive.
 	 *
@@ -157,59 +294,7 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	 * @return	a non-null clone of this Thing.
 	 */
 	public abstract Object clone();
-	
-	/**
-	 * Paints this thing by drawing its image, but only if it is not invisible.
-	 *
-	 * @param		inApplet				the current applet (used to retrieve images)
-	 * @param		g						a non-null Graphics object used for painting
-	 * @param		plotX					offset within the current Graphics for painting this Thing
-	 * @param		plotY					offset within the current Graphics for painting this Thing
-	 * @param		anEvent					a non-null WorldEvent that may trigger highlighting
-	 * @exception	JCavernInternalError	couldn't acquire the necessary to paint this Thing
-	 */
-	public void paint(JCavernApplet inApplet, Graphics g, int plotX, int plotY, WorldEvent anEvent) throws JCavernInternalError
-	{
-		if (! getInvisible())
-		{
-			Image theImage = getImage(inApplet);
-						
-			if (theImage == null)
-			{
-				g.drawString(getTextSymbol(), plotX, plotY);
-			}
-			else
-			{
-				g.drawImage(theImage,
-								plotX - WorldView.kPreferredImageSize / 2, plotY - WorldView.kPreferredImageSize / 2,
-								WorldView.kPreferredImageSize, WorldView.kPreferredImageSize, null);
-			}
-		}
-		else
-		{
-			g.drawString(".", plotX, plotY);
-		}
-	}
-		
-	/**
-	 * Returns the two character string that is the textual apperance of this thing.
-	 * Not currently in used; these kinds of abbreviations were a big part of the Turbo PASCAL version
-	 * of Cavern and Glen.
-	 *
-	 * @return	a non-null String abbreviation for this thing.
-	 */
-	public String getTextSymbol()
-	{
-		if (! getInvisible())
-		{
-			return mTextSymbol;
-		}
-		else
-		{
-			return " ";
-		}
-	}
-	
+			
 	/**
 	 * Notifies this thing that it has been removed from the World.
 	 * Subclasses interested in receiving such notifications should override this method.

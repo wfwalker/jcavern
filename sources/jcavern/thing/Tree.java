@@ -8,6 +8,8 @@
 
 package jcavern.thing;
 
+import jcavern.*;
+
 import java.awt.*;
 
 /**
@@ -19,6 +21,46 @@ import java.awt.*;
  */
 public class Tree extends Combatant
 {
+	/**
+	 * GraphicalTreeView is a GraphicalThingView for displaying Trees.
+	 * It differs from GraphicalCombatantView only in ensuring that Trees
+	 * are never highlighted, even though they are combatants.
+	 */
+	public class GraphicalTreeView extends Combatant.GraphicalCombatantView
+	{
+		/**
+		 * Creates a new GraphicalTreeView with the given image name.
+		 *
+		 * @param	inImageName		which image to use
+		 */
+		public GraphicalTreeView(String inImageName)
+		{
+			super(inImageName);
+		}
+	
+		/**
+		 * Decides whether a particular Combatant should be highlighted,
+		 * in the context of a particular event.
+		 *
+		 * @param	anEvent		the event that could trigger highlighting (ignored)
+		 * @return				<CODE>false</CODE>, never highlight a Tree.
+		 */
+		public boolean shouldHighlight(WorldEvent anEvent)
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Creates a GraphicalThingView appropriate to this Thing.
+	 *
+	 * @return	a non-nullGraphicalThingView appropriate to this Thing.
+	 */
+	public GraphicalThingView createGraphicalThingView(String inImageName)
+	{
+		return new GraphicalTreeView(inImageName);
+	}
+
 	/**
 	 * Creates a new Tree.
 	 */
@@ -37,6 +79,7 @@ public class Tree extends Combatant
 		return new Tree();
 	}
 	
+
 	/**
 	 * Returns whether this tree can attack a combatant.
 	 *
@@ -105,13 +148,6 @@ public class Tree extends Combatant
 	{
 		return "felled";
 	}
-	
-	/**
-	 * Returns the text-only appearance for this tree.
-	 *
-	 * @return		"T"
-	 */
-	public String getAppearance() { return "T"; }
 	
 	/**
 	 * Gains experience from killing a combatant. Does nothing, since trees don't kill.
