@@ -8,10 +8,12 @@
 
 package jcavern;
 
+import java.applet.*;
+
 /**
  * A Monster is a combatant that appears in the world.
  */
-public class Monster extends Thing implements Cloneable
+public class Monster extends Thing implements Cloneable, Combatant
 {
 	private String	mAppearance;
 	private double	mPoints;
@@ -29,7 +31,57 @@ public class Monster extends Thing implements Cloneable
 		mWorth = worth;
 		mInvisible = invisible;
 	}
+
+	public void doTurn(World aWorld) throws NoSuchThingException
+	{
+		int	aDirection = aWorld.directionToward(this, aWorld.getPlayer());
+		
+		try
+		{
+			aWorld.move(this, aDirection);
+		}
+		catch (ThingCollisionException tce)
+		{
+			if (tce.getMovee() instanceof Player)
+			{
+				aWorld.attack(this, aDirection);
+			}
+		}
+		catch (IllegalLocationException ile)
+		{
+			System.out.println("illegal location " + ile);
+		}
+		catch (NoSuchThingException nst)
+		{
+			System.out.println("no such thing " + nst);
+		}
+	}
+		
+	public int computeDamage()
+	{
+		return 1;
+	}
 	
+	public void sufferDamage(int theDamage)
+	{
+		mPoints -= theDamage;
+	}
+	
+	public void gainExperience(int theExperience)
+	{
+		mPoints += theExperience;
+	}
+	
+	public boolean isDead()
+	{
+		return mPoints < 0;
+	}
+	
+	public int getWorth()
+	{
+		return (int) mWorth;
+	}
+
 	public Object clone()
 	{
 		return new Monster(getName(), mAppearance, mPoints, mWorth, mInvisible);
