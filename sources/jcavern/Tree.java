@@ -20,15 +20,44 @@ public class Tree extends Combatant
 		return new Tree();
 	}
 	
+	public boolean canAttack(Combatant aCombatant)
+	{
+		return false;
+	}
+	
+	public boolean canRangedAttack(Combatant aCombatant)
+	{
+		System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
+		return false;
+	}
+	
+	public boolean vulnerableToMonsterAttack(Monster aMonster)
+	{
+		//System.out.println("Tree.vulnerableToMonsterAttack(Monster)");
+		return false;
+	}
+	
+	public boolean vulnerableToMonsterRangedAttack(Monster aMonster)
+	{
+		//System.out.println("Tree.vulnerableToMonsterRangedAttack(Monster)");
+		return false;
+	}
+	
+	public boolean vulnerableToPlayerRangedAttack(Player aPlayer)
+	{
+		System.out.println("Tree.vulnerableToPlayerRangedAttack(" + aPlayer + ")");
+		return false;
+	}
+	
 	public String getAppearance() { return "T"; }
 	
 	public void gainExperience(Combatant opponent) { }
 	
 	public void decrementRangedAttackCount() { }
 	
-	public int computeDamage(Combatant opponent) { return 0; }
+	public int computeDamageTo(Combatant opponent) { return 0; }
 	
-	public int computeRangedDamage(Combatant opponent) { return 0; }
+	public int computeRangedDamageTo(Combatant opponent) { return 0; }
 	
 	public int getWorth() { return 0; }
 }
