@@ -16,12 +16,19 @@ public class MissionTest extends TestCase
 {	
 	/**
 	 * Creates a suite of tests.
+	 *
+	 * @param	name	a non-null String containing a test name.
 	 */
 	public MissionTest(String name)
 	{
 		super(name);
 	}
 
+	/**
+	 * Tests whether mission quotas update correctly, and whether Mission.toString() is correct.
+	 *
+	 * @exception	MalformedURLException	bogus URL for the <CODE>monster.dat</CODE> file.
+	 */
 	public void testQuota() throws MalformedURLException
 	{
 		MonsterFactory.loadPrototypes(new URL("file:bin/monster.dat"));

@@ -16,10 +16,13 @@ public class PlayerTest extends TestCase
 	/** * The representation of the player */
 	private Player			mPlayer;
 	
+	/** * the representation of the world */
 	private World			mWorld;
 
 	/**
 	 * Creates a suite of tests.
+	 *
+	 * @param	name	the suite name
 	 */
 	public PlayerTest(String name)
 	{
@@ -28,6 +31,8 @@ public class PlayerTest extends TestCase
 
 	/**
 	 * Builds a world and a player, puts the player in the world.
+	 *
+	 * @exception	ThingCollisionException		placed two things in the same place
 	 */
 	public void setUp() throws ThingCollisionException
 	{
@@ -50,7 +55,11 @@ public class PlayerTest extends TestCase
 		mPlayer = null;
 	}
 	
-	
+	/**
+	 * Tests whether you can use and unuse items.
+	 *
+	 * @exception JCavernInternalError	had internal problem
+	 */
 	public void testItems() throws JCavernInternalError
 	{
 		Treasure anItem = new Sword("Fred", 1);
