@@ -50,16 +50,22 @@ public class CombatEvent extends WorldEvent
 					theBuffer.append("cannot attack" + " " + attackee.getNounPhrase()); break;
 			case ATTACKED_HIT:
 					theBuffer.append(attacker.getNounPhrase() + " ");
-					theBuffer.append(attackee.getHitVerb() + " " + attackee.getNounPhrase() + " for " + damage); break;
+					theBuffer.append(attackee.getHitVerb() + " " + attackee.getNounPhrase() + " for " + damage + " point");
+					if (damage != 1) { theBuffer.append("s"); }
+					break;
 			case ATTACKED_KILLED:
 					theBuffer.append(attacker.getNounPhrase() + " ");
 					theBuffer.append(attackee.getKilledVerb() + " " + attackee.getNounPhrase()); break;
 			case GAINED_POINTS:
 					theBuffer.append(attackee.getNounPhrase());
-					theBuffer.append(" gained " + damage + " points"); break;
+					theBuffer.append(" gained " + damage + " point");
+					if (damage != 1) { theBuffer.append("s"); }
+					break;
 			case LOST_POINTS:
 					theBuffer.append(attackee.getNounPhrase());
-					theBuffer.append(" lost " + damage + " points"); break;
+					theBuffer.append(" lost " + damage + " point");
+					if (damage != 1) { theBuffer.append("s"); }
+					break;
 			default:
 					theBuffer.append("no such outcome " + outcome);
 		}
