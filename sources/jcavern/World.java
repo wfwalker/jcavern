@@ -8,6 +8,7 @@
 
 package jcavern;
 
+import jcavern.ui.*;
 import java.util.*;
 import java.awt.Rectangle;
 
@@ -84,8 +85,8 @@ public class World extends Observable
 			// Put the player in the world
 			place(getRandomEmptyLocation(), aPlayer);
 			
-			JCavernWindow.log(aPlayer.getName() + "'s mission is " + aPlayer.getMission());
-			JCavernWindow.log(aPlayer.getName() + " can seek safety in " + castles + " magic castles");
+			MissionCard.log(aPlayer.getName() + "'s mission is " + aPlayer.getMission());
+			MissionCard.log(aPlayer.getName() + " can seek safety in " + castles + " magic castles");
 		}
 		catch (ThingCollisionException tce)
 		{
@@ -96,7 +97,7 @@ public class World extends Observable
 	/**
 	 * Places random trees using the default fraction.
 	 */
-	public int placeRandomTrees() throws ThingCollisionException
+	public int placeRandomTrees() throws ThingCollisionException, JCavernInternalError
 	{
 		return placeRandom(new Tree(), kTreeFraction);
 	}
@@ -104,7 +105,7 @@ public class World extends Observable
 	/**
 	 * Places random trees using the default fraction.
 	 */
-	public int placeRandomCastles() throws ThingCollisionException
+	public int placeRandomCastles() throws ThingCollisionException, JCavernInternalError
 	{
 		return placeRandom(new Castle(), kCastleFraction);
 	}
@@ -113,7 +114,7 @@ public class World extends Observable
 	 * Places random TreasureChests. The number of TreasureChests is based on the
 	 * number of monsters to be killed in the given Players mission quota.
 	 */
-	public int placeRandomTreasureChests(Player aPlayer) throws ThingCollisionException
+	public int placeRandomTreasureChests(Player aPlayer) throws ThingCollisionException, JCavernInternalError
 	{
 		int chestCount = aPlayer.getMission().getQuota() / 2;
 
@@ -130,7 +131,7 @@ public class World extends Observable
 	/**
 	 * Places random trees according to the fraction passed in.
 	 */
-	public int placeRandom(Thing aThingPrototype, double fraction) throws ThingCollisionException
+	public int placeRandom(Thing aThingPrototype, double fraction) throws ThingCollisionException, JCavernInternalError
 	{
 		int	numberOfThings = (int) (getBounds().width * getBounds().height * fraction);
 		
@@ -144,7 +145,7 @@ public class World extends Observable
 	/**
 	 * Places random trees according to the fraction passed in.
 	 */
-	public void placeRandom(Thing aThingPrototype, int numberOfThings) throws ThingCollisionException
+	public void placeRandom(Thing aThingPrototype, int numberOfThings) throws ThingCollisionException//, JCavernInternalError
 	{
 		System.out.println("Place " + numberOfThings + " Random " + aThingPrototype);
 		
@@ -157,7 +158,7 @@ public class World extends Observable
 	/**
 	 * Places appropriate opponents on the board, based on the prowess of the given player.
 	 */
-	public void placeWorthyOpponents(Player aPlayer, int numberOfMonsters) throws ThingCollisionException
+	public void placeWorthyOpponents(Player aPlayer, int numberOfMonsters) throws ThingCollisionException, JCavernInternalError
 	{
 		System.out.println("Place " + numberOfMonsters + " Worthy Opponents");
 		
@@ -241,7 +242,7 @@ public class World extends Observable
 				throw new IllegalLocationException("Ranged attack hit nothing");
 			}
 			
-			JCavernWindow.log(attackeeLocation.toString());
+			MissionCard.log(attackeeLocation.toString());
 			attackeeLocation = attackeeLocation.getNeighbor(aDirection);
 		}
 		
@@ -461,7 +462,7 @@ public class World extends Observable
 	/**
 	 * Places a Thing at the given location.
 	 */
-	public void place(Location aLocation, Thing aThing) throws ThingCollisionException
+	public void place(Location aLocation, Thing aThing) throws ThingCollisionException, JCavernInternalError
 	{
 		if (mLocationsToThings.containsKey(aLocation))
 		{
@@ -470,6 +471,8 @@ public class World extends Observable
 		
 		mLocationsToThings.put(aLocation, aThing);
 		mThingsToLocations.put(aThing, aLocation);
+		
+		aThing.thingPlaced(this, aLocation);
 		
 		setChanged();
 		notifyObservers();
@@ -502,6 +505,8 @@ public class World extends Observable
 		
 		mLocationsToThings.remove(locationToRemove);
 		mThingsToLocations.remove(thingToRemove);
+		
+		thingToRemove.thingRemoved(this, locationToRemove);
 
 		setChanged();
 		notifyObservers();
