@@ -438,15 +438,15 @@ public class Player extends Combatant
 	/**
 	 * Paints the player, and any castles the Player is currently sitting in.
 	 */
-	public void paint(Graphics g, int plotX, int plotY, boolean highlight) throws JCavernInternalError
+	public void paint(Graphics g, int plotX, int plotY, WorldEvent anEvent) throws JCavernInternalError
 	{
 		//System.out.println("Player.paint(g, " + plotX + ", " + plotY + ")");
 		
-		super.paint(g, plotX, plotY, highlight);
+		super.paint(g, plotX, plotY, anEvent);
 
 		if (getCastle() != null)
 		{
-			getCastle().paint(g, plotX, plotY, true);
+			getCastle().paint(g, plotX, plotY, anEvent);
 		}
 	}
 	

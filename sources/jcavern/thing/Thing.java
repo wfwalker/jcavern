@@ -165,7 +165,7 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 	 * @param		plotY					offset within the current Graphics for painting this Thing
 	 * @exception	JCavernInternalError	couldn't acquire the necessary to paint this Thing
 	 */
-	public void paint(Graphics g, int plotX, int plotY, boolean highlight) throws JCavernInternalError
+	public void paint(Graphics g, int plotX, int plotY, WorldEvent anEvent) throws JCavernInternalError
 	{
 		//System.out.println("(Thing) " + getName() + ".paint(g, " + plotX + ", " + plotY + ", " + highlight + ")");
 

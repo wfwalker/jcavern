@@ -78,7 +78,7 @@ public class MissionView extends Canvas implements Observer
 		
 		try
 		{
-			mModel.getTarget().paint(g, 20, 20, false);
+			mModel.getTarget().paint(g, 20, 20, null);
 		}
 		catch (JCavernInternalError jcie)
 		{

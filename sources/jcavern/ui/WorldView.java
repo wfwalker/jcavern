@@ -183,7 +183,7 @@ public class WorldView extends Canvas implements Observer
 							Thing		theThing = mModel.getThing(aLocation);
 							WorldEvent	anEvent = getEventForSubject(theThing);
 					
-							theThing.paint(g, plotX, plotY, anEvent != null);
+							theThing.paint(g, plotX, plotY, anEvent);
 						}
 						else
 						{
