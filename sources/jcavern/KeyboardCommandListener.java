@@ -173,12 +173,10 @@ public class KeyboardCommandListener extends KeyAdapter
 				doEndMission();
 				break;
 			case 'a' :
-				mPlayer.receiveGold(-1);
-				mPlayer.receiveArrows(1);
+				doBuyArrows(1);
 				break;
 			case 'A' :
-				mPlayer.receiveGold(-10);
-				mPlayer.receiveArrows(10);
+				doBuyArrows(10);
 				break;
 			default  :
 				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, "Unknown castle visit command"));
@@ -367,6 +365,19 @@ public class KeyboardCommandListener extends KeyAdapter
 		catch(IllegalArgumentException iae)
 		{
 			mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " has no neighboring treasure chest to open!"));
+		}
+	}
+	
+	private void doBuyArrows(int numberOfArrows) throws JCavernInternalError
+	{
+		if (mPlayer.getGold() < numberOfArrows)
+		{
+				mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.INFO_MESSAGE, mPlayer.getName() + " doesn't have " + numberOfArrows + " gold to buy arrows"));
+		}
+		else
+		{
+			mPlayer.spendGold(numberOfArrows);
+			mPlayer.receiveArrows(numberOfArrows);
 		}
 	}
 	
