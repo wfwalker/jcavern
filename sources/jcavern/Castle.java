@@ -24,7 +24,7 @@ public class Castle extends Thing
 	
 	public void paint(Graphics g, int plotX, int plotY)
 	{
-		g.drawOval(plotX - 15, plotY - 15, 30, 30);
+		g.drawOval(plotX - 20, plotY - 20, 40, 40);
 	}
 }
 
