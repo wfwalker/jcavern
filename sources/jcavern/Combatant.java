@@ -191,16 +191,16 @@ public abstract class Combatant extends Thing
 	{
 		StringBuffer	theBuffer = new StringBuffer();
 		
-		theBuffer.append(getArticle() + " " + getName() + " ");
+		theBuffer.append(getNounPhrase() + " ");
 		
 		switch (outcome)
 		{
 			case Combatant.MISS:
-					theBuffer.append("cannot attack " + opponent.getArticle() + " " + opponent.getName()); break;
+					theBuffer.append("cannot attack" + " " + opponent.getNounPhrase()); break;
 			case Combatant.HIT:
-					theBuffer.append(opponent.getHitVerb() + " " + opponent.getArticle() + opponent.getName() + " for " + damage); break;
+					theBuffer.append(opponent.getHitVerb() + " " + opponent.getNounPhrase() + " for " + damage); break;
 			case Combatant.KILL:
-					theBuffer.append(opponent.getKilledVerb() + " " + opponent.getArticle() + opponent.getName()); break;
+					theBuffer.append(opponent.getKilledVerb() + " " + opponent.getNounPhrase()); break;
 		}
 		
 		JCavernApplet.log(theBuffer.toString());
@@ -216,9 +216,21 @@ public abstract class Combatant extends Thing
 		return "killed";
 	}
 	
-	protected String getArticle()
+	protected boolean hasProperName()
 	{
-		return "the";
+		return false;
+	}
+	
+	protected String getNounPhrase()
+	{
+		if (hasProperName())
+		{
+			return getName();
+		}
+		else
+		{
+			return "the " + getName();
+		}
 	}
 
 	/**
