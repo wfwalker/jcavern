@@ -73,7 +73,7 @@ public class MagicItem extends Treasure
 	 */
 	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
 	{
-		aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + " starts using " + getName()));
+		aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, "you start using " + getName()));
 		
 		switch (mPower)
 		{
@@ -200,7 +200,7 @@ public class MagicItem extends Treasure
 					WorldEvent.INFO_MESSAGE,
 					detectee,
 					"There is a " +
-					aPrototype.getName() + " " +
+					detectee.getName() + " " +
 					aWorld.getDistanceBetween(seeker, detectee) + " moves " + 
 					Location.directionToString(direction) + " of " + seeker.getName()));
 		}
