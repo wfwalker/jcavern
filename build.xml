@@ -7,8 +7,6 @@
 
 	<property name="ant_home" value="c:/jakarta-ant" />
 	
-	<property name="vm_run_args" value="" />
-	
 	<!-- folders within the jcavern module  -->
 
 	<property name="binaries" value="bin" />
@@ -75,11 +73,12 @@
 	
 	<target name="junit" depends="compile" >
 		<junit fork="true" haltonerror="true" printsummary="true">
+			<formatter type="plain" />
+			
 			<test name="jcaverntest.WorldTest" />
 			<test name="jcaverntest.LocationTest" />
 			
 			<classpath refid="testpath" />
-			<jvmarg value="${vm_run_args}" />
 		</junit>
 	</target>
 
