@@ -75,6 +75,30 @@ public class WorldView extends Canvas implements Observer
 	}
 	
 	/** 
+	 * Retrieves a WorldEvent for a particular cause.
+	 * These are events that were caused by the given Thing (i. e., Thing attacked another thing, etc).
+	 *
+	 * @param	aSubject	a non-null Thing
+	 * @return				a non-null WorldEvent
+	 */
+	private WorldEvent getEventForCause(Thing aCause)
+	{
+		Enumeration theEvents = mEvents.elements();
+		
+		while (theEvents.hasMoreElements())
+		{
+			WorldEvent anEvent = (WorldEvent) theEvents.nextElement();
+			
+			if (anEvent.getCause() == aCause)
+			{
+				return anEvent;
+			}
+		}
+		
+		return null;
+	}
+	
+	/** 
 	 * Retrieves a WorldEvent for a particular location.
 	 * These are events that happened at the location (especially the deaths of combatants).
 	 *
