@@ -83,7 +83,7 @@ public class MissionView extends JCavernView
 		
 		try
 		{
-			mModel.getTarget().paint(getApplet(), g, 20, 20, null);
+			mModel.getTarget().getGraphicalThingView().paint(getApplet(), g, 20, 20);
 		}
 		catch (JCavernInternalError jcie)
 		{
