@@ -9,6 +9,7 @@
 package jcavern;
 
 import java.awt.Rectangle;
+import java.util.Vector;
 
 /**
  * Represents a location of a Thing within a World.
@@ -108,6 +109,22 @@ public class Location
 		}
 		
 		return new Location(newX, newY);
+	}
+	
+	public Vector getNeighbors()
+	{
+		Vector neighbors = new Vector(8);
+		
+		neighbors.addElement(getNeighbor(NORTH));
+		neighbors.addElement(getNeighbor(NORTHEAST));
+		neighbors.addElement(getNeighbor(EAST));
+		neighbors.addElement(getNeighbor(SOUTHEAST));
+		neighbors.addElement(getNeighbor(SOUTH));
+		neighbors.addElement(getNeighbor(SOUTHWEST));
+		neighbors.addElement(getNeighbor(WEST));
+		neighbors.addElement(getNeighbor(NORTHWEST));
+
+		return neighbors;
 	}
 
 	public int getDirectionToward(Location anotherLocation)
