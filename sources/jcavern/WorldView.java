@@ -18,6 +18,8 @@ public class WorldView extends Canvas implements Observer
 	
 	public WorldView(World aWorld)
 	{
+		System.out.println("Create WorldView");
+		
 		mModel = aWorld;
 		
 		setBackground(Color.white);
@@ -32,21 +34,33 @@ public class WorldView extends Canvas implements Observer
 	{
 		try
 		{
-			for (int yIndex = 0; yIndex < mModel.getBounds().height; yIndex++)
+			Player		thePlayer = mModel.getPlayer();
+			Location	theLocation = mModel.getLocation(thePlayer);
+		
+			for (int yIndex = -3; yIndex <= 3; yIndex++)
 			{
-				for (int xIndex = 0; xIndex < mModel.getBounds().width; xIndex++)
+				for (int xIndex = -3; xIndex <= 3; xIndex++)
 				{
-					Location aLocation = new Location(xIndex, yIndex);
+					Location	aLocation = new Location(xIndex + theLocation.getX(), yIndex + theLocation.getY());
+					int			plotX = 20 * (xIndex + 3);
+					int			plotY = 20 + 20 * (yIndex + 3);
 					
-					if (! mModel.isEmpty(aLocation))
+					if (aLocation.inBounds(mModel.getBounds()))
 					{
-						Thing theThing = mModel.getThing(aLocation);
-						
-						g.drawString(theThing.getAppearance(), 20 * xIndex, 20 + 20 * yIndex);
+						if (! mModel.isEmpty(aLocation))
+						{
+							Thing theThing = mModel.getThing(aLocation);
+					
+							g.drawString(theThing.getAppearance(), plotX, plotY);
+						}
+						else
+						{
+							g.drawString(".", plotX, plotY);
+						}
 					}
 					else
 					{
-						g.drawString(".", 20 * xIndex, 20 + 20 * yIndex);
+						g.drawString("*", plotX, plotY);
 					}
 				}
 			}
