@@ -28,6 +28,9 @@ public class MonsterFactory
 	
 	/**
 	 * Retrieves an appropriate opponent for this Player.
+	 *
+	 * @param	aPlayer		a non-null Player for against whom worthiness is measured.
+	 * @return				a worthy, non-null Monster
 	 */	
 	public static Monster getWorthyOpponent(Player aPlayer)
 	{
@@ -44,6 +47,9 @@ public class MonsterFactory
 	
 	/**
 	 * Retrieves the first opponent tougher than this Player.
+	 *
+	 * @param	aPlayer 	a non-null Player against whom the monsters are compared
+	 * @return				an instance of the first kind of Monster with more points than the given player.
 	 */	
 	public static Monster getMostWorthyOpponent(Player aPlayer)
 	{
@@ -59,7 +65,10 @@ public class MonsterFactory
 	}
 	
 	/**
-	 * Creates an appropriate Mission for this player.
+	 * Creates an appropriate Mission for a given player.
+	 *
+	 * @param	aPlayer 	a non-null Player for whom the Mission will be created
+	 * @return				a non-null Mission.
 	 */
 	public static Mission createMission(Player aPlayer)
 	{
@@ -82,8 +91,10 @@ public class MonsterFactory
 	
 	/**
 	 * Load the prototypical monsters from the monsters.dat file.
+	 *
+	 * @param	aURL	a non-null giving the location of the <CODE>monsters.dat</CODE> file.
 	 */
-	public static void loadPrototypes(URL aURL )
+	public static void loadPrototypes(URL aURL)
 	{
 		System.out.println("loadPrototypes(" + aURL + ")");
 		
@@ -116,7 +127,8 @@ public class MonsterFactory
 				}
 				else
 				{
-					imageName = JCavernApplet.MonsterImageNames[(imageNameIndex++) % JCavernApplet.MonsterImageNames.length];
+					imageName = JCavernApplet.MonsterImageNames[(imageNameIndex++) %
+									JCavernApplet.MonsterImageNames.length];
 				}
 
 				gMonsters.addElement(

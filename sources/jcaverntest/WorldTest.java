@@ -22,6 +22,8 @@ public class WorldTest extends TestCase
 
 	/**
 	 * Creates a suite of tests.
+	 *
+	 * @param	name		name of the suite of tests
 	 */
 	public WorldTest(String name)
 	{
@@ -30,6 +32,9 @@ public class WorldTest extends TestCase
 
 	/**
 	 * Builds a world and a player, puts the player in the world.
+	 *
+	 * @exception	ThingCollisionException		two things landed up in the same place
+	 * @exception	JCavernInternalError		could not set up the world
 	 */
 	public void setUp() throws ThingCollisionException, JCavernInternalError
 	{
@@ -55,6 +60,8 @@ public class WorldTest extends TestCase
 	
 	/**
 	 * Tests whether you can find the player where you left him.
+	 *
+	 * @exception	JCavernInternalError		could not complete the test
 	 */
 	public void testFindPlayer() throws JCavernInternalError
 	{
@@ -66,6 +73,9 @@ public class WorldTest extends TestCase
 	
 	/**
 	 * Tests whether two trees can be placed into the same location.
+	 *
+	 * @exception	ThingCollisionException		could not complete the test
+	 * @exception	JCavernInternalError		could not complete the test
 	 */
 	public void testCollision() throws ThingCollisionException, JCavernInternalError
 	{
@@ -88,7 +98,7 @@ public class WorldTest extends TestCase
 	/**
 	 * Tests whether you can find a tree that ain't there.
 	 */
-	public void testRetrieval() throws ThingCollisionException
+	public void testRetrieval()
 	{
 		Tree		aTree = new Tree();
 		
@@ -102,6 +112,9 @@ public class WorldTest extends TestCase
 		}
 	}
 	
+	/**
+	 * Tests whether a World properly detects Locations within and outside its bounds.
+	 */
 	public void testBounds()
 	{
 		assert("5, -1 out", mWorld.inBounds(new Location(5, -1)) == false);
@@ -118,6 +131,9 @@ public class WorldTest extends TestCase
 
 	}
 	
+	/**
+	 * Tests whether a World properly retrieves things.
+	 */
 	public void testGetThings()
 	{
 		assert("found something", mWorld.getThings().size() > 0);
@@ -126,6 +142,8 @@ public class WorldTest extends TestCase
 
 	/**
 	 * Tests whether you can remove a tree that ain't there.
+	 *
+	 * @exception	ThingCollisionException		two things landed up in the same place
 	 */
 	public void testBogusRemoval() throws ThingCollisionException
 	{

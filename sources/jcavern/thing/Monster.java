@@ -20,7 +20,7 @@ import jcavern.*;
  * @author	Bill Walker
  * @version	$Id$
  */
-public class Monster extends Combatant implements Cloneable
+public class Monster extends Combatant
 {
 	/** * How many points the monster is worth when a Player kills it. */
 	private double			mWorth;
@@ -36,6 +36,14 @@ public class Monster extends Combatant implements Cloneable
 	
 	/**
 	 * Creates a new monster with the given parameters.
+	 *
+	 * @param	name		a non-null String naming this monster
+	 * @param	imageName	a non-null String giving the image file name for this monster
+	 * @param	hitVerb		a non-null String giving the verb when this monster hits
+	 * @param	killedVerb	a non-null String giving the verb when this monster kills
+	 * @param	points		a non-null String giving how many points this monster has
+	 * @param	worth		a non-null String giving how many points this monster is worth when killed
+	 * @param	invisible	<CODE>true</CODE> if the monster is invisible, <CODE>false</CODE>otherwise
 	 */
 	public Monster(String name, String imageName, String hitVerb, String killedVerb, double points, double worth, boolean invisible)
 	{
@@ -47,12 +55,22 @@ public class Monster extends Combatant implements Cloneable
 		mHitVerb = hitVerb;
 		mKilledVerb = killedVerb;
 	}
-
+	
+	/**
+	 * Returns the verb to use when this monster hits.
+	 *
+	 * @return	a non-null string like "hit" or "smote"
+	 */
 	public String getHitVerb()
 	{
 		return mHitVerb;
 	}
 	
+	/**
+	 * Returns the verb to use when this monster hits.
+	 *
+	 * @return	a non-null string like "killed" or "laid waste to"
+	 */
 	public String getKilledVerb()
 	{
 		return mKilledVerb;
@@ -60,6 +78,9 @@ public class Monster extends Combatant implements Cloneable
 	
 	/**
 	 * Performs one turn by moving toward or attacking an adjacent Player.
+	 *
+	 * @param		aWorld					a non-null World in which action takes place
+	 * @exception	JCavernInternalError	couldn't find the Things in the world
 	 */
 	public void doTurn(World aWorld) throws JCavernInternalError
 	{
@@ -117,6 +138,9 @@ public class Monster extends Combatant implements Cloneable
 	
 	/**
 	 * Returns whether this monster can attack the given combatant.
+	 *
+	 * @param	aCombatant	a potentially attackable opponent
+	 * @return				<CODE>true</CODE> if this Monster can attack the opponent, <CODE>false</CODE>
 	 */
 	public boolean canAttack(Combatant aCombatant)
 	{
@@ -126,6 +150,9 @@ public class Monster extends Combatant implements Cloneable
 	
 	/**
 	 * Returns whether this monster can make a ranged attack the given combatant.
+	 *
+	 * @param	aCombatant	a potentially attackable opponent
+	 * @return				<CODE>true</CODE> if this Monster can ranged attack the opponent, <CODE>false</CODE>
 	 */	
 	public boolean canRangedAttack(Combatant aCombatant)
 	{
@@ -134,8 +161,11 @@ public class Monster extends Combatant implements Cloneable
 	}
 	
 	/**
-	 * Returns whether Monsters are vulnerable to attack from other Monsters.
+	 * Returns whether this Monster is vulnerable to attack from the given Monsters.
 	 * By default, this is always false.
+	 *
+	 * @param	aMonster	a Monster that wants to attack
+	 * @return				<CODE>true</CODE> if the given Monster can attack, <CODE>false</CODE>
 	 */
 	public boolean vulnerableToMonsterAttack(Monster aMonster)
 	{
@@ -145,6 +175,9 @@ public class Monster extends Combatant implements Cloneable
 		
 	/**
 	 * Returns how much damage this monster does to this opponent.
+	 *
+	 * @param	opponent	the opponent to whom damage was done.
+	 * @return				how much damage was done.
 	 */
 	public int computeDamageTo(Combatant opponent)
 	{
@@ -162,6 +195,9 @@ public class Monster extends Combatant implements Cloneable
 	
 	/**
 	 * Returns how much damage this monster does to this opponent during a ranged attack.
+	 *
+	 * @param	opponent	an opponent against whom a ranged attack is being conducted
+	 * @return				how much damage this monster would do in a ranged attack
 	 */
 	public int computeRangedDamageTo(Combatant opponent)
 	{
@@ -171,6 +207,8 @@ public class Monster extends Combatant implements Cloneable
 	/**
 	 * Gains experience points when this monster kills a combatant.
 	 * Not currently in use.
+	 *
+	 * @param	theVictim	unused
 	 */
 	public void gainExperience(Combatant theVictim)
 	{
@@ -178,6 +216,8 @@ public class Monster extends Combatant implements Cloneable
 	
 	/**
 	 * Returns how many points this Monster is worth when vanquished.
+	 *
+	 * @return 		how many points this Monster is worth when vanquished
 	 */
 	public int getWorth()
 	{
@@ -187,6 +227,8 @@ public class Monster extends Combatant implements Cloneable
 	/**
 	 * Returns a copy of this monster.
 	 * How cool is cloning a monster!
+	 *
+	 * @return		a clone of this monster.
 	 */
 	public Object clone()
 	{

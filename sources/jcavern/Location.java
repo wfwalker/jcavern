@@ -23,15 +23,29 @@ public class Location
 	private static final	int		gMaximumCoordinateValue = 1000;
 	
 	// Constants used for specifying directions
+	
+	/** * Constant indicating northwest (up and left) */
 	public static final	int		NORTHWEST = 7;
+	
+	/** * Constant indicating north (up) */
 	public static final	int		NORTH = 8;
+	
+	/** * Constant indicating northeast (up and right) */
 	public static final	int		NORTHEAST = 9;
 	
+	/** * Constant indicating west (left) */
 	public static final	int		WEST = 4;
+	
+	/** * Constant indicating east (right) */
 	public static final	int		EAST = 6;
 
+	/** * Constant indicating southwest (down and left) */
 	public static final	int		SOUTHWEST = 1;
+	
+	/** * Constant indicating south (down) */
 	public static final	int		SOUTH = 2;
+	
+	/** * Constant indiciating southeast (down and right) */
 	public static final	int		SOUTHEAST = 3;
 
 	/** * X (east/west or horiziontal) coordinate. Larger values are east and/or right. */
@@ -40,6 +54,12 @@ public class Location
 	/** * Y (north/south or vertical) coordinate. Larger values are south and/or down. */
 	private int		mY;
 	
+	/**
+	 * Returns a String description of the given direction.
+	 *
+	 * @param	aDirection		one of the direction constants.
+	 * @return					a non-null String description.
+	 */
 	public static String directionToString(int aDirection)
 	{
 		switch (aDirection)
@@ -57,6 +77,12 @@ public class Location
 		throw new IllegalArgumentException("no such direction");
 	}
 	
+	/**
+	 * Returns whether a Location is within the given rectangle.
+	 *
+	 * @param	bounds		a rectangle
+	 * @return				<CODE>true</CODE> if the Location is inside the rectangle, <CODE>false</CODE> otherwise
+	 */
 	public boolean inBounds(Rectangle bounds)
 	{
 		return bounds.contains(mX, mY);
@@ -64,6 +90,10 @@ public class Location
 	
 	/**
 	 * Returns a Location no closer to the bounds than the supplied inset.
+	 *
+	 * @param	bounds		a rectangle
+	 * @param	inset		an integer inset from the edge of the rectangle
+	 * @return				a Location that is at least <I>inset</I> cells from the edge of the rectangle
 	 */
 	public Location enforceMinimumInset(Rectangle bounds, int inset)
 	{
@@ -79,11 +109,21 @@ public class Location
 		return new Location(newX, newY);
 	}
 	
+	/**
+	 * Returns the x coordinate of this location.
+	 *
+	 * @return		the x coordinate of this location.
+	 */
 	public int getX()
 	{
 		return mX;
 	}
 	
+	/**
+	 * Returns the y coordinate of this location.
+	 *
+	 * @return		the y coordinate of this location.
+	 */
 	public int getY()
 	{
 		return mY;
@@ -93,33 +133,64 @@ public class Location
 	 * Computes the number of moves between Locations.
 	 * We use a modified Manhattan distance metric, with diagonal
 	 * moves allowed.
+	 *
+	 * @param	aLocation	the non-null Location to which the distance will be computed.
+	 * @return				the number of spaces between this location and the given location
 	 */ 
 	public int distanceTo(Location aLocation)
 	{
 		return Math.max(Math.abs(aLocation.getX() - mX), Math.abs(aLocation.getY() - mY));
 	}
 	
+	/**
+	 * Returns a string-based representation of this Location.
+	 *
+	 * @return		a String including the x and y coordinates.
+	 */
 	public String toString()
 	{
 		return "[" + mX + ", " + mY + "]";
 	}
 	
+	/**
+	 * Returns the hash code for this Location. Used for efficient equality tests amongst Locations.
+	 *
+	 * @return		the hash code for this Location
+	 */
 	public int hashCode()
 	{
 		return mX * gMaximumCoordinateValue + mY;
 	}
 	
+	/**
+	 * Returns whether this Location is the same as another Location.
+	 *
+	 * @param	aLocation		a non-null Location to compare this location against.
+	 * @return					<CODE>true</CODE> if the two Locations have the same coordinates, <CODE>false</CODE> otherwise
+	 */
 	public boolean equals(Object aLocation)
 	{
 		return (((Location) aLocation).mX == mX) && (((Location) aLocation).mY == mY);
 	}
 	
+	/**
+	 * Creates a new Location.
+	 *
+	 * @param	x		the x coordinate
+	 * @param	y		the y coordinate
+	 */
 	public Location(int x, int y)
 	{
 		mX = x;
 		mY = y;
 	}
 
+	/**
+	 * Returns a neighboring Location in the given direction.
+	 *
+	 * @param	direction	one of the direction codes
+	 * @return				a Location adjacent to this Location
+	 */
 	public Location getNeighbor(int direction)
 	{
 		int	newX = mX;
@@ -141,6 +212,11 @@ public class Location
 		return new Location(newX, newY);
 	}
 	
+	/**
+	 * Returns a Vector of all the neighbors of this Location.
+	 *
+	 * @return		a non-null Vector of Locations neighboring this Location.
+	 */
 	public Vector getNeighbors()
 	{
 		Vector neighbors = new Vector(8);
@@ -157,6 +233,12 @@ public class Location
 		return neighbors;
 	}
 
+	/**
+	 * Returns a direction toward the given location.
+	 *
+	 * @param		anotherLocation		a Location to move toward
+	 * @return							the direction code that moves toward that Location
+	 */
 	public int getDirectionToward(Location anotherLocation)
 	{
 		double	deltaX = anotherLocation.getX() - mX;
@@ -184,6 +266,12 @@ public class Location
 		}
 	}
 
+	/**
+	 * Returns a Location toward the given location.
+	 *
+	 * @param		anotherLocation		a Location to move toward
+	 * @return							a Location toward the given Location
+	 */
 	public Location getNeighborToward(Location anotherLocation)
 	{
 		return getNeighbor(getDirectionToward(anotherLocation));

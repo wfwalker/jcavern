@@ -30,26 +30,54 @@ public class Mission extends Observable
 	/** * How many of these monsters have been defeated? */
 	private int			mKills;
 	
+	/**
+	 * Returns the current quota of monsters to kill.
+	 *
+	 * @return		the current quota of monsters to kill.
+	 */
 	public int getQuota()
 	{
 		return mQuota;
 	}
 	
+	/**
+	 * Returns the target of this mission
+	 *
+	 * @return		the target Monster for this mission
+	 */
 	public Monster getTarget()
 	{
 		return mTarget;
 	}
 	
+	/**
+	 * Returns the number of quest monsters already killed
+	 *
+	 * @return		the number of monsters already killed
+	 */
 	public int getKills()
 	{
 		return mKills;
 	}
 	
+	/**
+	 * Returns whether the mission has been completed
+	 *
+	 * @return		<CODE>true</CODE> if the mission has been completed, <CODE>false</CODE> otherwise
+	 */
 	public boolean getCompleted()
 	{
 		return mKills >= mQuota;
 	}
 	
+	/**
+	 * Adjusts the quota for this mission to reflect the Player's latest kill.
+	 * The quota is only adjusted if the dead monster is the target of the this mission.
+	 *
+	 * @param	aWorld		the non-null world in which the mission takes place
+	 * @param	aPlayer		the non-null Player performing the mission
+	 * @param	theVictim	the non-null Monster just killed by the Player
+	 */
 	public void adjustQuota(World aWorld, Player aPlayer, Thing theVictim)
 	{
 		if (theVictim.getName().equals(mTarget.getName()))
@@ -62,6 +90,11 @@ public class Mission extends Observable
 		}
 	}
 	
+	/**
+	 * Returns a string-based representation of the mission.
+	 *
+	 * @return		a string-based representation of the mission.
+	 */
 	public String toString()
 	{
 		if (mKills < mQuota)
@@ -74,6 +107,12 @@ public class Mission extends Observable
 		}
 	}
 	
+	/**
+	 * Creates a new mission
+	 *
+	 * @param	target	the target monster for this mission
+	 * @param	quota	how many of the target monsters should be killed
+	 */
 	public Mission(Monster target, int quota)
 	{
 		mTarget = target;

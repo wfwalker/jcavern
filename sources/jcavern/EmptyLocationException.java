@@ -16,6 +16,11 @@ package jcavern;
  */
 public class EmptyLocationException extends Exception
 {
+	/**
+	 * Creates a new EmptyLocationException
+	 *
+	 * @param	msg		a non-null String describing the exception
+	 */
 	public EmptyLocationException(String msg)
 	{
 		super(msg);

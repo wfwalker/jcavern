@@ -15,7 +15,10 @@ import jcavern.thing.*;
  */
 public class MissionTest extends TestCase
 {
+	/** * A game world for testing. */
 	private World	mWorld;
+	
+	/** * A player with a mission; for testing. */
 	private Player	mPlayer;
 	
 	/**

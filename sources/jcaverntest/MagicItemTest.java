@@ -25,6 +25,7 @@ public class MagicItemTest extends TestCase
 	 * Builds a world and a player, puts the player in the world.
 	 *
 	 * @exception	ThingCollisionException		placed two things in the same place
+	 * @exception	JCavernInternalError		could not set up the world
 	 */
 	public void setUp() throws ThingCollisionException, JCavernInternalError
 	{
@@ -40,6 +41,8 @@ public class MagicItemTest extends TestCase
 
 	/**
 	 * Creates a suite of tests.
+	 *
+	 * @param	name	a non-null String test name
 	 */
 	public MagicItemTest(String name)
 	{

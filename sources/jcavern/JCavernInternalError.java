@@ -18,6 +18,8 @@ public class JCavernInternalError extends Exception
 {
 	/**
 	 * Creates a new jcavern internal error.
+	 *
+	 * @param	msg		a non-null String describing the problem
 	 */
 	public JCavernInternalError(String msg)
 	{

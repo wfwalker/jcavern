@@ -16,6 +16,11 @@ package jcavern;
  */
 public class IllegalLocationException extends Exception
 {
+	/**
+	 * Creates a new IllegalLocationException
+	 *
+	 * @param	msg		a non-null String describing the exception
+	 */
 	public IllegalLocationException(String msg)
 	{
 		super(msg);

@@ -19,11 +19,20 @@ import java.awt.Graphics;
  */
 public class Castle extends Thing
 {
+	/**
+	 * Creates a new Castle.
+	 */
 	public Castle()
 	{
 		super("Castle", "castle");
 	}
 	
+	/**
+	 * Creates a clone of this Castle.
+	 * Since all castles are the same, this is not very interesting.
+	 *
+	 * @return	a Castle.
+	 */
 	public Object clone()
 	{
 		return new Castle();

@@ -23,7 +23,11 @@ public class WorldContentsEvent extends WorldEvent
 	public static final int		REVEALED = 6;
 	
 	/**
-	 * Creates a WorldEvent for Things placed in the World.
+	 * Creates a WorldContentsEvent for Things placed in the World.
+	 *
+	 * @param	aLocation	a non-null Location
+	 * @param	aThing		a non-null Thing
+	 * @return				a non-null WorldContentsEvent
 	 */
 	public static WorldContentsEvent placed(Location aLocation, Thing aThing)
 	{
@@ -31,7 +35,11 @@ public class WorldContentsEvent extends WorldEvent
 	}
 	
 	/**
-	 * Creates a WorldEvent for Things removed from the World.
+	 * Creates a WorldContentsEvent for Things removed from the World.
+	 *
+	 * @param	aLocation	a non-null Location
+	 * @param	aThing		a non-null Thing
+	 * @return				a non-null WorldContentsEvent
 	 */
 	public static WorldContentsEvent removed(Location aLocation, Thing aThing)
 	{
@@ -39,7 +47,11 @@ public class WorldContentsEvent extends WorldEvent
 	}
 	
 	/**
-	 * Creates a WorldEvent for formerly invisible Things revealed in the World.
+	 * Creates a WorldContentsEvent for formerly invisible Things revealed in the World.
+	 *
+	 * @param	aThing		a non-null Thing that was revealed
+	 * @param	aCause		a non-null Thing that did the revealing
+	 * @return				a non-null WorldContentsEvent
 	 */
 	public static WorldContentsEvent revealed(Thing aThing, Thing aCause)
 	{
@@ -48,10 +60,15 @@ public class WorldContentsEvent extends WorldEvent
 	
 	/**
 	 * Creates a new WorldContentsEvent.
+	 *
+	 * @param	aLocation	a non-null Location
+	 * @param	subject		a non-null Thing, the subject of the event
+	 * @param	code		an event code
+	 * @param	cause		a non-null Thing, the cause of the event
+	 * @param	message		a non-null String message describing the event
 	 */
 	public WorldContentsEvent(Location aLocation, Thing subject, int code, Thing cause, String message)
 	{
 		super(aLocation, subject, code, cause, message);
 	}
-		
 }

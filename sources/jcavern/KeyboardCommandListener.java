@@ -27,13 +27,13 @@ public class KeyboardCommandListener extends KeyAdapter
 	/** * A model of the game world */
 	private World				mWorld;
 	
-	private WorldView			mWorldView;
-	
-	private MissionView			mMissionView;
-	
 	/** * The representation of the player */
 	private Player				mPlayer;
 	
+	/**
+	 * The current mode of the KeyboardCommandListener.
+	 * Should be one of the symbolic constants defined in this class.
+	 */
 	private int					mCurrentMode;
 	
 	/** * In normal command mode (movement, etc) */
@@ -54,16 +54,25 @@ public class KeyboardCommandListener extends KeyAdapter
 	/** * In start using mode */
 	private static final int	UNUSE_MODE = 6;
 
-
-	public KeyboardCommandListener(World aWorld, WorldView aWorldView, Player aPlayer, MissionView aMissionView)
+	/**
+	 * Creates a new KeyboardCommandListener for the given world and player.
+	 *
+	 * @param	aWorld	the World in which the player is playing
+	 * @param	aPlayer	the Player being controlled from the keyboard
+	 */
+	public KeyboardCommandListener(World aWorld, Player aPlayer)
 	{
 		mWorld = aWorld;
-		mWorldView = aWorldView;
 		mPlayer = aPlayer;
-		mMissionView = aMissionView;
 		mCurrentMode = NORMAL_MODE;
 	}
 	
+	/**
+	 * Returns a direction code for a direction key
+	 *
+	 * @param	e	a non-null KeyEvent
+	 * @return		a direction code from the Location class
+	 */
 	private int parseDirectionKey(KeyEvent e)
 	{
 	    switch (e.getKeyChar())
@@ -83,6 +92,8 @@ public class KeyboardCommandListener extends KeyAdapter
 
 	/**
 	 * Handles keyboard commands.
+	 *
+	 * @param	e	a non-null KeyEvent
 	 */
 	public void keyTyped(KeyEvent e)
 	{
@@ -114,6 +125,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		mWorld.eventHappened(new WorldEvent(mPlayer, WorldEvent.TURN_STOP));
 	}
 
+	/**
+	 * Handles keyboard commands when in normal mode.
+	 *
+	 * @param		e						a non-null KeyEvent
+	 * @exception	JCavernInternalError	trouble doing normal mode actions
+	 */
 	private void keyTypedNormalMode(KeyEvent e) throws JCavernInternalError
 	{
 		switch (e.getKeyChar())
@@ -167,6 +184,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 
+	/**
+	 * Handles keyboard commands when in castle mode.
+	 *
+	 * @param		e						a non-null KeyEvent
+	 * @exception	JCavernInternalError	trouble doing castle actions
+	 */
 	private void keyTypedCastleMode(KeyEvent e) throws JCavernInternalError
 	{
 		switch (e.getKeyChar())
@@ -186,6 +209,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 	
+	/**
+	 * Handles keyboard commands when in sword mode.
+	 *
+	 * @param		e						a non-null KeyEvent
+	 * @exception	JCavernInternalError	trouble doing sword attack
+	 */
 	private void keyTypedSwordMode(KeyEvent e) throws JCavernInternalError
 	{
 		switch (e.getKeyChar())
@@ -206,6 +235,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 	
+	/**
+	 * Handles keyboard commands when in ranged attack mode.
+	 *
+	 * @param		e						a non-null KeyEvent
+	 * @exception	JCavernInternalError	trouble doing ranged attack
+	 */
 	private void keyTypedRangedAttackMode(KeyEvent e) throws JCavernInternalError
 	{
 		switch (e.getKeyChar())
@@ -223,6 +258,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 	
+	/**
+	 * Handles keyboard commands when managing Treasure items.
+	 *
+	 * @param		e						a non-null KeyEvent
+	 * @exception	JCavernInternalError	trouble managing treasure items
+	 */
 	private void keyTypedUseMode(KeyEvent e) throws JCavernInternalError
 	{
 		switch (e.getKeyChar())
@@ -240,6 +281,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
  	}
 	
+	/**
+	 * Handles keyboard commands when managing Treasure items.
+	 *
+	 * @param		e							a non-null KeyEvent
+	 * @exception	JCavernInternalError	trouble managing treasure items
+	 */
 	private void keyTypedUnuseMode(KeyEvent e) throws JCavernInternalError
 	{
 		switch (e.getKeyChar())
@@ -261,6 +308,12 @@ public class KeyboardCommandListener extends KeyAdapter
 	// ------------ methods for controlling the player
 	//
 		
+	/**
+	 * Causes the player to start using a Treasure
+	 *
+	 * @param		anIndex					which unused Treasure to start using
+	 * @exception	JCavernInternalError	could not use treasure
+	 */
 	private void doUse(int anIndex) throws JCavernInternalError
 	{
 		try
@@ -273,6 +326,11 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 
+	/**
+	 * Causes the player to stop using a Treasure
+	 *
+	 * @param	anIndex		which in used Treasure to stop using
+	 */
 	private void doUnuse(int anIndex)
 	{
 		try
@@ -285,12 +343,16 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 	
+	/**
+	 * Causes the player to end the current mission
+	 *
+	 * @exception	JCavernInternalError	could not end the mission
+	 */
 	private void doEndMission() throws JCavernInternalError
 	{
 		if (mPlayer.getMission().getCompleted())
 		{
-			MissionCard.endMissionAlert("Congratulations, " + mPlayer.getName() + ".");
-			JCavernApplet.setPlayer(mPlayer);
+			mWorld.eventHappened(WorldEvent.missionEnd(mWorld.getLocation(mPlayer), mPlayer, "Congratulations, you completed your mission!"));
 		}
 		else
 		{
@@ -298,6 +360,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		}		
 	}
 	
+	/**
+	 * Causes the player to make a ranged attack in the given direction
+	 *
+	 * @param		direction				in which direction to attack
+	 * @exception	JCavernInternalError	could not attack
+	 */
 	private void doRangedAttack(int direction) throws JCavernInternalError
 	{
 		if (mPlayer.getArrows() > 0)
@@ -323,6 +391,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		mCurrentMode = NORMAL_MODE;
 	}	
 
+	/**
+	 * Causes the player to make an attack in the given direction
+	 *
+	 * @param		direction				in which direction to attack
+	 * @exception	JCavernInternalError	could not attack
+	 */
 	private void doAttack(int direction) throws JCavernInternalError
 	{
 		try
@@ -345,6 +419,11 @@ public class KeyboardCommandListener extends KeyAdapter
 		mCurrentMode = NORMAL_MODE;
 	}
 	
+	/**
+	 * Causes the player to open an adjacent TreasureChest.
+	 *
+	 * @exception	JCavernInternalError	could not find adjacent TreasureChest
+	 */
 	private void doOpen() throws JCavernInternalError
 	{
 		try
@@ -370,6 +449,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 	
+	/**
+	 * Causes the player to buy arrows
+	 *
+	 * @param		numberOfArrows			how many arrows to buy
+	 * @exception	JCavernInternalError	could not buy arrows
+	 */
 	private void doBuyArrows(int numberOfArrows) throws JCavernInternalError
 	{
 		if (mPlayer.getGold() < numberOfArrows)
@@ -383,6 +468,12 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 	
+	/**
+	 * Causes the player to move to an adjacent Location
+	 *
+	 * @param		direction				which direction to move
+	 * @exception	JCavernInternalError	could not move
+	 */
 	private void doMove(int direction) throws JCavernInternalError
 	{
 		try
