@@ -49,6 +49,9 @@
 		<javac srcdir="${sources}" destdir="${binaries}">
 			<classpath refid="buildpath"/>
 		</javac>
+
+		<copy file="monster.dat" toFile="${binaries}/monster.dat" />
+		<copy file="treasure.dat" toFile="${binaries}/treasure.dat" />
 	</target>
 	
 	<target name="runapplet" depends="compile" >
@@ -72,11 +75,16 @@
 	<!-- targets for doing unit testing -->
 	
 	<target name="junit" depends="compile" >
+		<delete>
+			<fileset dir="." includes="TEST*Test.txt" />
+		</delete>
+
 		<junit fork="true" haltonerror="true" printsummary="true">
 			<formatter type="plain" />
 			
-			<test name="jcaverntest.WorldTest" />
-			<test name="jcaverntest.LocationTest" />
+			<batchtest>
+				<fileset dir="${binaries}" includes="jcaverntest/*Test.class" />
+			</batchtest>
 			
 			<classpath refid="testpath" />
 		</junit>
