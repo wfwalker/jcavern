@@ -139,6 +139,8 @@ public class JCavernApplet extends Applet
 			mImages.put("jackolantern", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/jackolantern.gif")));
 			mImages.put("wahoo", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/wahoo.gif")));
 			mImages.put("snake", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/snake.gif")));
+			mImages.put("rajah", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/rajah.gif")));
+			mImages.put("wraith", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/wraith.gif")));
 
 			MonsterFactory.loadPrototypes(new URL(getDocumentBase(), "bin/monster.dat"));
 			Treasure.loadPrototypes(new URL(getDocumentBase(), "bin/treasure.dat"));
