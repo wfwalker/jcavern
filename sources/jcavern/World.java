@@ -9,6 +9,8 @@
 package jcavern;
 
 import jcavern.ui.*;
+import jcavern.thing.*;
+
 import java.util.*;
 import java.awt.Rectangle;
 
@@ -474,7 +476,7 @@ public class World extends Observable
 		
 		aThing.thingPlaced(this, aLocation);
 		
-		eventHappened(new WorldEvent(aThing, WorldEvent.PLACED));
+		eventHappened(WorldContentsEvent.placed(aLocation, aThing));
 	}
 	
 	/**
@@ -507,6 +509,6 @@ public class World extends Observable
 		
 		thingToRemove.thingRemoved(this, locationToRemove);
 
-		eventHappened(new WorldEvent(thingToRemove, WorldEvent.REMOVED));
+		eventHappened(WorldContentsEvent.removed(locationToRemove, thingToRemove));
 	}
 }
