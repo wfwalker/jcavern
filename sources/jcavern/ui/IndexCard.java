@@ -85,14 +85,14 @@ public class IndexCard extends AppletCard
 			{
 				System.out.println("Save Player ");
 				
-				try
+				/*try
 				{
 					Thing.fromDataString(mCurrentPlayer.getDataString());
 				}
 				catch (JCavernInternalError jcie)
 				{
 					System.out.println("could not save player " + jcie);
-				}
+				}*/
 				
 				System.out.println("Done Save Player");
 				
