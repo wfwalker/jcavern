@@ -144,7 +144,11 @@ public class KeyboardCommandListener extends KeyAdapter
 		switch (e.getKeyChar())
 		{
 			case 'q' : doEndMission(); break;
-			default  : MissionCard.log("Unknown castle visit command");
+			case 'a' : mPlayer.receiveGold(-1); mPlayer.receiveArrows(1); break;
+			case 'A' : mPlayer.receiveGold(-10); mPlayer.receiveArrows(10); break;
+			default  :
+						MissionCard.log("Unknown castle visit command");
+						MissionCard.log("q = quit mission, a = buy an arrow, A = buy 10 arrows");
 		}
 	}
 	
