@@ -18,25 +18,22 @@ import java.io.*;
  */
 public class MonsterFactory
 {
-	/** * A dictionary of Monsters stored by name. */
-	public static Hashtable		gMonstersByName;
+	/** * A list of Monsters stored in the order they were read from monsters.dat. */
+	public static Vector		gMonsters;
 	
-	/** * An array of Monsters */
-	public static Monster[]		gMonsters;
-
 	/**
 	 * Retrieves an appropriate opponent for this Player.
 	 */	
 	public static Monster getWorthyOpponent(Player aPlayer)
 	{
-		int randomIndex = (int) (Math.random() * gMonsters.length);
+		int randomIndex = (int) (Math.random() * gMonsters.size());
 		
-		while (gMonsters[randomIndex].getPoints() > aPlayer.getPoints())
+		while (((Monster) gMonsters.elementAt(randomIndex)).getPoints() > aPlayer.getPoints())
 		{
-			randomIndex = (int) (Math.random() * gMonsters.length);
+			randomIndex = (int) (Math.random() * gMonsters.size());
 		}
 		
-		return (Monster) gMonsters[randomIndex].clone();
+		return (Monster) ((Monster) gMonsters.elementAt(randomIndex)).clone();
 	}
 	
 	/**
@@ -68,8 +65,7 @@ public class MonsterFactory
 	{
 		System.out.println("loadPrototypes(" + aURL + ")");
 		
-		gMonstersByName = new Hashtable();
-		
+		gMonsters = new Vector();
 		
 		try
 		{
@@ -89,7 +85,7 @@ public class MonsterFactory
 				Double				worth = Double.valueOf(aTokenizer.nextToken());
 				Integer				invisible = Integer.valueOf(aTokenizer.nextToken());
 				
-				gMonstersByName.put(aName, new Monster(aName, aName.substring(0, 2), points.doubleValue(), worth.doubleValue(), invisible.intValue() < 0));
+				gMonsters.addElement(new Monster(aName, aName.substring(0, 2), points.doubleValue(), worth.doubleValue(), invisible.intValue() < 0));
 			}
 		}
 		catch (MalformedURLException mue)
@@ -100,19 +96,7 @@ public class MonsterFactory
 		{
 			System.out.println("IO Error reading monsters " + ioe);
 		}
-		
-		// Copy the list of monsters into an array
-		gMonsters = new Monster[gMonstersByName.size()];
-		
-		Enumeration		theMonsters = gMonstersByName.elements();
-		int				monsterCount = 0;
-		
-		while (theMonsters.hasMoreElements())
-		{
-			Monster aMonster = (Monster) theMonsters.nextElement();
-			gMonsters[monsterCount++] = aMonster;
-		}
-		
-		System.out.println("*** DONE " + gMonsters);
+
+		// System.out.println("STOP " + gMonsters);
 	}
 }
