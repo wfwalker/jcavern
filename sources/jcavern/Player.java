@@ -8,7 +8,7 @@
 
 package jcavern;
 
-public class Player extends Thing implements Combatant
+public class Player extends Combatant
 {
 	private int			mGold;
 	private Sword		mSword;
@@ -18,13 +18,22 @@ public class Player extends Thing implements Combatant
 	
 	public Player(String name)
 	{
+		/*
+		exp := 24.0; arrows := 20; gold := 10; which_swd := 0;
+		*/
+
 		super(name);
 		
-		mGold = 0;
+		mGold = 10;
 		mSword = new Sword(1);
-		mArrows = 10;
-		mExperience = 10;
-		mMission = new Mission();
+		mArrows = 20;
+		mExperience = 24;
+	}
+	
+	public void setMission(Mission aMission)
+	{
+		JCavernApplet.log(getName()+ "'s mission is " + aMission);
+		mMission = aMission;
 	}
 	
 	public void sufferDamage(int theDamage)
@@ -35,9 +44,11 @@ public class Player extends Thing implements Combatant
 		notifyObservers();
 	}
 	
-	public void gainExperience(int theExperience)
+	public void gainExperience(Combatant theVictim)
 	{
-		mExperience += theExperience;
+		mExperience += theVictim.getWorth();
+		
+		mMission.adjustQuota(theVictim);
 
 		setChanged();
 		notifyObservers();
@@ -78,6 +89,27 @@ public class Player extends Thing implements Combatant
 		{
 			return 1;
 		}
+	}
+	
+	public void decrementRangedAttackCount()
+	{
+		mArrows--;
+		setChanged();
+		notifyObservers();	
+	}
+	
+	public int computeRangedDamage()
+	{
+	/*
+		Message(' Arrow hit the '+Q[xx,yy].m.name,FALSE);
+		dam := 4 + int(exp / 10);
+		Q[xx,yy].m.points := Q[xx,yy].m.points - dam;
+		if Q[xx,yy].m.points<0 then Monster_died(xx,yy);
+	*/
+
+		double damage = 4 + mExperience / 10.0;
+		
+		return (int) damage;
 	}
 	
 	public boolean isCombatant()
