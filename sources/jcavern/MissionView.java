@@ -12,6 +12,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/**
+ * MissionView provides a view of what kind and how many monsters must
+ * be killed to complete the current mission.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
+ */
 public class MissionView extends Canvas implements Observer
 {
 	private Mission	mModel;
@@ -41,7 +48,6 @@ public class MissionView extends Canvas implements Observer
 	public void paint(Graphics g)
 	{
 		int				index;
-		StringBuffer	aBuffer = new StringBuffer();;
 		
 		//g.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		
@@ -49,15 +55,12 @@ public class MissionView extends Canvas implements Observer
 		{
 			if (index < mModel.getKills())
 			{
-				aBuffer.append ("- ");
+				g.drawString("-", 20 + 40 * index, getHeight() / 2);
 			}
 			else
 			{
-				aBuffer.append(mModel.getTarget().getAppearance());
+				mModel.getTarget().paint(g, 20 + 40 * index, getHeight() / 2);
 			}
-			
-			aBuffer.append(" ");
 		}
-		g.drawString(aBuffer.toString(), 10, 20);
 	}
 }
