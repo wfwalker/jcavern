@@ -36,7 +36,7 @@ public class Tree extends Combatant
 	
 	public boolean canRangedAttack(Combatant aCombatant)
 	{
-		System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
+		//System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
 		return false;
 	}
 	
@@ -54,7 +54,7 @@ public class Tree extends Combatant
 	
 	public boolean vulnerableToPlayerRangedAttack(Player aPlayer)
 	{
-		System.out.println("Tree.vulnerableToPlayerRangedAttack(" + aPlayer + ")");
+		//System.out.println("Tree.vulnerableToPlayerRangedAttack(" + aPlayer + ")");
 		return false;
 	}
 	
