@@ -19,7 +19,10 @@ import java.awt.Rectangle;
 public class World extends Observable
 {
 	/** * The usual fraction of trees in the world. */
-	private static final double		kTreeFraction = 0.1;
+	private static final double		kTreeFraction = 17.0 / 100.0;
+	
+	/** * The usual fraction of trees in the world. */
+	private static final double		kCastleFraction = 0.4 / 100.0;
 	
 	/** * The bounds of the world */
 	private static final Rectangle	kBounds = new Rectangle(21, 21);
@@ -44,25 +47,47 @@ public class World extends Observable
 	 */
 	public void placeRandomTrees() throws ThingCollisionException
 	{
-		placeRandomTrees(kTreeFraction);
+		placeRandom(new Tree(), kTreeFraction);
+	}
+	
+	/**
+	 * Places random trees using the default fraction.
+	 */
+	public void placeRandomCastles() throws ThingCollisionException
+	{
+		placeRandom(new Castle(), kCastleFraction);
+	}
+	
+	/**
+	 * Places random trees using the default fraction.
+	 */
+	public void placeRandomTreasureChests(Player aPlayer) throws ThingCollisionException
+	{
+		placeRandom(new TreasureChest(), aPlayer.getMission().getQuota() / 2);
 	}
 	
 	/**
 	 * Places random trees according to the fraction passed in.
 	 */
-	public void placeRandomTrees(double coverageFraction) throws ThingCollisionException
+	public void placeRandom(Thing aThingPrototype, double fraction) throws ThingCollisionException
 	{
-		System.out.println("Place Random Trees");
+		int	numberOfThings = (int) (getBounds().width * getBounds().height * fraction);
 		
-		for (int xIndex = 0; xIndex < kBounds.width; xIndex++)
+		System.out.println("Place fraction " + fraction + " Random " + aThingPrototype);
+		
+		placeRandom(aThingPrototype, numberOfThings);
+	}
+	
+	/**
+	 * Places random trees according to the fraction passed in.
+	 */
+	public void placeRandom(Thing aThingPrototype, int numberOfThings) throws ThingCollisionException
+	{
+		System.out.println("Place " + numberOfThings + " Random " + aThingPrototype);
+		
+		for (int index = 0; index < numberOfThings; index++)
 		{
-			for (int yIndex = 0; yIndex < kBounds.height; yIndex++)
-			{
-				if (Math.random() < coverageFraction)
-				{
-					place(new Location(xIndex, yIndex), new Tree());
-				}
-			}
+			place(getRandomEmptyLocation(), (Thing) aThingPrototype.clone());
 		}
 	}
 	
@@ -117,30 +142,17 @@ public class World extends Observable
 	
 	/**
 	 * Processes an attack by the given combatant in the given direction.
-	 */
-	public void attack(Thing attacker, int aDirection) throws NoSuchThingException
+	public void attack(Combatant attacker, Thing attackee) throws NoSuchThingException
 	{
-		//System.out.println("attack(" + attacker + ", " + Location.directionToString(aDirection) + ")");
-		
-		if (! mThingsToLocations.containsKey(attacker))
-		{
-			throw new NoSuchThingException("There's no " + attacker + " to attack");
-		}
-		
-		Location	attackerLocation = (Location) mThingsToLocations.get(attacker);
-		Location	attackeeLocation = attackerLocation.getNeighbor(aDirection);
-		Thing		attackee = getThing(attackeeLocation);
-		
 		if ((attacker instanceof Player) && (attackee instanceof Tree))
 		{
 			remove(attackee);
 			JCavernApplet.log(attacker.getName() + " chopped down the tree");
 		}
-		else if ((attacker instanceof Combatant) && (attackee instanceof Combatant))
+		else if (attackee instanceof Combatant)
 		{
-			Combatant 	theAttacker = (Combatant) attacker;
 			Combatant 	theAttackee = (Combatant) attackee;
-			int			damage = theAttacker.computeDamage();
+			int			damage = attacker.computeDamage();
 			
 			theAttackee.sufferDamage(damage);
 			
@@ -155,18 +167,23 @@ public class World extends Observable
 				JCavernApplet.log(attacker.getName() + " hit the " + attackee.getName() + " for " + damage);
 			}
 		}
+		else
+		{
+			throw IllegalArgumentExecption(attacker + " can't attack " + attackee);
+		}
 	}
+	 */
 	
 	/**
 	 * Processes an attack by the given combatant in the given direction.
 	 */
-	public void rangedAttack(Thing attacker, int aDirection) throws NoSuchThingException, IllegalLocationException
+	public Thing getThingToward(Thing attacker, int aDirection) throws JCavernInternalError, IllegalLocationException
 	{
 		//System.out.println("attack(" + attacker + ", " + Location.directionToString(aDirection) + ")");
 		
 		if (! mThingsToLocations.containsKey(attacker))
 		{
-			throw new NoSuchThingException("There's no " + attacker + " to attack");
+			throw new JCavernInternalError("There's no " + attacker + " to attack");
 		}
 		
 		Combatant 	theAttacker = (Combatant) attacker;
@@ -187,40 +204,24 @@ public class World extends Observable
 			attackeeLocation = attackeeLocation.getNeighbor(aDirection);
 		}
 		
-		Thing		attackee = getThing(attackeeLocation);
-		
-		if ((attacker instanceof Player) && (attackee instanceof Tree))
+		try
 		{
-			JCavernApplet.log(attacker.getName() + " shot a tree");
+			return getThing(attackeeLocation);
 		}
-		else if ((attacker instanceof Combatant) && (attackee instanceof Combatant))
+		catch (EmptyLocationException ele)
 		{
-			Combatant 	theAttackee = (Combatant) attackee;
-			int			damage = theAttacker.computeRangedDamage();
-			
-			theAttackee.sufferDamage(damage);
-			
-			if (theAttackee.isDead())
-			{
-				JCavernApplet.log(attacker.getName() + " killed the " + attackee.getName());
-				theAttacker.gainExperience(theAttackee);
-				remove(attackee);
-			}
-			else
-			{
-				JCavernApplet.log(attacker.getName() + "'s arrow hit the " + attackee.getName() + " for " + damage);
-			}
+			throw new JCavernInternalError("World says location isn't empty, but throws EmptyLocationException");
 		}
 	}
 	
 	/**
 	 * Moves the given thing in the given direction.
 	 */
-	public void move(Thing aThing, int direction) throws ThingCollisionException, NoSuchThingException, IllegalLocationException
+	public void move(Combatant aThing, int direction) throws ThingCollisionException, JCavernInternalError, IllegalLocationException
 	{
 		if (! mThingsToLocations.containsKey(aThing))
 		{
-			throw new NoSuchThingException("There's no " + aThing + " in this world to move");
+			throw new JCavernInternalError("There's no " + aThing + " in this world to move");
 		}
 		
 		Location	oldLocation = (Location) mThingsToLocations.get(aThing);
@@ -231,56 +232,67 @@ public class World extends Observable
 			throw new IllegalLocationException(aThing + " moved outside the world");
 		}
 		
-		if (isEmpty(newLocation))
+		if (isEmpty(newLocation)) // no collision on move
 		{
 			remove(oldLocation);
 			place(newLocation, aThing);
 		}
-		else
+		else // collision on move, find out what's currently there
 		{
-			Thing currentOccupant = getThing(newLocation);
-			throw new ThingCollisionException(aThing, currentOccupant, aThing + " moved into " + currentOccupant);
-		}
+			try
+			{
+				Thing	currentOccupant = getThing(newLocation);
+		
+				throw new ThingCollisionException(aThing, currentOccupant, aThing.getName() + " collided with " + currentOccupant.getName());
+			}
+			catch (EmptyLocationException ele)
+			{
+				throw new JCavernInternalError("World says location isn't empty, but throws EmptyLocationException!");
+			}
+		}	
 	}
 		
 	/**
 	 * Finds the direction between two things.
 	 */
-	public int directionToward(Thing aThing, Thing anotherThing) throws NoSuchThingException
+	public int directionToward(Thing aThing, Thing anotherThing) throws JCavernInternalError
 	{
 		if (! mThingsToLocations.containsKey(aThing))
 		{
-			throw new NoSuchThingException("There's no " + aThing + " in this world to move");
+			throw new JCavernInternalError("There's no " + aThing + " in this world to move");
 		}
 		
 		if (! mThingsToLocations.containsKey(anotherThing))
 		{
-			throw new NoSuchThingException("There's no " + anotherThing + " in this world to move toward");
+			throw new JCavernInternalError("There's no " + anotherThing + " in this world to move toward");
 		}
 		
 		Location	oldLocation1 = (Location) mThingsToLocations.get(aThing);
 		Location	oldLocation2 = (Location) mThingsToLocations.get(anotherThing);
-		
-		
+
 		return oldLocation1.getDirectionToward(oldLocation2);
 	}
 	
 	/**
 	 * Retrieves the thing at the given location.
 	 */
-	public Thing getThing(Location aLocation) throws NoSuchThingException
+	public Thing getThing(Location aLocation) throws EmptyLocationException, IllegalLocationException
 	{
 		if (mLocationsToThings.containsKey(aLocation))
 		{
 			return (Thing) mLocationsToThings.get(aLocation);
 		}
+		else if (! aLocation.inBounds(getBounds()))
+		{
+			throw new IllegalLocationException(aLocation + " is not in bounds");
+		}
 		else
 		{
-			throw new NoSuchThingException("There's nothing at " + aLocation);
+			throw new EmptyLocationException("There's nothing at " + aLocation);
 		}
 	}
 	
-	public Player getPlayer() throws NoSuchThingException
+	public Player getPlayer() throws JCavernInternalError
 	{
 		Enumeration theThings = mThingsToLocations.keys();
 		
@@ -294,30 +306,23 @@ public class World extends Observable
 			}
 		}
 		
-		throw new NoSuchThingException("No players found in this world");
+		throw new JCavernInternalError("No players found in this world");
 	}
 	
-	public void doTurn()
+	public void doTurn() throws JCavernInternalError
 	{
 		Enumeration theThings = mThingsToLocations.keys();
-		
-		try
+
+		while (theThings.hasMoreElements())
 		{
-			while (theThings.hasMoreElements())
-			{
-				((Thing) theThings.nextElement()).doTurn(this);
-			}
-		}
-		catch (NoSuchThingException nse)
-		{
-			System.out.println("World.doTurn() internal consistency problem");
+			((Thing) theThings.nextElement()).doTurn(this);
 		}
 	}
 	
 	/**
 	 * Answers whether there is any thing at the given location.
 	 */
-	protected boolean isEmpty(Location aLocation)
+	public boolean isEmpty(Location aLocation)
 	{
 		if (mLocationsToThings.containsKey(aLocation))
 		{
@@ -349,11 +354,11 @@ public class World extends Observable
 	/**
 	 * Retrieves the location of the given thing.
 	 */
-	public Location getLocation(Thing aThing) throws NoSuchThingException
+	public Location getLocation(Thing aThing) throws JCavernInternalError
 	{
 		if (! mThingsToLocations.containsKey(aThing))
 		{
-			throw new NoSuchThingException("There's no " + aThing + " in this world to locate");
+			throw new JCavernInternalError("There's no " + aThing + " in this world to locate");
 		}
 		
 		return (Location) mThingsToLocations.get(aThing);
@@ -362,13 +367,13 @@ public class World extends Observable
 	/**
 	 * Remove the thing at the given location from the world.
 	 */
-	public void remove(Location locationToRemove) throws NoSuchThingException
+	public void remove(Location locationToRemove) throws JCavernInternalError
 	{
 		Thing	thingToRemove = (Thing) mLocationsToThings.get(locationToRemove);
 		
 		if (thingToRemove == null)
 		{
-			throw new NoSuchThingException("There's no " + thingToRemove + " in this world to remove");
+			throw new JCavernInternalError("There's no " + thingToRemove + " in this world to remove");
 		}
 		
 		mLocationsToThings.remove(locationToRemove);
@@ -381,13 +386,13 @@ public class World extends Observable
 	/**
 	 * Remove the given thing from the world.
 	 */
-	public void remove(Thing thingToRemove) throws NoSuchThingException
+	public void remove(Thing thingToRemove) throws JCavernInternalError
 	{
 		Location	locationToRemove = (Location) mThingsToLocations.get(thingToRemove);
 		
 		if (locationToRemove == null)
 		{
-			throw new NoSuchThingException("There's no " + thingToRemove + " in this world to remove");
+			throw new JCavernInternalError("There's no " + thingToRemove + " in this world to remove");
 		}
 		
 		mLocationsToThings.remove(locationToRemove);
