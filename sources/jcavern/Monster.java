@@ -53,28 +53,48 @@ public class Monster extends Combatant implements Cloneable
 			{
 				try
 				{
-					if (tce.getMovee() instanceof Player)
-					{
-						attack(aWorld, tce.getMovee());
-					}
+					attack(aWorld, tce.getMovee());
 				}
 				catch (NonCombatantException nce)
 				{
-					System.out.println("non combatant " + nce);
+					System.out.println(getName() + " tried to attack non combatant " + tce.getMovee());
 				}
 				catch (JCavernInternalError nst)
 				{
-					System.out.println("no such thing " + nst);
+					System.out.println(getName() + " tried to attack, encountered internal error " + nst);
+					throw nst;
 				}
 			}
 			catch (IllegalLocationException ile)
 			{
-				System.out.println("illegal location " + ile);
+				System.out.println(getName() + " tried to move off edge of world " + ile);
 			}
 		}
 	}
+	
+	public boolean canAttack(Combatant aCombatant)
+	{
+		//System.out.println(getName() + ".canAttack(" + aCombatant + ")");
+		return aCombatant.vulnerableToMonsterAttack(this);
+	}
+	
+	public boolean canRangedAttack(Combatant aCombatant)
+	{
+		System.out.println(getName() + ".canRangedAttack(" + aCombatant + ")");
+		return aCombatant.vulnerableToMonsterRangedAttack(this);
+	}
+	
+	/**
+	 * Returns whether Monsters are vulnerable to attack from other Monsters.
+	 * By default, this is always false.
+	 */
+	public boolean vulnerableToMonsterAttack(Monster aMonster)
+	{
+		//System.out.println("Monster.vulnerableToMonsterAttack(Monster)");
+		return false;
+	}
 		
-	public int computeDamage(Combatant opponent)
+	public int computeDamageTo(Combatant opponent)
 	{
 		/*
 		dam := Q[i,j].m.points/8 + Random(3) + Q[i,j].m.worth/4
@@ -85,17 +105,10 @@ public class Monster extends Combatant implements Cloneable
 		Plot_Stats(TRUE);
 		*/
 		
-		if (opponent instanceof Tree)
-		{
-			return 0;
-		}
-		else
-		{
-			return (int) (3 * Math.random() + (getPoints() / 8) + (getWorth() / 4));
-		}
+		return (int) (3 * Math.random() + (getPoints() / 8) + (getWorth() / 4));
 	}
 	
-	public int computeRangedDamage(Combatant opponent)
+	public int computeRangedDamageTo(Combatant opponent)
 	{
 		return 0;
 	}

@@ -18,18 +18,64 @@ public abstract class Combatant extends Thing
 	// Combatants can compute and suffer damage they cause
 	
 	/**
+	 * Returns whether this Combatant can attack a given Combatant.
+	 */
+	public abstract boolean canAttack(Combatant aCombatant);
+	
+	/**
+	 * Returns whether this Combatant can make a ranged attack on a given Combatant.
+	 */
+	public abstract boolean canRangedAttack(Combatant aCombatant);
+	
+	/**
+	 * Returns whether this combatant is vulnerable to attack from a given Monster.
+	 */
+	public boolean vulnerableToMonsterAttack(Monster aMonster)
+	{
+		//System.out.println("Combatant.vulnerableToMonsterAttack(Combatant)");
+		return true;
+	}
+	
+	/**
+	 * Returns whether this combatant is vulnerable to attack from a given Player.
+	 */
+	public boolean vulnerableToPlayerAttack(Player aPlayer)
+	{
+		//System.out.println("Combatant.vulnerableToPlayerAttack(Combatant)");
+		return true;
+	}
+	
+	/**
+	 * Returns whether this combatant is vulnerable to attack from a given Monster.
+	 */
+	public boolean vulnerableToMonsterRangedAttack(Monster aMonster)
+	{
+		//System.out.println("Combatant.vulnerableToMonsterRangedAttack(Combatant)");
+		return true;
+	}
+	
+	/**
+	 * Returns whether this combatant is vulnerable to attack from a given Player.
+	 */
+	public boolean vulnerableToPlayerRangedAttack(Player aPlayer)
+	{
+		System.out.println("Combatant.vulnerableToPlayerRangedAttack(Combatant)");
+		return true;
+	}
+	
+	/**
 	 * Computes the damage this combatant does to a given opponent in a sword attack.
 	 *
 	 * @param	opponent	a non-null Combatant on whom the receiver will inflict damage
 	 */
-	public abstract int computeDamage(Combatant opponent);
+	public abstract int computeDamageTo(Combatant opponent);
 	
 	/**
 	 * Computes the damage this combatant does to a given opponent in a ranged attack.
 	 *
 	 * @param	opponent	a non-null Combatant on whom the receiver will inflict damage
 	 */
-	public abstract int computeRangedDamage(Combatant opponent);
+	public abstract int computeRangedDamageTo(Combatant opponent);
 
 	/**
 	 * Causes this combatant to suffer damage.
@@ -61,10 +107,12 @@ public abstract class Combatant extends Thing
 			throw new NonCombatantException(potentialOpponent + " is not a combatant!");
 		}
 		
-		Combatant	opponent = (Combatant) potentialOpponent;
-		int			damage = computeDamage(opponent);
-		
-		finishAttack(aWorld, damage, opponent);
+		Combatant opponent = (Combatant) potentialOpponent;
+
+		if (this.canAttack(opponent))
+		{
+			finishAttack(aWorld, computeDamageTo(opponent), opponent);
+		}
 	}
 	
 	// this method can go up to Combatant
@@ -83,17 +131,21 @@ public abstract class Combatant extends Thing
 	 */
 	public void rangedAttack(World aWorld, Thing potentialOpponent) throws JCavernInternalError, NonCombatantException
 	{
+		System.out.println(this + " ranged attack " + potentialOpponent);
+		
 		if (! (potentialOpponent instanceof Combatant))
 		{
 			throw new NonCombatantException(potentialOpponent + " is not a combatant!");
 		}
 		
-		Combatant	opponent = (Combatant) potentialOpponent;
-		int			damage = computeRangedDamage(opponent);
+		Combatant opponent = (Combatant) potentialOpponent;
 		
 		opponent.decrementRangedAttackCount();
-		
-		finishAttack(aWorld, damage, opponent);
+
+		if (this.canRangedAttack(opponent))
+		{
+			finishAttack(aWorld, computeRangedDamageTo(opponent), opponent);
+		}
 	}
 		
 	// this method can go up to Combatant
