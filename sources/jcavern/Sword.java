@@ -12,9 +12,15 @@ public class Sword extends Treasure
 {
 	private int		mStrength;
 	
-	public Sword(int strength)
+	public Sword(String aName, int strength)
 	{
+		super(aName);
 		mStrength = strength;
+	}
+	
+	public Object clone()
+	{
+		return new Sword(new String(getName()), mStrength);
 	}
 	
 	public int getStrength()
@@ -24,6 +30,6 @@ public class Sword extends Treasure
 	
 	public String toString()
 	{
-		return "Sword +" + (mStrength - 1);
+		return getName() + " +" + (mStrength - 1);
 	}
 }	
