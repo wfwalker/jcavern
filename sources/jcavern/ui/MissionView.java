@@ -9,6 +9,7 @@
 package jcavern.ui;
 
 import jcavern.*;
+import jcavern.thing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;

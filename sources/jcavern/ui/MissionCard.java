@@ -2,6 +2,8 @@ package jcavern.ui;
 
 import jcavern.*;
 import jcavern.ui.*;
+import jcavern.thing.*;
+
 import java.awt.*;
 import java.util.*;
 import java.applet.Applet;
