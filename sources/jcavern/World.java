@@ -81,7 +81,7 @@ public class World extends Observable
 			// Put the player in the world
 			place(getRandomEmptyLocation(), aPlayer);
 			
-			JCavernApplet.log("You will have " + castles + " magic castles to help you");
+			JCavernApplet.current().log("You will have " + castles + " magic castles to help you");
 		}
 		catch (ThingCollisionException tce)
 		{
@@ -221,7 +221,7 @@ public class World extends Observable
 				throw new IllegalLocationException("Ranged attack hit nothing");
 			}
 			
-			JCavernApplet.log(attackeeLocation.toString());
+			JCavernApplet.current().log(attackeeLocation.toString());
 			attackeeLocation = attackeeLocation.getNeighbor(aDirection);
 		}
 		
@@ -306,22 +306,43 @@ public class World extends Observable
 	/**
 	 * Finds the direction between two things.
 	 */
-	public int directionToward(Thing aThing, Thing anotherThing) throws JCavernInternalError
+	public int getDirectionToward(Thing aThing, Thing anotherThing) throws JCavernInternalError
 	{
 		if (! mThingsToLocations.containsKey(aThing))
 		{
-			throw new JCavernInternalError("There's no " + aThing + " in this world to move");
+			throw new JCavernInternalError("There's no " + aThing + " in this world");
 		}
 		
 		if (! mThingsToLocations.containsKey(anotherThing))
 		{
-			throw new JCavernInternalError("There's no " + anotherThing + " in this world to move toward");
+			throw new JCavernInternalError("There's no " + anotherThing + " in this world");
 		}
 		
-		Location	oldLocation1 = (Location) mThingsToLocations.get(aThing);
-		Location	oldLocation2 = (Location) mThingsToLocations.get(anotherThing);
+		Location	location1 = getLocation(aThing);
+		Location	location2 = getLocation(anotherThing);
 
-		return oldLocation1.getDirectionToward(oldLocation2);
+		return location1.getDirectionToward(location2);
+	}
+	
+	/**
+	 * Finds the distance between two things.
+	 */
+	public int getDistanceBetween(Thing aThing, Thing anotherThing) throws JCavernInternalError
+	{
+		if (! mThingsToLocations.containsKey(aThing))
+		{
+			throw new JCavernInternalError("There's no " + aThing + " in this world");
+		}
+		
+		if (! mThingsToLocations.containsKey(anotherThing))
+		{
+			throw new JCavernInternalError("There's no " + anotherThing + " in this world");
+		}
+		
+		Location	location1 = getLocation(aThing);
+		Location	location2 = getLocation(anotherThing);
+
+		return location1.distanceTo(location2);	
 	}
 	
 	/**
