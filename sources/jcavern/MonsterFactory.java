@@ -12,19 +12,21 @@ import java.util.*;
 import java.net.*;
 import java.io.*;
 
+/**
+ * The MonsterFactory creates Monsters based on the monsters.dat file. It also
+ * creates Missions appropriate to the prowess of the player.
+ */
 public class MonsterFactory
 {
+	/** * A dictionary of Monsters stored by name. */
 	public static Hashtable		gMonstersByName;
 	
+	/** * An array of Monsters */
 	public static Monster[]		gMonsters;
-	
-	public static Monster getRandomMonster()
-	{
-		int randomIndex = (int) (Math.random() * gMonsters.length);
-		
-		return (Monster) gMonsters[randomIndex].clone();
-	}
-	
+
+	/**
+	 * Retrieves an appropriate opponent for this Player.
+	 */	
 	public static Monster getWorthyOpponent(Player aPlayer)
 	{
 		int randomIndex = (int) (Math.random() * gMonsters.length);
@@ -37,6 +39,9 @@ public class MonsterFactory
 		return (Monster) gMonsters[randomIndex].clone();
 	}
 	
+	/**
+	 * Creates an appropriate Mission for this player.
+	 */
 	public static Mission createMission(Player aPlayer)
 	{
 		System.out.println("Create Mission");
@@ -56,6 +61,9 @@ public class MonsterFactory
 		return new Mission(getWorthyOpponent(aPlayer), quota);
 	}
 	
+	/**
+	 * Load the prototypical monsters from the monsters.dat file.
+	 */
 	public static void loadPrototypes(URL aURL )
 	{
 		System.out.println("loadPrototypes(" + aURL + ")");
