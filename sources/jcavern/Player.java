@@ -8,6 +8,7 @@
 
 package jcavern;
 
+import jcavern.ui.*;
 import java.util.Vector;
 import java.awt.*;
 
@@ -44,6 +45,18 @@ public class Player extends Combatant
 	{
 		mUnusedItems.removeElement(anItem);
 		mInUseItems.addElement(anItem);
+		
+		setChanged();
+		notifyObservers();
+	}
+	
+	/**
+	 * Drop an item.
+	 */
+	public void drop(Treasure anItem)
+	{
+		mUnusedItems.removeElement(anItem);
+		mInUseItems.removeElement(anItem);
 		
 		setChanged();
 		notifyObservers();
@@ -171,6 +184,12 @@ public class Player extends Combatant
 		}
 		
 		super.sufferDamage(adjustedDamage);
+		
+		if (isDead())
+		{
+			MissionCard.endMissionAlert("Sorry, " + getName() + ", your game is over.");
+			JCavernApplet.setPlayer(this);
+		}
 
 		setChanged();
 		notifyObservers();
@@ -249,6 +268,22 @@ public class Player extends Combatant
 		mArrows--;
 		setChanged();
 		notifyObservers();	
+	}
+	
+	public void decrementAttackCount()
+	{
+		Sword theSword = getSword();
+		
+		if ((theSword != null) && (Math.random() < Sword.kWearFraction))
+		{
+			theSword.decrementCharges();
+			
+			if (theSword.isDepleted())
+			{
+				drop(theSword);
+			}
+		}
+	
 	}
 	
 	public int computeRangedDamageTo(Combatant opponent)
@@ -359,16 +394,32 @@ public class Player extends Combatant
 		mCastle = aCastle;
 	}
 	
-	public void paint(Graphics g, int plotX, int plotY)
+	public void paint(Graphics g, int plotX, int plotY) throws JCavernInternalError
 	{
 		if (getCastle() == null)
 		{
-			super.paint(g, plotX, plotY);
+			super.paint(g, plotX, plotY, true);
 		}
 		else
 		{
-			super.paint(g, plotX, plotY);
+			super.paint(g, plotX, plotY, true);
 			getCastle().paint(g, plotX, plotY);
+		}
+	}
+	
+	public void thingRemoved(World aWorld, Location aLocation) throws JCavernInternalError
+	{
+		if (getCastle() != null)
+		{
+			try
+			{
+				aWorld.place(aLocation, getCastle());
+				setCastle(null);
+			}
+			catch (ThingCollisionException tce)
+			{
+				throw new JCavernInternalError("Can't put castle back in place of player");
+			}
 		}
 	}
 }
