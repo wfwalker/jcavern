@@ -10,6 +10,7 @@
 	<!-- folders within the jcavern module  -->
 
 	<property name="binaries" value="bin" />
+	<property name="images" value="images" />
 	<property name="sources" value="sources" />
 	<property name="documentation" value="docs" />
 	<property name="libraries" value="lib" />
@@ -52,6 +53,10 @@
 
 		<copy file="monster.dat" toFile="${binaries}/monster.dat" />
 		<copy file="treasure.dat" toFile="${binaries}/treasure.dat" />
+
+		<copy todir="${binaries}/images" >
+			<fileset dir="${images}" />
+		</copy>
 	</target>
 	
 	<target name="runapplet" depends="compile" >
