@@ -35,10 +35,16 @@ public class PlayerView extends Canvas implements Observer
 
 		String statusString =
 			"Gold: " + mModel.getGold() +
-			" Weapon: " + mModel.getSword() +
-			" Arrows: " + mModel.getArrows() +
-			" Experience: " + mModel.getPoints() + 
-			" Mission: " + mModel.getMission();
+			" Experience: " + mModel.getPoints();
+			
+			
+		Vector items = mModel.getItems();
+		
+		for (int index = 0; index < items.size(); index++)
+		{
+			statusString += " ";
+			statusString += ((Treasure) items.elementAt(index)).toString();
+		}
 			
 		g.drawString(statusString, 10, 20);
 	}
