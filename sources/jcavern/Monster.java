@@ -166,15 +166,6 @@ public class Monster extends Combatant implements Cloneable
 		return 0;
 	}
 	
-	/**
-	 * Decrements how many ranged attacks this monster can perform.
-	 * This simulates using up a supply of arrows.
-	 */
-	public void decrementRangedAttackCount()
-	{
-	
-	}
-
 	protected void reportResultAgainst(Combatant opponent, int outcome, int damage)
 	{
 		if (opponent instanceof Player)
@@ -211,7 +202,7 @@ public class Monster extends Combatant implements Cloneable
 	/**
 	 * Paints the Monster, but only paints the gauge if it's not a tree.
 	 */
-	public void paint(Graphics g, int plotX, int plotY)
+	public void paint(Graphics g, int plotX, int plotY) throws JCavernInternalError
 	{
 		paint(g, plotX, plotY, ! getName().startsWith("Tree"));
 	}
