@@ -112,8 +112,10 @@ public class World extends Observable
 	/**
 	 * Processes an attack by the given combatant in the given direction.
 	 */
-	public String attack(Thing attacker, int aDirection) throws NoSuchThingException
+	public void attack(Thing attacker, int aDirection) throws NoSuchThingException
 	{
+		//System.out.println("attack(" + attacker + ", " + Location.directionToString(aDirection) + ")");
+		
 		if (! mThingsToLocations.containsKey(attacker))
 		{
 			throw new NoSuchThingException("There's no " + attacker + " to attack");
@@ -126,11 +128,26 @@ public class World extends Observable
 		if ((attacker instanceof Player) && (attackee instanceof Tree))
 		{
 			remove(attackee);
-			return attacker.getName() + " chopped down the tree";
+			JCavernApplet.log(attacker.getName() + " chopped down the tree");
 		}
-		else
+		else if ((attacker instanceof Combatant) && (attackee instanceof Combatant))
 		{
-			return attacker.getName() + " attacks " + attackee.getName();
+			Combatant 	theAttacker = (Combatant) attacker;
+			Combatant 	theAttackee = (Combatant) attackee;
+			int			damage = theAttacker.computeDamage();
+			
+			theAttackee.sufferDamage(damage);
+			
+			if (theAttackee.isDead())
+			{
+				JCavernApplet.log(attacker.getName() + " killed the " + attackee.getName());
+				theAttacker.gainExperience(theAttackee.getWorth());
+				remove(attackee);
+			}
+			else
+			{
+				JCavernApplet.log(attacker.getName() + " hit the " + attackee.getName() + " for " + damage);
+			}
 		}
 	}
 	
@@ -152,45 +169,40 @@ public class World extends Observable
 			throw new IllegalLocationException(aThing + " moved outside the world");
 		}
 		
-		remove(oldLocation);
-		
-		try
+		if (isEmpty(newLocation))
 		{
+			remove(oldLocation);
 			place(newLocation, aThing);
 		}
-		catch(ThingCollisionException e)
+		else
 		{
-			place(oldLocation, aThing);
-			throw e;
+			Thing currentOccupant = getThing(newLocation);
+			throw new ThingCollisionException(aThing, currentOccupant, aThing + " moved into " + currentOccupant);
 		}
+	}
+		
+	/**
+	 * Finds the direction between two things.
+	 */
+	public int directionToward(Thing aThing, Thing anotherThing) throws NoSuchThingException
+	{
+		if (! mThingsToLocations.containsKey(aThing))
+		{
+			throw new NoSuchThingException("There's no " + aThing + " in this world to move");
+		}
+		
+		if (! mThingsToLocations.containsKey(anotherThing))
+		{
+			throw new NoSuchThingException("There's no " + anotherThing + " in this world to move toward");
+		}
+		
+		Location	oldLocation1 = (Location) mThingsToLocations.get(aThing);
+		Location	oldLocation2 = (Location) mThingsToLocations.get(anotherThing);
+		
+		
+		return oldLocation1.getDirectionToward(oldLocation2);
 	}
 	
-	/**
-	 * Moves the thing at the given location in the given direction.
-	 */
-	public void move(Location oldLocation, int direction) throws ThingCollisionException, NoSuchThingException, IllegalLocationException
-	{
-		Thing		theThing = (Thing) mLocationsToThings.get(oldLocation);
-		Location	newLocation = oldLocation.getNeighbor(direction);
-
-		if (! newLocation.inBounds(kBounds))
-		{
-			throw new IllegalLocationException(theThing + " moved outside the world");
-		}
-		
-		remove(oldLocation);
-		
-		try
-		{
-			place(newLocation, theThing);
-		}
-		catch(ThingCollisionException e)
-		{
-			place(oldLocation, theThing);
-			throw e;
-		}
-	}
-
 	/**
 	 * Retrieves the thing at the given location.
 	 */
@@ -203,6 +215,40 @@ public class World extends Observable
 		else
 		{
 			throw new NoSuchThingException("There's nothing at " + aLocation);
+		}
+	}
+	
+	public Player getPlayer() throws NoSuchThingException
+	{
+		Enumeration theThings = mThingsToLocations.keys();
+		
+		while (theThings.hasMoreElements())
+		{
+			Thing aThing = (Thing) theThings.nextElement();
+			
+			if (aThing instanceof Player)
+			{
+				return (Player) aThing;
+			}
+		}
+		
+		throw new NoSuchThingException("No players found in this world");
+	}
+	
+	public void doTurn()
+	{
+		Enumeration theThings = mThingsToLocations.keys();
+		
+		try
+		{
+			while (theThings.hasMoreElements())
+			{
+				((Thing) theThings.nextElement()).doTurn(this);
+			}
+		}
+		catch (NoSuchThingException nse)
+		{
+			System.out.println("World.doTurn() internal consistency problem");
 		}
 	}
 	
@@ -228,7 +274,7 @@ public class World extends Observable
 	{
 		if (mLocationsToThings.containsKey(aLocation))
 		{
-			throw new ThingCollisionException("There's already " + aThing + " at " + aLocation);
+			throw new ThingCollisionException(aThing, "There's already " + aThing + " at " + aLocation);
 		}
 		
 		mLocationsToThings.put(aLocation, aThing);
