@@ -8,6 +8,13 @@
 
 package jcavern;
 
+/**
+ * Armour represents an item which, when used, reduces the amount of
+ * damage done by each monster's attack.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
+ */
 public class Armour extends Treasure
 {
 	private int		mPoints;

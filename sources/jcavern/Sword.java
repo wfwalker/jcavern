@@ -8,6 +8,12 @@
 
 package jcavern;
 
+/**
+ * A Sword is a Thing the player uses to attack combatants.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
+ */
 public class Sword extends Treasure
 {
 	private int		mStrength;

@@ -13,6 +13,9 @@ import java.util.Vector;
 
 /**
  * Represents a location of a Thing within a World.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
  */
 public class Location
 {

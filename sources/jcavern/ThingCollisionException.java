@@ -10,6 +10,9 @@ package jcavern;
 
 /**
  * Represents an attempt to put two things into the same location..
+ *
+ * @author	Bill Walker
+ * @version	$Id$
  */
 public class ThingCollisionException extends Exception
 {

@@ -8,6 +8,12 @@
 
 package jcavern;
 
+/**
+ * MagicItems are Things which can perform some magical operation.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
+ */
 public class MagicItem extends Treasure
 {
 	private int					mPower;

@@ -10,6 +10,9 @@ package jcavern;
 
 /**
  * Represents a situation in which an asked-for thing was not found.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
  */
 public class NonCombatantException extends Exception
 {

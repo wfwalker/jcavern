@@ -10,6 +10,13 @@ package jcavern;
 
 import java.awt.Graphics;
 
+/**
+ * Castle represents a stationary shelter that renders
+ * the player invulnerable to all monster attacks.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
+ */
 public class Castle extends Thing
 {
 	public Castle()
