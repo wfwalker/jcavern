@@ -43,8 +43,11 @@ public class JCavernApplet extends Applet
 	
 	public static void log(String aString)
 	{
-		gLogView.append(aString);
-		gLogView.append("\n");
+		if (gLogView != null)
+		{
+			gLogView.append(aString);
+			gLogView.append("\n");
+		}
 	}
 
 	/**
@@ -72,20 +75,24 @@ public class JCavernApplet extends Applet
 			// Create a player and a view of the player
 			mPlayer  = new Player("Bill");
 			mPlayerView = new PlayerView(mPlayer);
+			mPlayer.setMission(MonsterFactory.createMission(mPlayer));
 	
 			// Create a world  and a view of the world
 			mWorld = new World();
 			mWorld.placeRandomTrees();
+			mWorld.placeRandomCastles();
+			mWorld.placeRandomTreasureChests(mPlayer);
 			mWorld.placeWorthyOpponents(mPlayer, 10);
 			mWorldView = new WorldView(mWorld);
 	
-			gLogView = new TextArea(5, 80);
+			gLogView = new TextArea(5, 60);
+			gLogView.setEditable(false);
 			
-			mWorldView.setSize(500, 500);		
+			mWorldView.setSize(500, 200);		
 			add(mWorldView);
 			mWorld.addObserver(mWorldView);
 			
-			mPlayerView.setSize(500, 50);		
+			mPlayerView.setSize(500, 150);		
 			add(mPlayerView);
 			mPlayer.addObserver(mPlayerView);
 			
