@@ -8,6 +8,8 @@
 
 package jcavern;
 
+import java.util.Vector;
+
 /**
  * MagicItems are Things which can perform some magical operation.
  *
@@ -37,25 +39,27 @@ public class MagicItem extends Treasure
 	
 	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
 	{
-		JCavernApplet.current().log(aPlayer.getName() + " uses magic item " + getName());
+		JCavernApplet.log(aPlayer.getName() + " uses magic item " + getName());
 		
 		switch (mPower)
 		{
 			case MAGIC_NOTHING:
-					JCavernApplet.current().log(getName() + ": nothing happens"); break;
+					JCavernApplet.log(getName() + ": nothing happens"); break;
 					
 			case MAGIC_REVEAL_INVISIBILITY:
-					JCavernApplet.current().log(getName() + ": reveal invisibility"); break;
+					JCavernApplet.log(getName() + ": reveal invisibility"); break;
 					
 			case MAGIC_TELEPORTATION:
-					doTeleportation(aPlayer, aWorld);
-					JCavernApplet.current().log(getName() + ": teleportation"); break;
+					JCavernApplet.log(getName() + ": teleportation"); 
+					doTeleportation(aPlayer, aWorld); break;
 					
 			case MAGIC_DETECT_TREASURE:
-					JCavernApplet.current().log(getName() + ": detect treasure"); break;
+					JCavernApplet.log(getName() + ": detect treasure"); 
+					doDetectTreasure(aPlayer, aWorld); break;
 					
 			case MAGIC_DETECT_MAGIC_CASTLE:
-					JCavernApplet.current().log(getName() + ": detect magic castle"); break;
+					JCavernApplet.log(getName() + ": detect magic castle"); 
+					doDetectMagicCastle(aPlayer, aWorld); break;
 			
 			default:
 					throw new JCavernInternalError("MagicItem.startUseBy(), known power");
@@ -90,5 +94,31 @@ public class MagicItem extends Treasure
 		{
 			throw new JCavernInternalError("can't teleport");
 		}
+	}
+	
+	private void doDetectThings(Thing seeker, World aWorld, Thing aPrototype) throws JCavernInternalError
+	{
+		Vector	theThings = aWorld.getThings(aPrototype);
+		
+		for (int index = 0; index < theThings.size(); index++)
+		{
+			Thing	detectee = (Thing) theThings.elementAt(index);
+			int		direction = aWorld.getDirectionToward(seeker, detectee);
+			
+			JCavernApplet.log("There is a " +
+					aPrototype.getName() + " " +
+					aWorld.getDistanceBetween(seeker, detectee) + " moves " + 
+					Location.directionToString(direction) + " of " + seeker.getName());
+		}
+	}
+	
+	private void doDetectTreasure(Thing seeker, World aWorld) throws JCavernInternalError
+	{
+		doDetectThings(seeker, aWorld, new TreasureChest(null, 0));
+	}
+	
+	private void doDetectMagicCastle(Thing seeker, World aWorld) throws JCavernInternalError
+	{
+		doDetectThings(seeker, aWorld, new Castle());
 	}
 }
