@@ -24,6 +24,9 @@ import java.util.*;
  */
 public class WorldView extends JCavernView
 {
+	/** * Radius of the world view, in Locations */
+	public static final int			kWorldViewRadius = 4;
+	
 	/** * Preferred size of images */
 	public static final int			kPreferredImageSize = 32;
 	
@@ -38,6 +41,8 @@ public class WorldView extends JCavernView
 	
 	/** * The location of the most interesting thing in the World, usually the player. */
 	private	Location				mLocationOfInterest;
+	
+	private Hashtable				mBackgroundColors;
 	
 	/** * A Thread to animate the world view. */
 	private WorldViewUpdateThread	mThread;
@@ -93,11 +98,23 @@ public class WorldView extends JCavernView
 		
 		if (inLocationOfInterest != null)
 		{
-			mLocationOfInterest = mModel.enforceMinimumInset(inLocationOfInterest, 3);
+			mLocationOfInterest = mModel.enforceMinimumInset(inLocationOfInterest, kWorldViewRadius);
 		}
 		
 		setBackground(Color.black);
 		setForeground(JCavernApplet.CavernOrange);
+		
+		mBackgroundColors = new Hashtable();
+		
+		for (int xIndex = 0; xIndex < mModel.getBounds().width; xIndex++)
+		{
+			for (int yIndex = 0; yIndex < mModel.getBounds().height; yIndex++)
+			{
+				Location aLocation = new Location(xIndex, yIndex);
+				
+				mBackgroundColors.put(aLocation, randomPaleOrange(xIndex, yIndex));
+			}
+		}
 		
 		mThread = new WorldViewUpdateThread();
 		mThread.start();
@@ -335,7 +352,7 @@ public class WorldView extends JCavernView
 	private void paintBorder(Graphics g, Location theLocation)
 	{
 		int		topBorder = scaled(-0.5);
-		int		bottomBorder = scaled(6.5);
+		int		bottomBorder = scaled(2 * kWorldViewRadius + 0.5);
 		
 		g.setColor(JCavernApplet.CavernOrangeDim);
 		
@@ -348,28 +365,51 @@ public class WorldView extends JCavernView
 
 		// draw tick marks on those axes. Major ticks every third unit.
 		
-		for (int yIndex = -3; yIndex <= 3; yIndex++)
+		for (int yIndex = -kWorldViewRadius; yIndex <= kWorldViewRadius; yIndex++)
 		{
 			int		worldY = yIndex + theLocation.getY();
-			int		plotY = scaled(yIndex + 3);
+			int		plotY = scaled(yIndex + kWorldViewRadius);
 			boolean	isYEdge =
-						Math.abs(worldY - mModel.getBounds().height) <= 3 ||
-						worldY < 3;
+						Math.abs(worldY - mModel.getBounds().height) <= kWorldViewRadius ||
+						worldY < kWorldViewRadius;
 
-			for (int xIndex = -3; xIndex <= 3; xIndex++)
+			for (int xIndex = -kWorldViewRadius; xIndex <= kWorldViewRadius; xIndex++)
 			{
 				int		worldX = xIndex + theLocation.getX();
-				int		plotX = scaled(xIndex + 3);
+				int		plotX = scaled(xIndex + kWorldViewRadius);
 				boolean	isXEdge =
-							Math.abs(worldX - mModel.getBounds().width) <= 3 ||
-							worldX < 3;
+							Math.abs(worldX - mModel.getBounds().width) <= kWorldViewRadius ||
+							worldX < kWorldViewRadius;
 
-				if ((worldX % 3 == 0) && (worldY % 3 == 0))
-				{
-					g.fillRect(plotX - 3, plotY - 3, 6, 6);
-				}
+				//if ((worldX % 3 == 0) && (worldY % 3 == 0))
+				//{
+				//	g.fillRect(plotX - 3, plotY - 3, 6, 6);
+				//}
+				
+				g.setColor((Color) mBackgroundColors.get(new Location(worldX, worldY)));
+				g.fillRect(plotX - kSpacing / 2, plotY - kSpacing / 2, kSpacing, kSpacing);
 			}
 		}
+	}
+	
+	private Color randomPaleOrange(int worldX, int worldY)
+	{
+		//double scale = (worldX % 5) / 16.0 + (worldY % 7) / 24.0;
+		double scale = 0.1 + Math.random() * 0.1;
+		double red = 1.0 * scale;
+		double green = 0.2 * scale;
+		double blue = 0 * scale;
+		
+		return new Color((float) red, (float) green, (float) blue);
+	}
+	
+	/**
+	 * Returns the preferred radius for this view.
+	 */
+	public int getPreferredRadius()
+	{
+		return (4 + 2 * kWorldViewRadius) * kPreferredImageSize;
+
 	}
 	
 	/**
@@ -384,7 +424,7 @@ public class WorldView extends JCavernView
 		try
 		{
 			thePlayer = mModel.getPlayer();
-			mLocationOfInterest = mModel.enforceMinimumInset(mModel.getLocation(thePlayer), 3);
+			mLocationOfInterest = mModel.enforceMinimumInset(mModel.getLocation(thePlayer), kWorldViewRadius);
 		}
 		catch (JCavernInternalError jcie)
 		{
@@ -395,15 +435,15 @@ public class WorldView extends JCavernView
 		
 		try
 		{
-			for (int yIndex = -3; yIndex <= 3; yIndex++)
+			for (int yIndex = -kWorldViewRadius; yIndex <= kWorldViewRadius; yIndex++)
 			{
 				int		worldY = yIndex + mLocationOfInterest.getY();
-				int		plotY = scaled(yIndex + 3);
+				int		plotY = scaled(yIndex + kWorldViewRadius);
 
-				for (int xIndex = -3; xIndex <= 3; xIndex++)
+				for (int xIndex = -kWorldViewRadius; xIndex <= kWorldViewRadius; xIndex++)
 				{
 					int			worldX = xIndex + mLocationOfInterest.getX();
-					int			plotX = scaled(xIndex + 3);
+					int			plotX = scaled(xIndex + kWorldViewRadius);
 					Location	aLocation = new Location(worldX, worldY);					
 					
 					paintLocation(g, aLocation, plotX, plotY);
