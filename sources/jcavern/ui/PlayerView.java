@@ -68,12 +68,13 @@ public class PlayerView extends JCavernView
 		int y = g.getFontMetrics().getHeight();
 		int lineHeight = g.getFontMetrics().getHeight();
 
-		g.drawString("Name: " + mModel.getName(), 1, y); y += lineHeight;
+		g.drawString(mModel.getName(), 1, y); y += lineHeight;
 		
 		g.drawString("Points: " + mModel.getPoints() + "/" + mModel.getMaximumPoints(), 1, y); y += lineHeight;
 		g.drawString("Gold: " + mModel.getGold(), 1, y); y += lineHeight;
 		g.drawString("Arrows: " + mModel.getArrows(), 1, y); y += lineHeight;
-		g.drawString("Moves: " + mModel.getMoveCount(), 1, y); y += lineHeight; y += lineHeight;
+		g.drawString("Turns: " + mModel.getMoveCount(), 1, y); y += lineHeight;
+		g.drawString("Kills: " + mModel.getKills(), 1, y); y += lineHeight; y += lineHeight;
 		
 		g.drawString("In Use:", 1, y); y += lineHeight; 
 			
@@ -81,7 +82,7 @@ public class PlayerView extends JCavernView
 				
 		for (int index = 0; index < items.size(); index++)
 		{
-			g.drawString(index + " " + ((Treasure) items.elementAt(index)).toString(), 1, y); y += lineHeight;
+			g.drawString((index + 1) + " " + ((Treasure) items.elementAt(index)).toString(), 1, y); y += lineHeight;
 		}
 		
 		y += lineHeight;
@@ -91,7 +92,7 @@ public class PlayerView extends JCavernView
 		
 		for (int index = 0; index < items2.size(); index++)
 		{
-			g.drawString(index + " " + ((Treasure) items2.elementAt(index)).toString(), 1, y); y += lineHeight;
+			g.drawString((index + 1) + " " + ((Treasure) items2.elementAt(index)).toString(), 1, y); y += lineHeight;
 		}
 	}
 }
