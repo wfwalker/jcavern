@@ -76,7 +76,7 @@ public class WorldView extends Canvas implements Observer
 					}
 					else
 					{
-						g.fillRect(plotX - kSpacing / 2, plotY - kSpacing / 2, kSpacing, kSpacing);
+						//g.fillRect(plotX - kSpacing / 2, plotY - kSpacing / 2, kSpacing, kSpacing);
 					}
 				}
 			}
