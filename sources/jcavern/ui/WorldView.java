@@ -25,24 +25,61 @@ import java.util.*;
 public class WorldView extends JCavernView
 {
 	/** * Preferred size of images */
-	public static final int		kPreferredImageSize = 32;
+	public static final int			kPreferredImageSize = 32;
 	
 	/** * Number of pixels between board pictures. */
-	private static final int	kSpacing = 5 * kPreferredImageSize / 4;
+	private static final int		kSpacing = 5 * kPreferredImageSize / 4;
 	
 	/** * The World being viewed by this View. */
-	private World				mModel;
+	private World					mModel;
 	
 	/** * The list of events received from the model for this turn */
-	private Vector				mEvents;
+	private Vector					mEvents;
+	
+	/** * The location of the most interesting thing in the World, usually the player. */
+	private	Location				mLocationOfInterest;
+	
+	/** * A Thread to animate the world view. */
+	private WorldViewUpdateThread	mThread;
+	
+	/** * An animation thread class. */
+	private class WorldViewUpdateThread extends Thread
+	{
+		/** * Should the thread continue running. */
+		private boolean		mKeepRunning = true;
+		
+		/** * Asks the thread to stop running. */
+		public void pleaseStop()
+		{
+			mKeepRunning = false;
+		}
+		
+		/** * The main animation routine. */
+		public void run()
+		{
+			while (mKeepRunning)
+			{
+				try
+				{
+					sleep(5000);
+					System.out.println("WorldView animation thread");
+				}
+				catch (InterruptedException ie)
+				{
+					//System.out.println("Interrupted " + ie);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Creates a new WorldView for the given World.
 	 *
-	 * @param	inApplet	a non-null Applet used to retrieve images
-	 * @param	inWorld		a non-null World being viewed.
+	 * @param	inApplet				a non-null Applet used to retrieve images
+	 * @param	inWorld					a non-null World being viewed.
+	 * @param	inLocationOfInterest	a Location of interest, or <CODE>null</CODE> if none.
 	 */
-	public WorldView(JCavernApplet inApplet, World inWorld)
+	public WorldView(JCavernApplet inApplet, World inWorld, Location inLocationOfInterest)
 	{
 		super(inApplet);
 		
@@ -54,8 +91,24 @@ public class WorldView extends JCavernView
 		mModel = inWorld;
 		mEvents = new Vector();
 		
+		if (inLocationOfInterest != null)
+		{
+			mLocationOfInterest = mModel.enforceMinimumInset(inLocationOfInterest, 3);
+		}
+		
 		setBackground(Color.black);
 		setForeground(JCavernApplet.CavernOrange);
+		
+		mThread = new WorldViewUpdateThread();
+		mThread.start();
+	}
+	
+	/**
+	 * Stops the animation thread from running.
+	 */
+	public void stopThread()
+	{
+		mThread.pleaseStop();
 	}
 	
 	/** 
@@ -163,11 +216,10 @@ public class WorldView extends JCavernView
 	/**
 	 * Paints some text centered around the given coordinates.
 	 *
-	 * @param		inApplet				a non-null Applet used to retrieve images
 	 * @param		g						a non-null Graphics object with which to paint
 	 * @param		plotX					x coordinate relative to the corner of the world view
 	 * @param		plotY					y coordinate relative to the corner of the world view
-	 * @param		imageName				name of the image
+	 * @param		inLavel					the non-null String to be painted
 	 * @exception	JCavernInternalError	could not paint
 	 */
 	public static void paintCenteredText(Graphics g, int plotX, int plotY, String inLabel) throws JCavernInternalError
@@ -229,7 +281,7 @@ public class WorldView extends JCavernView
 	 * Paints a representation of a given Event at the given screen coordinates.
 	 *
 	 * @param		g						a non-null Graphics object 
-	 * @param		inLocation				a non-null Location to paint 
+	 * @param		anEvent					a non-null WorldEvent to paint 
 	 * @param		plotX					horizontal screen coordinate relative to corner of this WorldView
 	 * @param		plotY					vertical screen coordinate relative to corner of this WorldView
 	 * @exception	JCavernInternalError	problem painting a board image
@@ -260,59 +312,61 @@ public class WorldView extends JCavernView
 		//}
 	}
 	
+	/**
+	 * Converts from World coordinates to WorldView coordinates.
+	 * Used in WorldView paint routines.
+	 * @see		jcavern.World#getBounds()
+	 *
+	 * @param	ordinal		a World coordinate
+	 * @return				a WorldView coordinate.
+	 */
 	private int scaled(double ordinal)
 	{
 		return (int) (kSpacing / 2 + (ordinal * kSpacing));
 	}
 	
-
+	/**
+	 * Draw a grid of dots on the World view to
+	 * help convey the idea of motion.
+	 *
+	 * @param		g						a non-null Graphics object 
+	 * @param		theLocation				the location to focus on. 
+	 */
 	private void paintBorder(Graphics g, Location theLocation)
 	{
 		int		topBorder = scaled(-0.5);
-		int		topLocation = scaled(0);
-		int		bottomLocation = scaled(6);
 		int		bottomBorder = scaled(6.5);
 		
 		g.setColor(JCavernApplet.CavernOrangeDim);
 		
 		// draw axes at the perimeter of the display
-		g.drawLine(topLocation, topBorder, bottomLocation, topBorder);
-		g.drawLine(topLocation, bottomBorder, bottomLocation, bottomBorder);
-		g.drawLine(topBorder, topLocation, topBorder, bottomLocation);
-		g.drawLine(bottomBorder, topLocation, bottomBorder, bottomLocation);
+		
+		if (theLocation.getY() < 4) g.drawLine(topBorder, topBorder, bottomBorder, topBorder);
+		if (theLocation.getY() > (mModel.getBounds().height - 5)) g.drawLine(topBorder, bottomBorder, bottomBorder, bottomBorder);
+		if (theLocation.getX() < 4) g.drawLine(topBorder, topBorder, topBorder, bottomBorder);
+		if (theLocation.getX() > (mModel.getBounds().width - 5)) g.drawLine(bottomBorder, topBorder, bottomBorder, bottomBorder);
 
 		// draw tick marks on those axes. Major ticks every third unit.
 		
 		for (int yIndex = -3; yIndex <= 3; yIndex++)
 		{
-			int	worldY = yIndex + theLocation.getY();
-			int	plotY = scaled(yIndex + 3);
+			int		worldY = yIndex + theLocation.getY();
+			int		plotY = scaled(yIndex + 3);
+			boolean	isYEdge =
+						Math.abs(worldY - mModel.getBounds().height) <= 3 ||
+						worldY < 3;
 
-			if (worldY % 3 == 0)
-			{
-				g.fillRect(1, plotY - 3, 6, 6);
-				g.fillRect(bottomBorder - 6, plotY - 3, 6, 6);
-			}
-			else
-			{
-				g.drawLine(1, plotY, 6, plotY);
-				g.drawLine(bottomBorder - 6, plotY, bottomBorder, plotY);
-			}
-			
 			for (int xIndex = -3; xIndex <= 3; xIndex++)
 			{
-				int	worldX = xIndex + theLocation.getX();
-				int	plotX = scaled(xIndex + 3);
+				int		worldX = xIndex + theLocation.getX();
+				int		plotX = scaled(xIndex + 3);
+				boolean	isXEdge =
+							Math.abs(worldX - mModel.getBounds().width) <= 3 ||
+							worldX < 3;
 
-				if (worldX % 3 == 0)
+				if ((worldX % 3 == 0) && (worldY % 3 == 0))
 				{
-					g.fillRect(plotX - 3, topBorder, 6, 6);
-					g.fillRect(plotX - 3, bottomBorder - 6, 6, 6);
-				}
-				else
-				{
-					g.drawLine(plotX, topBorder, plotX, topBorder + 6);
-					g.drawLine(plotX, bottomBorder - 6, plotX, bottomBorder);
+					g.fillRect(plotX - 3, plotY - 3, 6, 6);
 				}
 			}
 		}
@@ -326,31 +380,29 @@ public class WorldView extends JCavernView
 	public void paint(Graphics g)
 	{
 		Player		thePlayer;
-		Location	theLocation;
 		
 		try
 		{
 			thePlayer = mModel.getPlayer();
-			theLocation = mModel.enforceMinimumInset(mModel.getLocation(thePlayer), 3);
+			mLocationOfInterest = mModel.enforceMinimumInset(mModel.getLocation(thePlayer), 3);
 		}
 		catch (JCavernInternalError jcie)
 		{
-			System.out.println("Can't find player");
-			theLocation = new Location( 5, 5);
+			System.out.println("Can't find player, using " + mLocationOfInterest);
 		}
 		
-		paintBorder(g, theLocation);
+		paintBorder(g, mLocationOfInterest);
 		
 		try
 		{
 			for (int yIndex = -3; yIndex <= 3; yIndex++)
 			{
-				int		worldY = yIndex + theLocation.getY();
+				int		worldY = yIndex + mLocationOfInterest.getY();
 				int		plotY = scaled(yIndex + 3);
 
 				for (int xIndex = -3; xIndex <= 3; xIndex++)
 				{
-					int			worldX = xIndex + theLocation.getX();
+					int			worldX = xIndex + mLocationOfInterest.getX();
 					int			plotX = scaled(xIndex + 3);
 					Location	aLocation = new Location(worldX, worldY);					
 					
