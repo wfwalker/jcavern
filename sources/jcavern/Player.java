@@ -31,7 +31,7 @@ public class Player extends Combatant
 		super(name, 24);
 		
 		mGold = 10;
-		mSword = new Sword(1);
+		mSword = new Sword("Sword", 1);
 		mArrows = 20;
 	}
 	
@@ -152,6 +152,14 @@ public class Player extends Combatant
 	public int getGold()
 	{
 		return mGold;
+	}
+	
+	public void incrementGold(int delta)
+	{
+		mGold += delta;
+
+		setChanged();
+		notifyObservers();
 	}
 	
 	public Sword getSword()
