@@ -9,6 +9,7 @@
 package jcavern;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.net.*;
 import java.util.Hashtable;
 import java.awt.event.*;
@@ -24,23 +25,8 @@ public class JCavernApplet extends Applet
 {
 	public static final Color		CavernOrange = new Color(0xFF, 0x66, 0x00);
 	
-	/** * A view of the game world */
-	private WorldView				mWorldView;
-	
-	/** * A view of the player statistics */
-	private PlayerView				mPlayerView;
-	
-	/** * A view of the player statistics */
-	private MissionView				mMissionView;
-	
-	/** * A model of the game world */
-	private World					mWorld;
-	
-	/** * A model of the game world */
-	private TextArea				mLogView;
-	
-	/** * The representation of the player */
-	private Player					mPlayer;
+	/** * The current player. */
+	private Player					mCurrentPlayer;
 	
 	/** * A table of messages */
 	private Hashtable				mImages;
@@ -48,21 +34,46 @@ public class JCavernApplet extends Applet
 	/** * A MediaTracker to make sure the images get loaded. */
 	private MediaTracker			mTracker;
 
+	/** * The current applet */
 	private static JCavernApplet	gApplet;
+	
+	private Button					mNewMissionButton;
+	private Button					mNewPlayerButton;
+	private Button					mLoadPlayerButton;
+	private Button					mSavePlayerButton;
+	private TextField				mLabel;
 	
 	public static JCavernApplet current()
 	{
 		return gApplet;
 	}
-
-	public static void log(String aString)
+	
+	public static void setPlayer(Player aPlayer)
 	{
-		if (gApplet != null)
+		if (current() != null)
 		{
-			gApplet.privateLog(aString);
+			current().privateSetPlayer(aPlayer);
 		}
 	}
-
+	
+	private void privateSetPlayer(Player aPlayer)
+	{
+		mCurrentPlayer = aPlayer;
+					
+		System.out.println("current player " + mCurrentPlayer + " is dead " + mCurrentPlayer.isDead());
+		
+		if ((mCurrentPlayer != null) && (! mCurrentPlayer.isDead()))
+		{
+			mNewMissionButton.setEnabled(true);
+			mLabel.setText("Current Player is " + mCurrentPlayer.getName() + " with " + mCurrentPlayer.getPoints() + " points");
+			
+		}
+		else
+		{
+			mNewMissionButton.setEnabled(false);
+			mLabel.setText("Press 'New Player' to create a new Player");
+		}
+	}
 
 	/**
 	 * Creates game world, player, viewers.
@@ -72,16 +83,7 @@ public class JCavernApplet extends Applet
 		mImages = new Hashtable();
 		gApplet = this;
 	}
-	
-	private void privateLog(String aString)
-	{
-		if (mLogView != null)
-		{
-			mLogView.append(aString);
-			mLogView.append("\n");
-		}
-	}
-	
+		
 	public Image getBoardImage(String aName)
 	{
 		return (Image) mImages.get(aName);
@@ -92,8 +94,6 @@ public class JCavernApplet extends Applet
 	 */
 	public void start()
 	{
-		mWorldView.requestFocus();
-        mWorldView.addKeyListener(new KeyboardCommandListener(mWorld, mWorldView, mPlayer, mMissionView));
 	}
 
 	// Get applet information
@@ -111,13 +111,12 @@ public class JCavernApplet extends Applet
 		return image;
 	}
 
-
 	// Initialize the applet
 	public void init()
 	{
-		setBackground(Color.black);
-		setForeground(CavernOrange);
-		setFont(new Font("Monospaced", Font.PLAIN, 12));
+		//setBackground(Color.black);
+		//setForeground(CavernOrange);
+		//setFont(new Font("Monospaced", Font.PLAIN, 12));
 		
 		mTracker = new MediaTracker(this);
 
@@ -128,6 +127,7 @@ public class JCavernApplet extends Applet
 			// get data from server
 			
 			mImages.put("monster", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/monster.gif")));
+			mImages.put("demon", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/demon.gif")));
 			mImages.put("player", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/player.gif")));
 			mImages.put("tree", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/tree.gif")));
 			mImages.put("tree2", fetchImageAndWait(new URL(getDocumentBase(), "bin/images/tree2.gif")));
@@ -144,43 +144,69 @@ public class JCavernApplet extends Applet
 
 			MonsterFactory.loadPrototypes(new URL(getDocumentBase(), "bin/monster.dat"));
 			Treasure.loadPrototypes(new URL(getDocumentBase(), "bin/treasure.dat"));
-	
-			// Create a player and a view of the player
-			String playerName = doStringDialog("What is your name, player?");
-			
-			mPlayer  = new Player(playerName);
-			mPlayerView = new PlayerView(mPlayer);
-			mPlayer.setMission(MonsterFactory.createMission(mPlayer));
-			mMissionView = new MissionView(mPlayer.getMission());
-	
-			// Create a world  and a view of the world
-			mWorld = new World();
-			mWorldView = new WorldView(mWorld);
-	
-			mLogView = new TextArea("Welome to JCavern\n", 5, 60, TextArea.SCROLLBARS_NONE);
-			mLogView.setEditable(false);
-			mLogView.setBackground(Color.black);
-			mLogView.setForeground(CavernOrange);
-			
-			mWorldView.setSize(300, 300);		
-			add(mWorldView);
-			mWorld.addObserver(mWorldView);
-			
-			//mPlayerView.setSize(500, 50);		
-			add(mPlayerView);
-			mPlayer.addObserver(mPlayerView);
-			
-			mMissionView.setSize(500, 50);		
-			add(mMissionView);
-			mPlayer.getMission().addObserver(mMissionView);
-			
-			add(mLogView);
 
-			mWorld.populateFor(mPlayer);
-		}
-		catch(JCavernInternalError jcie)
-		{
-			System.out.println("JCaverApplet.init internal error " + jcie);
+			// add the text field
+			mLabel = new TextField("Press 'New Player' to create a new Player", 60);
+			add(mLabel);
+			
+			// add the load-player button
+			mLoadPlayerButton = new Button("Load Player");
+			mLoadPlayerButton.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					System.out.println("Load Player ");
+				}
+			});
+			mLoadPlayerButton.setEnabled(false);
+			add(mLoadPlayerButton);
+			
+			mSavePlayerButton = new Button("Save Player");
+			mSavePlayerButton.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					System.out.println("Save Player ");
+				}
+			});
+			mSavePlayerButton.setEnabled(false);
+			add(mSavePlayerButton);
+			
+			mNewMissionButton = new Button("New Mission");
+			mNewMissionButton.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					System.out.println("New Mission ");
+					// build a mission window
+					JCavernWindow	window = new JCavernWindow(mCurrentPlayer);
+					
+					window.setSize(500, 600);
+					window.setTitle("JCavern Mission");
+					window.setVisible(true);
+				}
+			});
+			mNewMissionButton.setEnabled(false);
+			add(mNewMissionButton);
+			
+			// add the create-a-new-player button
+			mNewPlayerButton = new Button("New Player");
+			mNewPlayerButton.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					System.out.println("New Player ");
+					// build a mission window
+					PlayerWindow	window = new PlayerWindow(null);
+					
+					window.setSize(200, 400);
+					window.setTitle("JCavern Player");
+					window.setVisible(true);
+					
+					mCurrentPlayer = window.getPlayer();
+				}
+			});
+			add(mNewPlayerButton);
 		}
 		catch(InterruptedException ie)
 		{
@@ -192,45 +218,4 @@ public class JCavernApplet extends Applet
 		}
 	}
 
-	public String doStringDialog(String prompt)
-	{
-		final Dialog	theStringDialog = new Dialog(new Frame(), prompt, true);
-		Button			theButton = new Button("OK");
-		final TextField	theField = new TextField("Name", 40);
-		final TextField	thePrompt = new TextField(prompt, 40);
-
-		thePrompt.setEditable(false);
-		
-		theStringDialog.setForeground(CavernOrange);
-		theButton.setForeground(CavernOrange);
-		theField.setForeground(CavernOrange);
-		thePrompt.setForeground(CavernOrange);
-		
-		theStringDialog.setBackground(Color.black);
-		theButton.setBackground(Color.black);
-		theField.setBackground(Color.black);
-		thePrompt.setBackground(Color.black);
-
-		theField.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		theButton.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		thePrompt.setFont(new Font("Monospaced", Font.PLAIN, 12));
-
-		ActionListener	theListener = new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				theStringDialog.hide();
-			}
-		};
-		
-		theButton.addActionListener(theListener);
-		
-		theStringDialog.add(thePrompt, BorderLayout.NORTH);
-		theStringDialog.add(theField, BorderLayout.CENTER);
-		theStringDialog.add(theButton, BorderLayout.SOUTH);
-		theStringDialog.pack();
-		theStringDialog.show();
-		
-		return theField.getText();
-	}
 }
