@@ -13,7 +13,13 @@ package jcavern;
  */
 public abstract class Combatant extends Thing
 {
-	private int		mPoints;
+	protected static final int	HIT = 1;
+	
+	protected static final int	MISS = 2;
+	
+	protected static final int	KILL = 3;
+	
+	private int					mPoints;
 	
 	// Combatants can compute and suffer damage they cause
 	
@@ -115,7 +121,7 @@ public abstract class Combatant extends Thing
 		}
 		else
 		{
-			JCavernApplet.log(getName() + " misses.");
+			reportResultAgainst(opponent, Combatant.MISS, 0);
 		}
 	}
 	
@@ -144,7 +150,7 @@ public abstract class Combatant extends Thing
 		
 		Combatant opponent = (Combatant) potentialOpponent;
 		
-		opponent.decrementRangedAttackCount();
+		decrementRangedAttackCount();
 
 		if (this.canRangedAttack(opponent))
 		{
@@ -152,7 +158,7 @@ public abstract class Combatant extends Thing
 		}
 		else
 		{
-			JCavernApplet.log(getName() + " misses.");
+			reportResultAgainst(opponent, Combatant.MISS, 0);
 		}
 	}
 		
@@ -162,6 +168,16 @@ public abstract class Combatant extends Thing
 		Thing	potentialOpponent = aWorld.getThingToward(this, aDirection);
 	
 		rangedAttack(aWorld, potentialOpponent);
+	}
+	
+	protected void reportResultAgainst(Combatant opponent, int outcome, int damage)
+	{
+		switch (outcome)
+		{
+			case Combatant.MISS: JCavernApplet.log(getName() + " misses " + opponent.getName()); break;
+			case Combatant.HIT: JCavernApplet.log(getName() + " hits " + opponent.getName() + " for " + damage); break;
+			case Combatant.KILL: JCavernApplet.log(getName() + " kills " + opponent.getName()); break;
+		}
 	}
 
 	/**
@@ -177,13 +193,13 @@ public abstract class Combatant extends Thing
 		{
 			if (opponent.isDead())
 			{
-				JCavernApplet.log(getName() + " killed the " + opponent.getName());
+				reportResultAgainst(opponent, Combatant.KILL, damage);
 				gainExperience(opponent);
 				aWorld.remove(opponent);
 			}
 			else
 			{
-				JCavernApplet.log(getName() + " hit the " + opponent.getName() + " for " + damage);
+				reportResultAgainst(opponent, Combatant.HIT, damage);
 			}
 		}
 		catch (JCavernInternalError jcie)
@@ -210,8 +226,7 @@ public abstract class Combatant extends Thing
 	}
 	
 	public Combatant(String name, int points)
-	{
-		super(name);
+	{		super(name);
 		
 		mPoints = points;
 	}
