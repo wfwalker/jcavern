@@ -9,6 +9,8 @@
 package jcavern;
 
 import java.applet.*;
+import java.awt.*;
+import java.net.URL;
 
 /**
  * A Monster is a combatant that appears in the world.
@@ -151,7 +153,15 @@ public class Monster extends Combatant implements Cloneable
 	{
 	
 	}
-	
+
+	protected void reportResultAgainst(Combatant opponent, int outcome, int damage)
+	{
+		if (opponent instanceof Player)
+		{
+			super.reportResultAgainst(opponent, outcome, damage);
+		}
+	}
+
 	/**
 	 * Gains experience points when this monster kills a combatant.
 	 * Not currently in use.
@@ -188,4 +198,21 @@ public class Monster extends Combatant implements Cloneable
 			return ".";
 		}
 	}
+
+	public void paint(Graphics g, int plotX, int plotY)
+	{
+		if (! mInvisible)
+		{
+			Image theImage = JCavernApplet.current().getBoardImage("monster");
+		
+			g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
+		
+			super.paint(g, plotX + 10, plotY - 10);
+		}
+		else
+		{
+			g.drawString(".", plotX, plotY);
+		}
+	}
+
 }
