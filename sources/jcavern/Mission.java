@@ -23,6 +23,11 @@ public class Mission
 	/** * How many of these monsters must be defeated? */
 	private int			mQuota;
 	
+	public int getQuota()
+	{
+		return mQuota;
+	}
+	
 	public void adjustQuota(Thing theVictim)
 	{
 		if (theVictim.getName().equals(mTarget.getName()))
@@ -36,7 +41,7 @@ public class Mission
 	{
 		if (mQuota > 0)
 		{
-			return "to kill " + mQuota + " " + mTarget + "s";
+			return "to kill " + mQuota + " " + mTarget.getName() + "s";
 		}
 		else
 		{
