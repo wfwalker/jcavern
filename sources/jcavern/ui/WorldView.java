@@ -9,6 +9,8 @@
 package jcavern.ui;
 
 import jcavern.*;
+import jcavern.thing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -48,6 +50,13 @@ public class WorldView extends Canvas implements Observer
 		setForeground(JCavernApplet.CavernOrange);
 	}
 	
+	/** 
+	 * Retrieves a WorldEvent for a particular subject.
+	 * These are events that happened to the subject (i. e., subject was attacked, was placed in the world, etc).
+	 *
+	 * @param	aSubject	a non-null Thing
+	 * @return				a non-null WorldEvent
+	 */
 	private WorldEvent getEventForSubject(Thing aSubject)
 	{
 		Enumeration theEvents = mEvents.elements();
@@ -65,6 +74,13 @@ public class WorldView extends Canvas implements Observer
 		return null;
 	}
 	
+	/** 
+	 * Retrieves a WorldEvent for a particular location.
+	 * These are events that happened at the location (especially the deaths of combatants).
+	 *
+	 * @param	aLocation	a non-null Location
+	 * @return				a non-null WorldEvent
+	 */
 	private WorldEvent getEventForLocation(Location aLocation)
 	{
 		Enumeration theEvents = mEvents.elements();
@@ -97,19 +113,40 @@ public class WorldView extends Canvas implements Observer
 				mEvents = new Vector();
 				break;
 				
-			case WorldEvent.ATTACKED_HIT:
-			case WorldEvent.ATTACKED_KILLED:
-			case WorldEvent.REVEALED:
+			case WorldContentsEvent.PLACED:
+			case CombatEvent.ATTACKED_MISSED:
+			case CombatEvent.ATTACKED_HIT:
+			case CombatEvent.ATTACKED_KILLED:
+			case WorldContentsEvent.REVEALED:
 			case WorldEvent.RANGED_ATTACK:
 				mEvents.addElement(anEvent);
 				break;
 				
 			case WorldEvent.TURN_STOP:
-				repaint();
+				if (mEvents.size() > 0)
+				{
+					repaint();
+				}
+				else
+				{
+					System.out.println("WorldView.update() received TURN_END, did not repaint");
+				}
 				break;
 		}
 	}
 	
+	/**
+	 * Paints a board image centered around the given coordinates.
+	 */
+	private void paintCenteredImage(Graphics g, int plotX, int plotY, String imageName) throws JCavernInternalError
+	{
+		Image theImage = JCavernApplet.getBoardImage(imageName);
+	
+		g.drawImage(theImage,
+						plotX - WorldView.kPreferredImageSize / 2, plotY - WorldView.kPreferredImageSize / 2,
+						WorldView.kPreferredImageSize, WorldView.kPreferredImageSize, null);
+	}
+
 	/**
 	 * Paints a view of the world, centered around the player's current location.
 	 */
@@ -154,7 +191,14 @@ public class WorldView extends Canvas implements Observer
 							
 							if (anEvent != null)
 							{
-								g.drawString(anEvent.toString(), plotX, plotY);
+								if (anEvent.getEventCode() == CombatEvent.ATTACKED_KILLED)
+								{
+									paintCenteredImage(g, plotX, plotY, "splat");
+								}
+								else
+								{
+									g.drawString(anEvent.toString(), plotX, plotY);
+								}
 							}
 							else
 							{
