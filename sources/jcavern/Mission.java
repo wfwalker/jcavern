@@ -14,9 +14,6 @@ package jcavern;
  */
 public class Mission
 {
-	/** * Has the mission been completed? */
-	private boolean		mCompleted;
-	
 	/** * What kind of monster must be defeated? */
 	private Monster		mTarget;
 	
@@ -26,6 +23,16 @@ public class Mission
 	public int getQuota()
 	{
 		return mQuota;
+	}
+	
+	public Monster getTarget()
+	{
+		return mTarget;
+	}
+	
+	public boolean getCompleted()
+	{
+		return mQuota <= 0;
 	}
 	
 	public void adjustQuota(Thing theVictim)
