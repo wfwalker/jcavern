@@ -10,6 +10,7 @@ package jcavern;
 
 import java.awt.event.*;
 import java.awt.*;
+import java.util.Enumeration;
 
 public class KeyboardCommandListener extends KeyAdapter
 {
@@ -18,8 +19,6 @@ public class KeyboardCommandListener extends KeyAdapter
 	
 	/** * The representation of the player */
 	private Player				mPlayer;
-	
-	private TextArea			mLogView;
 	
 	private int					mCurrentMode;
 	
@@ -36,11 +35,10 @@ public class KeyboardCommandListener extends KeyAdapter
 	private static final int	CASTLE_MODE = 4;
 
 
-	public KeyboardCommandListener(World aWorld, Player aPlayer, TextArea logView)
+	public KeyboardCommandListener(World aWorld, Player aPlayer)
 	{
 		mWorld = aWorld;
 		mPlayer = aPlayer;
-		mLogView = logView;
 		mCurrentMode = NORMAL_MODE;
 	}
 	
@@ -61,7 +59,6 @@ public class KeyboardCommandListener extends KeyAdapter
 		throw new IllegalArgumentException("not a movement key!");
 	}
 
-	
 	/**
 	 * Handles keyboard commands.
 	 */
@@ -82,7 +79,7 @@ public class KeyboardCommandListener extends KeyAdapter
 							case 'z' :
 							case 'x' :
 							case 'c' : mWorld.move(mPlayer, parseDirectionKey(e)); break;
-							case 's' : mCurrentMode = SWORD_MODE; mLogView.append("Sword attack, direction?\n"); break;
+							case 's' : mCurrentMode = SWORD_MODE; JCavernApplet.log("Sword attack, direction?"); break;
 						} break;
 				case SWORD_MODE: switch (e.getKeyChar())
 						{
@@ -94,23 +91,29 @@ public class KeyboardCommandListener extends KeyAdapter
 							case 'd' :
 							case 'z' :
 							case 'x' :
-							case 'c' : String result = mWorld.attack(mPlayer, parseDirectionKey(e)); mLogView.append(result + "\n"); mCurrentMode = NORMAL_MODE; break;
+							case 'c' : mWorld.attack(mPlayer, parseDirectionKey(e)); mCurrentMode = NORMAL_MODE; break;
 						} break;
 			}
 		}
 		catch(ThingCollisionException tce)
 		{
-			mLogView.append("Collided with tree\n"); 
+			JCavernApplet.log("Collided with " + tce.getMovee()); 
 			mPlayer.collideWithTree();
 		}
 		catch(IllegalLocationException ile)
 		{
-			mLogView.append("Tried to move off the edge of the world\n"); 
+			JCavernApplet.log("Tried to move off the edge of the world"); 
 		}
 		catch(NoSuchThingException nste)
 		{
-			mLogView.append("Nothing to attack!\n");
+			JCavernApplet.log("Nothing to attack!");
 			mCurrentMode = NORMAL_MODE;
+		}
+		
+		// and now, the monsters get a turn
+		if (mCurrentMode == NORMAL_MODE)
+		{
+			mWorld.doTurn();
 		}
 	}
 }
