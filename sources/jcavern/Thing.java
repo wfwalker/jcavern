@@ -33,19 +33,19 @@ public abstract class Thing extends Observable implements Cloneable
 		return mName;
 	}
 	
-	public void doTurn(World aWorld) throws NoSuchThingException
+	public void doTurn(World aWorld) throws JCavernInternalError
 	{
 	
 	}
 	
-	public boolean isCombatant()
-	{
-		return false;
-	}
+	public abstract Object clone();
 	
 	/**
 	 * Returns the one character string that is the appearance of this thing.
 	 */
-	public abstract String getAppearance();
+	public String getAppearance()
+	{
+		return "?";
+	}
 }
 
