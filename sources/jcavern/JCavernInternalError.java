@@ -16,6 +16,9 @@ package jcavern;
  */
 public class JCavernInternalError extends Exception
 {
+	/**
+	 * Creates a new jcavern internal error.
+	 */
 	public JCavernInternalError(String msg)
 	{
 		super(msg);
