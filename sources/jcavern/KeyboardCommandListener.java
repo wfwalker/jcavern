@@ -17,6 +17,10 @@ public class KeyboardCommandListener extends KeyAdapter
 	/** * A model of the game world */
 	private World				mWorld;
 	
+	private WorldView			mWorldView;
+	
+	private MissionView			mMissionView;
+	
 	/** * The representation of the player */
 	private Player				mPlayer;
 	
@@ -35,10 +39,12 @@ public class KeyboardCommandListener extends KeyAdapter
 	private static final int	CASTLE_MODE = 4;
 
 
-	public KeyboardCommandListener(World aWorld, Player aPlayer)
+	public KeyboardCommandListener(World aWorld, WorldView aWorldView, Player aPlayer, MissionView aMissionView)
 	{
 		mWorld = aWorld;
+		mWorldView = aWorldView;
 		mPlayer = aPlayer;
+		mMissionView = aMissionView;
 		mCurrentMode = NORMAL_MODE;
 	}
 	
@@ -83,6 +89,7 @@ public class KeyboardCommandListener extends KeyAdapter
 							case 'b' : mCurrentMode = RANGED_ATTACK_MODE; JCavernApplet.log("Ranged attack, direction?"); break;
 							case 'v' : mCurrentMode = CASTLE_MODE; JCavernApplet.log("Visiting Castle, command?"); break;
 							case '.' : JCavernApplet.log("Sit"); break;
+							case 'o' : doOpen(); break;
 							default  : JCavernApplet.log("Unknown command");
 						} break;
 				case CASTLE_MODE: switch (e.getKeyChar())
@@ -124,6 +131,11 @@ public class KeyboardCommandListener extends KeyAdapter
 			{
 				mWorld.doTurn();
 			}
+			
+			if (mPlayer.isDead())
+			{
+				JCavernApplet.log("Sorry, " + mPlayer.getName() + ", your game is over.");
+			}
 		}
 		catch(JCavernInternalError jcie)
 		{
@@ -131,11 +143,18 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 	}
 
-	private void doEndMission()
+	private void doEndMission() throws JCavernInternalError
 	{
 		if (mPlayer.getMission().getCompleted())
 		{
 			JCavernApplet.log("Congratulations, " + mPlayer.getName() + ".");
+			
+			// let's do it again!
+			mPlayer.setMission(MonsterFactory.createMission(mPlayer));
+			mMissionView.setModel(mPlayer.getMission());
+	
+			// Create a world  and a view of the world
+			mWorld.populateFor(mPlayer);
 		}
 		else
 		{
@@ -190,6 +209,24 @@ public class KeyboardCommandListener extends KeyAdapter
 		mCurrentMode = NORMAL_MODE;
 	}
 	
+	private void doOpen() throws JCavernInternalError
+	{
+		TreasureChest aChest = (TreasureChest) mWorld.getNeighboring(mWorld.getLocation(mPlayer), new TreasureChest(null, 0));
+
+		mWorld.remove(aChest);
+		JCavernApplet.log(mPlayer.getName() + " found " + aChest);
+		
+		if (aChest.getGold() > 0)
+		{
+			mPlayer.incrementGold(aChest.getGold());
+		}
+		
+		if (aChest.getContents() != null)
+		{
+			mPlayer.receiveItem(aChest.getContents());
+		}
+	}
+	
 	private void doMove(int direction) throws JCavernInternalError
 	{
 		try
@@ -206,15 +243,7 @@ public class KeyboardCommandListener extends KeyAdapter
 		}
 		catch (ThingCollisionException tce)
 		{
-			System.out.println("player collided with " + tce.getMovee());
-			
-			if (tce.getMovee() instanceof TreasureChest)
-			{
-				mWorld.remove(tce.getMovee());
-				doMove(direction);
-				JCavernApplet.log(mPlayer.getName() + " collected " + tce.getMovee().getName());
-			}
-			else if (tce.getMovee() instanceof Castle)
+			if (tce.getMovee() instanceof Castle)
 			{
 				Castle	theCastle = (Castle) tce.getMovee();
 				
