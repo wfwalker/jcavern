@@ -21,8 +21,6 @@ import java.io.*;
  */
 public class MonsterFactory
 {
-	private static final String		gImageNames[] = { "monster", "demon", "wraith", "rajah", "eyeball", "darklord", "chavin", "wahoo", "gobbler", "jackolantern", "snake" };
-	
 	/** * A list of Monsters stored in the order they were read from monsters.dat. */
 	public static Vector			gMonsters;
 	
@@ -114,7 +112,7 @@ public class MonsterFactory
 				}
 				else
 				{
-					imageName = gImageNames[(imageNameIndex++) % gImageNames.length];
+					imageName = JCavernApplet.MonsterImageNames[(imageNameIndex++) % JCavernApplet.MonsterImageNames.length];
 				}
 
 				gMonsters.addElement(
