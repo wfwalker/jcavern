@@ -313,10 +313,11 @@ public class WorldView extends JCavernView
 						paintCenteredImage(getApplet(), g, plotX, plotY, "splat");
 						break;
 				case WorldContentsEvent.REMOVED:
-						paintCenteredText(g, plotX, plotY, "poof");
+						paintCenteredImage(getApplet(), g, plotX, plotY, "open-chest");
 						break;
 				case CombatEvent.RANGED_ATTACK:
-						paintCenteredText(g, plotX, plotY, "*");
+						//paintCenteredText(g, plotX, plotY, "*");
+						paintCenteredImage(getApplet(), g, plotX, plotY, "empty");
 						break;
 				default:
 						//paintCenteredImage(getApplet(), g, plotX, plotY, "empty");
