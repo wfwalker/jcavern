@@ -135,7 +135,7 @@ public class CombatantTest extends TestCase
 		Location	playerLocation = mWorld.getLocation(mPlayer);
 		Location	treeLocation = playerLocation.getNeighbor(Location.WEST);
 		
-		mPlayer.stopUsing(mPlayer.getInUseTreasureAt(0));
+		mPlayer.stopUsing(mPlayer.getInUseTreasureAt(1));
 		
 		mWorld.place(treeLocation, aTree);		
 		mPlayer.attack(mWorld, Location.WEST);
