@@ -53,8 +53,8 @@ public class Monster extends Combatant
 			return
 				(anEvent != null) &&
 				(anEvent instanceof CombatEvent) &&
-				((anEvent.getSubject() == Combatant.this) && (anEvent.getCause() instanceof Player)) ||
-				((anEvent.getCause() == Combatant.this) && (anEvent.getSubject() instanceof Player));
+				((anEvent.getSubject() == Monster.this) && (anEvent.getCause() instanceof Player)) ||
+				((anEvent.getCause() == Monster.this) && (anEvent.getSubject() instanceof Player));
 		}
 		
 		/**
