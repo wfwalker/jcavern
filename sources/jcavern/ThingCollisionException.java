@@ -8,6 +8,8 @@
 
 package jcavern;
 
+import jcavern.thing.*;
+
 /**
  * Represents an attempt to put two things into the same location..
  *

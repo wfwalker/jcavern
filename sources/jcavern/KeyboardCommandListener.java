@@ -9,6 +9,8 @@
 package jcavern;
 
 import jcavern.ui.*;
+import jcavern.thing.*;
+
 import java.awt.event.*;
 import java.awt.*;
 import java.util.Enumeration;

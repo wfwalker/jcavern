@@ -9,6 +9,7 @@
 package jcavern;
 
 import jcavern.ui.*;
+import jcavern.thing.*;
 import java.util.Observable;
 
 /**
