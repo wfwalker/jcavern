@@ -56,6 +56,7 @@ public class WorldView extends Canvas implements Observer
 	{
 		Player		thePlayer = mModel.getPlayer();
 
+		g.drawRect(0, 0, getSize().width - 1, getSize().height - 1);
 
 		if (thePlayer == null)
 		{
@@ -64,17 +65,22 @@ public class WorldView extends Canvas implements Observer
 		
 		try
 		{
-			Location	theLocation = mModel.getLocation(thePlayer).enforceMinimumInset(mModel.getBounds(), 3);
+			Location	theLocation = mModel.enforceMinimumInset(mModel.getLocation(thePlayer), 3);
 		
+			System.out.println("Player at " + mModel.getLocation(thePlayer));
+			System.out.println("Painting at " + theLocation);
+			
 			for (int yIndex = -3; yIndex <= 3; yIndex++)
 			{
 				for (int xIndex = -3; xIndex <= 3; xIndex++)
 				{
 					Location	aLocation = new Location(xIndex + theLocation.getX(), yIndex + theLocation.getY());
-					int			plotX = kSpacing + kSpacing * (xIndex + 3);
-					int			plotY = kSpacing + kSpacing * (yIndex + 3);
+					int			plotX = (kSpacing / 2) + kSpacing * (xIndex + 3);
+					int			plotY = (kSpacing / 2) + kSpacing * (yIndex + 3);
 					
-					if (aLocation.inBounds(mModel.getBounds()))
+					System.out.print(aLocation + " ");
+					
+					if (mModel.inBounds(aLocation))
 					{
 						if (! mModel.isEmpty(aLocation))
 						{
@@ -87,11 +93,9 @@ public class WorldView extends Canvas implements Observer
 							g.drawString(".", plotX, plotY);
 						}
 					}
-					else
-					{
-						//g.fillRect(plotX - kSpacing / 2, plotY - kSpacing / 2, kSpacing, kSpacing);
-					}
 				}
+				
+				System.out.println();
 			}
 		}
 		catch (JCavernInternalError jcie)
