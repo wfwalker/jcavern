@@ -89,6 +89,8 @@ public class World extends Observable
 			
 			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + "'s mission is " + aPlayer.getMission()));
 			eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, aPlayer.getName() + " can seek safety in " + castles + " magic castles"));
+
+			eventHappened(new WorldEvent(aPlayer, WorldEvent.TURN_START, "Begin mission"));
 		}
 		catch (ThingCollisionException tce)
 		{
