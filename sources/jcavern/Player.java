@@ -9,7 +9,7 @@
 package jcavern;
 
 import java.util.Vector;
-import java.awt.Graphics;
+import java.awt.*;
 
 /**
  * The Player class represents the current state of the player.
@@ -188,7 +188,7 @@ public class Player extends Combatant
 
 		return (int) (4 + getPoints() / 10.0);
 	}
-	
+
 	public String getAppearance()
 	{
 		return "P";
@@ -207,7 +207,7 @@ public class Player extends Combatant
 		notifyObservers();
 	}
 	
-	private Sword getSword()
+	public Sword getSword()
 	{
 		for (int index = 0; index < mItems.size(); index++)
 		{
@@ -276,11 +276,13 @@ public class Player extends Combatant
 	
 	public void paint(Graphics g, int plotX, int plotY)
 	{
-		super.paint(g, plotX, plotY);
+		Image theImage = JCavernApplet.current().getBoardImage("player");
 		
+		g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
+
 		if (getCastle() != null)
 		{
 			getCastle().paint(g, plotX, plotY);
-		}
+		}		
 	}
 }
