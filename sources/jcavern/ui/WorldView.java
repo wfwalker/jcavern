@@ -59,30 +59,6 @@ public class WorldView extends JCavernView
 	}
 	
 	/** 
-	 * Retrieves a WorldEvent for a particular subject.
-	 * These are events that happened to the subject (i. e., subject was attacked, was placed in the world, etc).
-	 *
-	 * @param	aSubject	a non-null Thing
-	 * @return				a non-null WorldEvent
-	 */
-	private WorldEvent getEventForSubject(Thing aSubject)
-	{
-		Enumeration theEvents = mEvents.elements();
-		
-		while (theEvents.hasMoreElements())
-		{
-			WorldEvent anEvent = (WorldEvent) theEvents.nextElement();
-			
-			if (anEvent.getSubject() == aSubject)
-			{
-				return anEvent;
-			}
-		}
-		
-		return null;
-	}
-	
-	/** 
 	 * Retrieves a WorldEvent for a particular location.
 	 * These are events that happened at the location (especially the deaths of combatants).
 	 *
@@ -125,6 +101,8 @@ public class WorldView extends JCavernView
 				break;
 				
 			case WorldContentsEvent.PLACED:
+			case WorldContentsEvent.MOVED:
+			case WorldContentsEvent.REMOVED:
 			case CombatEvent.ATTACKED_MISSED:
 			case CombatEvent.ATTACKED_HIT:
 			case CombatEvent.ATTACKED_KILLED:
@@ -156,17 +134,190 @@ public class WorldView extends JCavernView
 	 * @param		imageName				name of the image
 	 * @exception	JCavernInternalError	could not paint
 	 */
-	private void paintCenteredImage(JCavernApplet inApplet, Graphics g,
+	public static void paintCenteredImage(JCavernApplet inApplet, Graphics g,
 					int plotX, int plotY, String imageName) throws JCavernInternalError
 	{
 		Image theImage = inApplet.getBoardImage(imageName);
 	
-		g.drawImage(theImage,
+		paintCenteredImage(g, theImage, plotX, plotY);
+	}
+	
+	/**
+	 * Paints a board image centered around the given coordinates.
+	 *
+	 * @param		g						a non-null Graphics object with which to paint
+	 * @param		inImage					a non-null Image
+	 * @param		plotX					x coordinate relative to the corner of the world view
+	 * @param		plotY					y coordinate relative to the corner of the world view
+	 * @exception	JCavernInternalError	could not paint
+	 */
+	public static void paintCenteredImage(Graphics g, Image inImage, 
+					int plotX, int plotY) throws JCavernInternalError
+	{
+		g.drawImage(inImage,
 						plotX - WorldView.kPreferredImageSize / 2,
 						plotY - WorldView.kPreferredImageSize / 2,
 						WorldView.kPreferredImageSize, WorldView.kPreferredImageSize, null);
 	}
+	
+	/**
+	 * Paints some text centered around the given coordinates.
+	 *
+	 * @param		inApplet				a non-null Applet used to retrieve images
+	 * @param		g						a non-null Graphics object with which to paint
+	 * @param		plotX					x coordinate relative to the corner of the world view
+	 * @param		plotY					y coordinate relative to the corner of the world view
+	 * @param		imageName				name of the image
+	 * @exception	JCavernInternalError	could not paint
+	 */
+	public static void paintCenteredText(Graphics g, int plotX, int plotY, String inLabel) throws JCavernInternalError
+	{
+		int textWidth = g.getFontMetrics().stringWidth(inLabel);
+		int	textHeight = g.getFontMetrics().getHeight();
+		
+		System.out.println("textWidth " + textWidth + " textHeight " + textHeight);
+	
+		g.drawString(inLabel, plotX - textWidth / 2, plotY - textHeight / 2);
+	}
 
+	/**
+	 * Paints a representation of a given Location at the given screen coordinates.
+	 * If the given Location is out of bounds, do nothing.
+	 * If the given Location is empty, see if there's an event for that location; if so, paint the event.
+	 * If the given Location contains a Thing, invoke that Thing's paint method
+	 *
+	 * @param		g						a non-null Graphics object 
+	 * @param		inLocation				a non-null Location to paint 
+	 * @param		plotX					horizontal screen coordinate relative to corner of this WorldView
+	 * @param		plotY					vertical screen coordinate relative to corner of this WorldView
+	 * @exception	JCavernInternalError	problem retrieving contents of this Location
+	 */
+	public void paintLocation(Graphics g, Location inLocation, int plotX, int plotY) throws JCavernInternalError
+	{
+		if (mModel.inBounds(inLocation))
+		{
+			if (! mModel.isEmpty(inLocation))
+			{
+				Thing		theThing;
+				
+				try
+				{
+					theThing = mModel.getThing(inLocation);
+				}
+				catch(EmptyLocationException ele)
+				{
+					throw new JCavernInternalError("model says not empty, but throws EmptyLocationException");
+					
+				}
+				catch(IllegalLocationException ele)
+				{
+					throw new JCavernInternalError("model says not in bounds, but throws IllegalLocationException");	
+				}
+				
+				theThing.getGraphicalThingView().paint(getApplet(), g, plotX, plotY);
+			}
+			else
+			{
+				WorldEvent	anEvent = getEventForLocation(inLocation);
+				paintEvent(g, anEvent, plotX, plotY);
+				
+			}
+		} // end if mModel.isEmpty
+	}
+	
+	/**
+	 * Paints a representation of a given Event at the given screen coordinates.
+	 *
+	 * @param		g						a non-null Graphics object 
+	 * @param		inLocation				a non-null Location to paint 
+	 * @param		plotX					horizontal screen coordinate relative to corner of this WorldView
+	 * @param		plotY					vertical screen coordinate relative to corner of this WorldView
+	 * @exception	JCavernInternalError	problem painting a board image
+	 */
+	public void paintEvent(Graphics g, WorldEvent anEvent, int plotX, int plotY) throws JCavernInternalError
+	{
+		if (anEvent != null)
+		{
+			switch (anEvent.getEventCode())
+			{
+				case CombatEvent.ATTACKED_KILLED:
+						paintCenteredImage(getApplet(), g, plotX, plotY, "splat");
+						break;
+				case WorldContentsEvent.REMOVED:
+						paintCenteredText(g, plotX, plotY, "poof");
+						break;
+				case CombatEvent.RANGED_ATTACK:
+						paintCenteredText(g, plotX, plotY, "*");
+						break;
+				default:
+						//paintCenteredImage(getApplet(), g, plotX, plotY, "empty");
+						break;
+			}
+		}
+		//else
+		//{
+		//	paintCenteredImage(getApplet(), g, plotX, plotY, "empty");
+		//}
+	}
+	
+	private int scaled(double ordinal)
+	{
+		return (int) (kSpacing / 2 + (ordinal * kSpacing));
+	}
+	
+
+	private void paintBorder(Graphics g, Location theLocation)
+	{
+		int		topBorder = scaled(-0.5);
+		int		topLocation = scaled(0);
+		int		bottomLocation = scaled(6);
+		int		bottomBorder = scaled(6.5);
+		
+		g.setColor(JCavernApplet.CavernOrangeDim);
+		
+		// draw axes at the perimeter of the display
+		g.drawLine(topLocation, topBorder, bottomLocation, topBorder);
+		g.drawLine(topLocation, bottomBorder, bottomLocation, bottomBorder);
+		g.drawLine(topBorder, topLocation, topBorder, bottomLocation);
+		g.drawLine(bottomBorder, topLocation, bottomBorder, bottomLocation);
+
+		// draw tick marks on those axes. Major ticks every third unit.
+		
+		for (int yIndex = -3; yIndex <= 3; yIndex++)
+		{
+			int	worldY = yIndex + theLocation.getY();
+			int	plotY = scaled(yIndex + 3);
+
+			if (worldY % 3 == 0)
+			{
+				g.fillRect(1, plotY - 3, 6, 6);
+				g.fillRect(bottomBorder - 6, plotY - 3, 6, 6);
+			}
+			else
+			{
+				g.drawLine(1, plotY, 6, plotY);
+				g.drawLine(bottomBorder - 6, plotY, bottomBorder, plotY);
+			}
+			
+			for (int xIndex = -3; xIndex <= 3; xIndex++)
+			{
+				int	worldX = xIndex + theLocation.getX();
+				int	plotX = scaled(xIndex + 3);
+
+				if (worldX % 3 == 0)
+				{
+					g.fillRect(plotX - 3, topBorder, 6, 6);
+					g.fillRect(plotX - 3, bottomBorder - 6, 6, 6);
+				}
+				else
+				{
+					g.drawLine(plotX, topBorder, plotX, topBorder + 6);
+					g.drawLine(plotX, bottomBorder - 6, plotX, bottomBorder);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Paints a view of the world, centered around the player's current location.
 	 *
@@ -174,16 +325,12 @@ public class WorldView extends JCavernView
 	 */
 	public void paint(Graphics g)
 	{
-		System.out.println("\n\nstart WorldView.paint()");
-		
 		Player		thePlayer;
 		Location	theLocation;
 		
 		try
 		{
-			System.out.println("\n\nWorldView.paint() seeking player from " + mModel);
 			thePlayer = mModel.getPlayer();
-			System.out.println("\n\nWorldView.paint() found player " + thePlayer);
 			theLocation = mModel.enforceMinimumInset(mModel.getLocation(thePlayer), 3);
 		}
 		catch (JCavernInternalError jcie)
@@ -191,64 +338,29 @@ public class WorldView extends JCavernView
 			System.out.println("Can't find player");
 			theLocation = new Location( 5, 5);
 		}
-
-		g.drawRect(0, 0, getSize().width - 1, getSize().height - 1);
-
+		
+		paintBorder(g, theLocation);
+		
 		try
 		{
 			for (int yIndex = -3; yIndex <= 3; yIndex++)
 			{
+				int		worldY = yIndex + theLocation.getY();
+				int		plotY = scaled(yIndex + 3);
+
 				for (int xIndex = -3; xIndex <= 3; xIndex++)
 				{
-					Location	aLocation = new Location(xIndex + theLocation.getX(), yIndex + theLocation.getY());
+					int			worldX = xIndex + theLocation.getX();
+					int			plotX = scaled(xIndex + 3);
+					Location	aLocation = new Location(worldX, worldY);					
 					
-					if (mModel.inBounds(aLocation))
-					{
-						int		plotX = (kSpacing / 2) + kSpacing * (xIndex + 3);
-						int		plotY = (kSpacing / 2) + kSpacing * (yIndex + 3);
-
-						if (! mModel.isEmpty(aLocation))
-						{
-							Thing		theThing = mModel.getThing(aLocation);
-							WorldEvent	anEvent = getEventForSubject(theThing);
-					
-							theThing.paint(getApplet(), g, plotX, plotY, anEvent);
-						}
-						else
-						{
-							WorldEvent	anEvent = getEventForLocation(aLocation);
-							
-							if (anEvent != null)
-							{
-								if (anEvent.getEventCode() == CombatEvent.ATTACKED_KILLED)
-								{
-									paintCenteredImage(getApplet(), g, plotX, plotY, "splat");
-								}
-								else
-								{
-									g.drawString(anEvent.toString(), plotX, plotY);
-								}
-							}
-							else
-							{
-								g.drawString(".", plotX, plotY);
-							}
-						}
-					} // end if mModel.isEmpty
-				} // end for xIndex
-			} // end for yIndex			
+					paintLocation(g, aLocation, plotX, plotY);
+				}
+			}
 		}
 		catch (JCavernInternalError jcie)
 		{
 			System.out.println("Can't paint world view, " + jcie);
-		}
-		catch (EmptyLocationException ele)
-		{
-			System.out.println("Can't paint world view, internal error " + ele);
-		}
-		catch (IllegalLocationException ile)
-		{
-			System.out.println("Illegal location exception, " + ile);
 		}
 	}
 }
