@@ -8,7 +8,9 @@
 
 package jcavern;
 
+import jcavern.thing.*;
 import jcavern.ui.*;
+
 import java.util.Vector;
 
 /**
@@ -126,7 +128,7 @@ public class MagicItem extends Treasure
 			{
 				aWorld.eventHappened(new WorldEvent(aPlayer, WorldEvent.INFO_MESSAGE, detectee, "There is an invisible " + detectee.getName()));
 				detectee.setInvisible(false);
-				aWorld.eventHappened(new WorldEvent(detectee, WorldEvent.REVEALED, aPlayer));
+				aWorld.eventHappened(WorldContentsEvent.revealed(detectee, aPlayer));
 			}
 		}
 	}
