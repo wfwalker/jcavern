@@ -142,6 +142,8 @@ public abstract class Combatant extends Thing
 		
 		Combatant opponent = (Combatant) potentialOpponent;
 
+		decrementAttackCount();
+		
 		if (this.canAttack(opponent))
 		{
 			finishAttack(aWorld, computeDamageTo(opponent), opponent);
