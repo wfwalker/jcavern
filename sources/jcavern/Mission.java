@@ -35,6 +35,11 @@ public class Mission extends Observable
 		return mTarget;
 	}
 	
+	public int getKills()
+	{
+		return mKills;
+	}
+	
 	public boolean getCompleted()
 	{
 		return mKills >= mQuota;
