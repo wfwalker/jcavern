@@ -26,9 +26,11 @@ public class JCavernApplet extends Applet
 {
 	public static final Color		CavernOrange = new Color(0xFF, 0x66, 0x00);
 	
-	public static final String		MonsterImageNames[] = { "tree2", "snail", "hoplite", "monster", "demon", "wraith", "rajah", "eyeball", "darklord", "chavin", "wahoo", "gobbler", "jackolantern", "snake" };
-	public static final String		OtherImageNames[] = { "player", "chest", "tree" };
+	public static final String		MonsterImageNames[] = { "snail", "blob", "hoplite", "guy", "monster", "trex", "demon", "wraith", "rajah", "eyeball", "ugly", "darklord", "chavin", "wahoo", "gobbler", "scary", "jackolantern", "snake" };
+	public static final String		OtherImageNames[] = { "player", "chest", "tree", "tree2" };
 
+	public static final int			kPreferredImageSize = 32;
+	
 	/** * The current player. */
 	private Player					mCurrentPlayer;
 	

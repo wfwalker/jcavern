@@ -78,7 +78,6 @@ public abstract class Thing extends Observable implements Cloneable
 			mImage = JCavernApplet.getBoardImage(mImageName);
 		}
 		
-		System.out.println("got image for " + getName() + ", " + mImage);
 		return mImage;
 	}
 	
@@ -123,7 +122,10 @@ public abstract class Thing extends Observable implements Cloneable
 			else
 			{
 				Image theImage = getImage();
-				g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
+				//g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
+				g.drawImage(theImage,
+								plotX - JCavernApplet.kPreferredImageSize / 2, plotY - JCavernApplet.kPreferredImageSize / 2,
+								JCavernApplet.kPreferredImageSize, JCavernApplet.kPreferredImageSize, null);
 			}
 		}
 		else
