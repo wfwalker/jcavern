@@ -36,6 +36,23 @@ public class Location
 	/** * Y (north/south or vertical) coordinate. Larger values are south and/or down. */
 	private int		mY;
 	
+	public static String directionToString(int aDirection)
+	{
+		switch (aDirection)
+		{
+			case NORTH: return "north";
+			case NORTHEAST: return "northeast";
+			case EAST: return "east";
+			case SOUTHEAST: return "southeast";
+			case SOUTH: return "south";
+			case SOUTHWEST: return "southwest";
+			case WEST: return "west";
+			case NORTHWEST: return "northwest";
+		}
+		
+		throw new IllegalArgumentException("no such direction");
+	}
+	
 	public boolean inBounds(Rectangle bounds)
 	{
 		return bounds.contains(mX, mY);
@@ -87,12 +104,13 @@ public class Location
 			case SOUTHWEST: newX--; newY++; break;
 			case WEST: newX--; break;
 			case NORTHWEST: newX--; newY--; break;
+			default: throw new IllegalArgumentException("No such direction");
 		}
 		
 		return new Location(newX, newY);
 	}
 
-	public Location getNeighborToward(Location anotherLocation)
+	public int getDirectionToward(Location anotherLocation)
 	{
 		double	deltaX = anotherLocation.getX() - mX;
 		double	deltaY = anotherLocation.getY() - mY;
@@ -100,22 +118,27 @@ public class Location
 		
 		if (Math.abs(degrees) > 67.5) // either north or south
 		{
-			return getNeighbor(deltaY > 0 ? SOUTH : NORTH);
+			return deltaY > 0 ? SOUTH : NORTH;
 		}
 		else if (Math.abs(degrees) > 22.5) // one of the four diagonals
 		{
 			if (deltaY < 0)
 			{
-				return getNeighbor(deltaX > 0 ? NORTHEAST : NORTHWEST);
+				return deltaX > 0 ? NORTHEAST : NORTHWEST;
 			}
 			else
 			{
-				return getNeighbor(deltaX > 0 ? SOUTHEAST : SOUTHWEST);
+				return deltaX > 0 ? SOUTHEAST : SOUTHWEST;
 			}
 		}
 		else // either east or west
 		{
-			return getNeighbor(deltaX > 0 ? EAST : WEST);
+			return deltaX > 0 ? EAST : WEST;
 		}
+	}
+
+	public Location getNeighborToward(Location anotherLocation)
+	{
+		return getNeighbor(getDirectionToward(anotherLocation));
 	}
 }
