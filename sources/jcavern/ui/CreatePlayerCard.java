@@ -49,7 +49,7 @@ public class CreatePlayerCard extends AppletCard implements ActionListener
 			// add blank panels, so that the dialog will appear where
 			// in the same place as the "create a player" button
 			// in the IndexCard.
-			mApplet.add(createLabelledButtonPanel(new ImageCanvas(JCavernApplet.getBoardImage("player")), "Create a new player"));
+			mApplet.add(createLabelledButtonPanel(new ImageCanvas(mApplet.getBoardImage("player")), "Create a new player"));
 			mApplet.add(createLabelledButtonPanel(new Button("Load Player"), "Load player from database", false));
 			mApplet.add(createLabelledButtonPanel(new Button("Save Player"), "Save player to database", false));
 			mApplet.add(createLabelledButtonPanel(new Button("New Mission"), "Undertake a new mission", false));
@@ -80,8 +80,14 @@ public class CreatePlayerCard extends AppletCard implements ActionListener
     {
     	if (mField.getText().length() > 0)
     	{
-			mApplet.setPlayer(new Player(mField.getText()));
-			mApplet.displayHomeCard();
+    		try
+    		{
+				mApplet.displayHomeCard(new Player(mField.getText()));
+			}
+			catch(JCavernInternalError jcie)
+			{
+				System.out.println("Can't create new player " + jcie);
+			}
 		}
     }
 }
