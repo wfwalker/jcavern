@@ -23,9 +23,6 @@ public class Monster extends Combatant implements Cloneable
 	/** * How many points the monster is worth when a Player kills it. */
 	private double			mWorth;
 	
-	/** * Is this monster invisible. */
-	private boolean			mInvisible;
-	
 	/** * Likelihood that this monster wants to move on a given turn */
 	//private static double	kMoveFraction = 0.7;
 	private static int		kMoveRadius = 4;
@@ -35,12 +32,11 @@ public class Monster extends Combatant implements Cloneable
 	 */
 	public Monster(String name, String imageName, double points, double worth, boolean invisible)
 	{
-		super(name, imageName, (int) points);
+		super(name, imageName, (int) points, invisible);
 	
 		// System.out.println("Monster(" + name + ", " + appearance + ", " + points + ", " + worth + ", " + invisible + ")");
 		
 		mWorth = worth;
-		mInvisible = invisible;
 	}
 
 	/**
@@ -48,6 +44,8 @@ public class Monster extends Combatant implements Cloneable
 	 */
 	public void doTurn(World aWorld) throws JCavernInternalError
 	{
+		super.doTurn(aWorld);
+		
 		Player	aPlayer = aWorld.getPlayer();
 		
 		if ((aPlayer == null) || (! aPlayer.vulnerableToMonsterAttack(this)))
@@ -190,31 +188,6 @@ public class Monster extends Combatant implements Cloneable
 	 */
 	public Object clone()
 	{
-		return new Monster(getName(), getImageName(), getPoints(), mWorth, mInvisible);
+		return new Monster(getName(), getImageName(), getPoints(), mWorth, getInvisible());
 	}
-	
-	public String getTextSymbol()
-	{
-		if (! mInvisible)
-		{
-			return super.getTextSymbol();
-		}
-		else
-		{
-			return ".";
-		}
-	}
-
-	public void paint(Graphics g, int plotX, int plotY)
-	{
-		if (! mInvisible)
-		{
-			super.paint(g, plotX, plotY);
-		}
-		else
-		{
-			g.drawString(".", plotX, plotY);
-		}
-	}
-
 }
