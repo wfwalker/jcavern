@@ -2,21 +2,21 @@ Gnat, hit, smashed, 2.0, 2.0, -1
 Nomad, slashed, bested, 10.0, 2.0, 0
 Spider, poked, squished, 13.0, 4.0, 0
 Moth, swatted at, flattened, 18.0, 5.0, 0
-Tree of Death, hacked at, demonlished, 20.0, 3.0, 0
+Tree of Death, hacked at, felled, 20.0, 3.0, 0
 Snark, thwarted, disposed of, 28.0, 9.0, 0
-Bolotomus, hit, killed, 28.0, 9.0, 0
+Bolotomus, stomped, dispatched, 28.0, 9.0, 0
 Nimbus, hit, killed, 36.0, 11.0, 0
-Troll, hit, killed, 50.0, 22.0, 0
+Troll, hacked, killed, 50.0, 22.0, 0
 Dragon, hit, slayed, 75.0, 28.0, 0
-Aardvark, hit, killed, 100.0, 33.0, 0
-Werewolf, hit, killed, 120.0, 37.0, 0
+Aardvark, jabbed, killed, 100.0, 33.0, 0
+Werewolf, wounded, killed, 120.0, 37.0, 0
 Buffalo, hit, killed, 140.0, 43.0, 0
 Troglodyte, hit, killed, 150.0, 45.0, 0
 Nazgul, hit, killed, 200.0, 50.0, 0
 Toilet Elf, hit, killed, 205.0, 53.0, 0
 Cyclops, hit, killed, 230.0, 56.0, 0
-Elbowsaurus, hit, killed, 230.0, 56.0, 0
-Vampire, hit, killed, 250.0, 58.0, 0
+Elbowsaurus, bent, killed, 230.0, 56.0, 0
+Vampire, hit, impaled, 250.0, 58.0, 0
 Jaguar, hit, killed, 250.0, 58.0, 0
 Griffon, hit, killed, 300.0, 65.0, 0
 Kobold, hit, killed, 700.0, 100.0, 0
