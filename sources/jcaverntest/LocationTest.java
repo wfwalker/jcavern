@@ -3,6 +3,7 @@ package jcaverntest;
 
 import junit.framework.*;
 
+import java.awt.Rectangle;
 import jcavern.*;
 
 /**
@@ -19,6 +20,15 @@ public class LocationTest extends TestCase
 	public LocationTest(String name)
 	{
 		super(name);
+	}
+	
+	public void testInset()
+	{
+		Rectangle	bounds = new Rectangle(0, 0, 20, 20);
+		Location	location = new Location(10, 20);
+		Location	desiredLocation = new Location(10, 15);
+		
+		assert("inset 1", location.enforceMinimumInset(bounds, 5).equals(desiredLocation));
 	}
 
 	public void testReciprocal()
