@@ -26,7 +26,7 @@ public class World extends Observable
 	private static final double		kCastleFraction = 0.4 / 100.0;
 	
 	/** * The bounds of the world */
-	private static final Rectangle	kBounds = new Rectangle(21, 21);
+	private static final Rectangle	kBounds = new Rectangle(20, 20);
 	
 	/** * A dictionary mapping from locations to things */
 	private Hashtable			mLocationsToThings;
@@ -202,9 +202,19 @@ public class World extends Observable
 	/**
 	 * Returns the bounds of this world.
 	 */
-	public Rectangle getBounds()
+	private Rectangle getBounds()
 	{
 		return kBounds;
+	}
+	
+	public Location enforceMinimumInset(Location aLocation, int inset)
+	{
+		return aLocation.enforceMinimumInset(getBounds(), inset);
+	}
+	
+	public boolean inBounds(Location aLocation)
+	{
+		return aLocation.inBounds(getBounds());
 	}
 	
 	/**
@@ -226,7 +236,7 @@ public class World extends Observable
 		
 		while (isEmpty(attackeeLocation))
 		{
-			if (! attackeeLocation.inBounds(kBounds))
+			if (! inBounds(attackeeLocation))
 			{
 				throw new IllegalLocationException("Ranged attack hit nothing");
 			}
@@ -288,7 +298,7 @@ public class World extends Observable
 		Location	oldLocation = (Location) mThingsToLocations.get(aThing);
 		Location	newLocation = oldLocation.getNeighbor(direction);
 
-		if (! newLocation.inBounds(kBounds))
+		if (! inBounds(newLocation))
 		{
 			throw new IllegalLocationException(aThing + " moved outside the world");
 		}
@@ -364,7 +374,7 @@ public class World extends Observable
 		{
 			return (Thing) mLocationsToThings.get(aLocation);
 		}
-		else if (! aLocation.inBounds(getBounds()))
+		else if (! inBounds(aLocation))
 		{
 			throw new IllegalLocationException(aLocation + " is not in bounds");
 		}
