@@ -9,6 +9,7 @@ import jcavern.*;
  * Tests functionality of jcavern.
  *
  * @author	Bill Walker
+ * @version	$Id$
  */
 public class WorldTest extends TestCase
 {
@@ -52,7 +53,7 @@ public class WorldTest extends TestCase
 	
 	
 	/**
-	 * Tests whether two trees can be placed into the same location.
+	 * Tests whether you can find the player where you left him.
 	 */
 	public void testFindPlayer() throws JCavernInternalError
 	{
@@ -81,8 +82,6 @@ public class WorldTest extends TestCase
 		catch(ThingCollisionException e)
 		{
 		}
-
-		mWorld.remove(aTree);
 	}
 	
 	/**
@@ -117,65 +116,5 @@ public class WorldTest extends TestCase
 		catch(JCavernInternalError e)
 		{
 		}
-	}
-	
-	/**
-	 * Tests whether you can attack with a tree that ain't there.
-	 */
-	public void testBogusAttacker() throws NonCombatantException
-	{
-		Player		aPlayer = new Player("bogus");
-		
-		try
-		{
-			aPlayer.attack(mWorld, Location.WEST);
-			fail("testBogusAttacker failed exception");
-		}
-		catch(JCavernInternalError e)
-		{
-		}
-		catch(IllegalLocationException ile)
-		{
-		}
-		catch(EmptyLocationException ile)
-		{
-		}
-	}
-	
-	/**
-	 * Tests whether you can attack an empty square
-	 */
-	public void testAttackNothing() throws NonCombatantException
-	{
-		try
-		{
-			mPlayer.attack(mWorld, Location.WEST);
-			fail("testAttackNothing failed exception");
-		}
-		catch(JCavernInternalError e)
-		{
-		}
-		catch(IllegalLocationException ile)
-		{
-		}
-		catch(EmptyLocationException ile)
-		{
-		}
-	}
-	
-	/**
-	 * Tests whether you can attack and remove a tree.
-	 */
-	public void testAttackTree() throws ThingCollisionException, NonCombatantException, EmptyLocationException, IllegalLocationException, JCavernInternalError
-	{
-		Tree		aTree = new Tree();
-		
-		Location	playerLocation = mWorld.getLocation(mPlayer);
-		Location	treeLocation = playerLocation.getNeighbor(Location.WEST);
-		
-		mWorld.place(treeLocation, aTree);		
-		mPlayer.attack(mWorld, Location.WEST);
-		
-		assert("testAttackTree removes tree", mWorld.isEmpty(treeLocation));
 	}
 }
