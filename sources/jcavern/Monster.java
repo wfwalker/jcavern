@@ -22,23 +22,40 @@ public class Monster extends Combatant implements Cloneable
 {
 	/** * How many points the monster is worth when a Player kills it. */
 	private double			mWorth;
+
+	/** * The appropriate verb for when you hit this monster */
+	private String			mHitVerb;
 	
+	/** * The appropriate verb for when you kill this monster */
+	private String			mKilledVerb;
+		
 	/** * Likelihood that this monster wants to move on a given turn */
-	//private static double	kMoveFraction = 0.7;
 	private static int		kMoveRadius = 4;
 	
 	/**
 	 * Creates a new monster with the given parameters.
 	 */
-	public Monster(String name, String imageName, double points, double worth, boolean invisible)
+	public Monster(String name, String imageName, String hitVerb, String killedVerb, double points, double worth, boolean invisible)
 	{
 		super(name, imageName, (int) points, invisible);
 	
-		// System.out.println("Monster(" + name + ", " + appearance + ", " + points + ", " + worth + ", " + invisible + ")");
+		//System.out.println("Monster(" + name + ", " + imageName + ", " + points + ", " + worth + ", " + invisible + ")");
 		
 		mWorth = worth;
+		mHitVerb = hitVerb;
+		mKilledVerb = killedVerb;
 	}
 
+	protected String getHitVerb()
+	{
+		return mHitVerb;
+	}
+	
+	protected String getKilledVerb()
+	{
+		return mKilledVerb;
+	}
+	
 	/**
 	 * Performs one turn by moving toward or attacking an adjacent Player.
 	 */
@@ -188,6 +205,6 @@ public class Monster extends Combatant implements Cloneable
 	 */
 	public Object clone()
 	{
-		return new Monster(getName(), getImageName(), getPoints(), mWorth, getInvisible());
+		return new Monster(getName(), getImageName(), mHitVerb, mKilledVerb, getPoints(), mWorth, getInvisible());
 	}
 }
