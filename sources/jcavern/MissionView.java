@@ -21,7 +21,7 @@ public class MissionView extends Canvas implements Observer
 		mModel = aMission;
 		
 		setBackground(Color.black);
-		setForeground(Color.orange);
+		setForeground(JCavernApplet.CavernOrange);
 		aMission.addObserver(this);
 	}
 	
@@ -40,8 +40,24 @@ public class MissionView extends Canvas implements Observer
 	
 	public void paint(Graphics g)
 	{
+		int				index;
+		StringBuffer	aBuffer = new StringBuffer();;
+		
 		//g.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		
+		for (index = 0; index < mModel.getQuota(); index++)
+		{
+			if (index < mModel.getKills())
+			{
+				aBuffer.append ("- ");
+			}
+			else
+			{
+				aBuffer.append(mModel.getTarget().getAppearance());
+			}
 			
-		g.drawString("Your mission is " + mModel.toString(), 10, 20);
+			aBuffer.append(" ");
+		}
+		g.drawString(aBuffer.toString(), 10, 20);
 	}
 }
