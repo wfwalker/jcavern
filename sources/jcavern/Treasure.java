@@ -100,7 +100,7 @@ public abstract class Treasure implements Cloneable, Serializable
 	 */
 	public static void loadPrototypes(URL aURL)
 	{
-		System.out.println("loadPrototypes(" + aURL + ")");
+		System.out.println("Treasure.loadPrototypes(" + aURL + ")");
 		
 		gTreasures = new Vector();
 		
@@ -133,11 +133,11 @@ public abstract class Treasure implements Cloneable, Serializable
 		}
 		catch (MalformedURLException mue)
 		{
-			System.out.println("IO Error reading monsters " + mue);
+			System.out.println("IO Error reading treasure " + mue);
 		}
 		catch (IOException ioe)
 		{
-			System.out.println("IO Error reading monsters " + ioe);
+			System.out.println("IO Error reading treasure " + ioe);
 		}
 
 		System.out.println("STOP " + gTreasures);
