@@ -33,9 +33,16 @@ public class WorldView extends Canvas implements Observer
 	
 	public void paint(Graphics g)
 	{
+		Player		thePlayer = mModel.getPlayer();
+
+
+		if (thePlayer == null)
+		{
+			return;
+		}
+		
 		try
 		{
-			Player		thePlayer = mModel.getPlayer();
 			Location	theLocation = mModel.getLocation(thePlayer);
 		
 			for (int yIndex = -3; yIndex <= 3; yIndex++)
@@ -58,6 +65,10 @@ public class WorldView extends Canvas implements Observer
 						{
 							g.drawString(".", plotX, plotY);
 						}
+					}
+					else
+					{
+						g.fillRect(plotX - 15, plotY - 15, 30, 30);
 					}
 				}
 			}
