@@ -8,17 +8,22 @@
 
 package jcavern;
 
+import java.util.Observable;
+
 /**
  * A Mission represents the set of Monsters to be defeated
  * in order to complete a particular level.
  */
-public class Mission
+public class Mission extends Observable
 {
 	/** * What kind of monster must be defeated? */
 	private Monster		mTarget;
 	
 	/** * How many of these monsters must be defeated? */
 	private int			mQuota;
+	
+	/** * How many of these monsters have been defeated? */
+	private int			mKills;
 	
 	public int getQuota()
 	{
@@ -32,23 +37,26 @@ public class Mission
 	
 	public boolean getCompleted()
 	{
-		return mQuota <= 0;
+		return mKills >= mQuota;
 	}
 	
 	public void adjustQuota(Thing theVictim)
 	{
 		if (theVictim.getName().equals(mTarget.getName()))
 		{
-			mQuota--;
-			JCavernApplet.log("You mission is now " + this);			
+			mKills++;
+			JCavernApplet.log("You mission is now " + this);
+			
+			setChanged();
+			notifyObservers();		
 		}
 	}
 	
 	public String toString()
 	{
-		if (mQuota > 0)
+		if (mKills < mQuota)
 		{
-			return "to kill " + mQuota + " " + mTarget.getName() + "s";
+			return "to kill " + (mQuota - mKills) + " of " + mQuota + " " + mTarget.getName() + "s";
 		}
 		else
 		{
@@ -60,5 +68,6 @@ public class Mission
 	{
 		mTarget = target;
 		mQuota = quota;
+		mKills = 0;
 	}
 }
