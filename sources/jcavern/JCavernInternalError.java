@@ -1,5 +1,5 @@
 /* 
-	JCavernApplet.java
+	JCavernInternalError.java
 
 	Title:			JCavern And Glen
 	Author:			Bill Walker

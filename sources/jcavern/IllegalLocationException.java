@@ -1,5 +1,5 @@
 /* 
-	JCavernApplet.java
+	IllegalLocationException.java
 
 	Title:			JCavern And Glen
 	Author:			Bill Walker

@@ -1,5 +1,5 @@
 /* 
-	JCavernApplet.java
+	EmptyLocationException.java
 
 	Title:			JCavern And Glen
 	Author:			Bill Walker
