@@ -71,6 +71,7 @@
 		<mkdir dir="${documentation}" />
 
 		<javadoc
+			Private="true"
 			sourcepath="${sources}"
 			destdir="${documentation}"
 			Doctitle="JCavern"
@@ -88,11 +89,18 @@
 			destdir="${documentation}"
             doclet="com.jollem.doclint.DocLint"
             docletPath="lib/doclint.jar"
-			packagenames="jcavern.*, jcaverntest.*" >
+			Private="true"
+			packagenames="jcavern.*" >
 
 			<classpath refid="buildpath" />
 
 		</javadoc>
+	</target>
+
+	<target name="doxygen" >
+		<exec executable="c:/doxygen-1.2.6/bin/doxygen" >
+			<arg value="c:/doxygen-1.2.6/doxy-jcavern-config" />
+		</exec>
 	</target>
 
 	<!-- targets for doing unit testing -->
