@@ -1,8 +1,7 @@
 package jcavern.thing;
 
-import java.io.Serializable;
-import java.util.Observable;
-import java.util.Observer;
+import java.io.*;
+import java.util.*;
 import java.awt.*;
 
 import jcavern.ui.*;
@@ -17,16 +16,16 @@ import jcavern.*;
 public abstract class Thing extends Observable implements Cloneable, Serializable
 {
 	/** * The name of this thing. */
-	private String				mName;
+	private String							mName;
 	
 	/** * How many turns has this Thing been in the game? */
-	private int					mMoveCounter;
+	private int								mMoveCounter;
 	
 	/** * Is this Thing invisible? */
-	private boolean				mInvisible;
+	private boolean							mInvisible;
 	
 	/** * How to show this Thing in a graphical view */
-	protected GraphicalThingView	mGraphicalThingView;
+	protected transient GraphicalThingView	mGraphicalThingView;
 
 	/**
 	 * A Graphical View of a Thing
@@ -177,6 +176,52 @@ public abstract class Thing extends Observable implements Cloneable, Serializabl
 		mMoveCounter = 0;
 		mInvisible = invisible;
 		mGraphicalThingView = createGraphicalThingView(inImageName);
+	}
+
+	public String getDataString() throws JCavernInternalError
+	{
+		StringBuffer playerDataString = new StringBuffer();
+		
+		try
+		{
+			ByteArrayOutputStream someBytes = new ByteArrayOutputStream();
+			ObjectOutputStream aStream = new ObjectOutputStream(someBytes);
+			aStream.writeObject(this);
+			aStream.flush();
+			
+			byte[]			theBytes = someBytes.toByteArray();
+			
+			for (int byteIndex = 0; byteIndex < theBytes.length; byteIndex++)
+			{
+				//playerDataString.append(" 0x");
+				playerDataString.append(" ");
+				playerDataString.append(Integer.toHexString(Math.abs(theBytes[byteIndex])).toUpperCase());
+			}
+			
+			System.out.println("-- " + playerDataString.toString() + " --");
+		}
+		catch(IOException ioe)
+		{
+			throw new JCavernInternalError("can't serialize " + ioe);
+		}
+		
+		return playerDataString.toString();
+	}
+
+	public static void fromDataString(String inDataString) throws JCavernInternalError
+	{
+		StringTokenizer aTokenizer = new StringTokenizer(inDataString);
+		int				index = 0;
+		byte[]			theBytes = new byte[aTokenizer.countTokens()];
+		
+		while (aTokenizer.hasMoreTokens())
+		{
+			String	aToken = aTokenizer.nextToken();
+			theBytes[index] = (byte) Integer.parseInt(aToken, 16);
+			System.out.println(index + " " + aToken + " " + theBytes[index]);
+			index++;
+		}
+		
 	}
 
 	/**

@@ -87,14 +87,13 @@ public class IndexCard extends AppletCard
 				
 				try
 				{
-					ObjectOutputStream aStream = new ObjectOutputStream(System.out);
-					aStream.writeObject(mCurrentPlayer);
-					aStream.flush();
+					Thing.fromDataString(mCurrentPlayer.getDataString());
 				}
-				catch(IOException ioe)
+				catch (JCavernInternalError jcie)
 				{
-					System.out.println("can't serialize " + ioe);
+					System.out.println("could not save player " + jcie);
 				}
+				
 				System.out.println("Done Save Player");
 				
 			}
