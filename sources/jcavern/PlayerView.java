@@ -18,50 +18,57 @@ import java.util.*;
  * @author	Bill Walker
  * @version	$Id$
  */
-public class PlayerView extends TextArea implements Observer
+public class PlayerView extends Canvas implements Observer
 {
 	private Player	mModel;
 	
 	public PlayerView(Player aPlayer)
 	{
-		super("", 15, 20, TextArea.SCROLLBARS_NONE);
-		setEditable(false);
-
 		mModel = aPlayer;
 		
 		setBackground(Color.black);
 		setForeground(JCavernApplet.CavernOrange);
+		
+		aPlayer.addObserver(this);
 	}
-	
+
 	public void update(Observable a, Object b)
 	{
-		StringBuffer aBuffer = new StringBuffer();
+		repaint();
+	}
+	
+	public void paint(Graphics g)
+	{
+		setBackground(Color.black);
+		setForeground(JCavernApplet.CavernOrange);
+
+		int y = g.getFontMetrics().getHeight();
+		int lineHeight = g.getFontMetrics().getHeight();
+
+		g.drawString(mModel.getName(), 1, y); y += lineHeight;
 		
-		aBuffer.append("  Gold: " + mModel.getGold());
-		aBuffer.append("\n  Arrows: " + mModel.getArrows());
-		aBuffer.append("\n  Points: " + mModel.getPoints() + "/" + mModel.getMaximumPoints());
-		aBuffer.append("\n  Moves: " + mModel.getMoveCount());
-		aBuffer.append("\n\n  In Use:");
+		g.drawString("Points: " + mModel.getPoints() + "/" + mModel.getMaximumPoints(), 1, y); y += lineHeight;
+		g.drawString("Gold: " + mModel.getGold(), 1, y); y += lineHeight;
+		g.drawString("Arrows: " + mModel.getArrows(), 1, y); y += lineHeight;
+		g.drawString("Moves: " + mModel.getMoveCount(), 1, y); y += lineHeight; y += lineHeight;
+		
+		g.drawString("In Use:", 1, y); y += lineHeight; 
 			
 		Vector items = mModel.getInUseItems();
-		
+				
 		for (int index = 0; index < items.size(); index++)
 		{
-			aBuffer.append("\n" + index + " ");
-			aBuffer.append(((Treasure) items.elementAt(index)).toString());
+			g.drawString(index + " " + ((Treasure) items.elementAt(index)).toString(), 1, y); y += lineHeight;
 		}
 		
-		aBuffer.append("\n\n  Unused:");
+		y += lineHeight;
+		g.drawString("Unused:", 1, y); y += lineHeight;
 			
 		Vector items2 = mModel.getUnusedItems();
 		
 		for (int index = 0; index < items2.size(); index++)
 		{
-			aBuffer.append("\n" + index + " ");
-			aBuffer.append(((Treasure) items2.elementAt(index)).toString());
+			g.drawString(index + " " + ((Treasure) items2.elementAt(index)).toString(), 1, y); y += lineHeight;
 		}
-		
-		setText(aBuffer.toString());
-		repaint();
 	}
 }
