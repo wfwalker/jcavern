@@ -40,7 +40,18 @@ public class TreasureChest extends Thing
 	
 	public String toString()
 	{
-		return "TreasureChest with " + mGoldPieces + " gold pieces and " + mContents;
+		StringBuffer aBuffer = new StringBuffer("Treasure Chest");
+		
+		if (mGoldPieces > 0)
+		{
+			aBuffer.append(" with " + mGoldPieces + " gold pieces");		
+		}
+		if (mContents != null)
+		{
+			aBuffer.append(" with " + mContents);
+		}
+		
+		return aBuffer.toString();
 	}
 
 	public static TreasureChest createRandom()
