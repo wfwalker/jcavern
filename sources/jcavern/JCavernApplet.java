@@ -68,6 +68,10 @@ public class JCavernApplet extends Applet
 	// Initialize the applet
 	public void init()
 	{
+		setBackground(Color.black);
+		setForeground(Color.orange);
+		setFont(new Font("Monospaced", Font.PLAIN, 12));
+
 		try
 		{
 			MonsterFactory.loadPrototypes(new URL(getDocumentBase(), "./monster.dat"));
@@ -78,15 +82,13 @@ public class JCavernApplet extends Applet
 			mPlayer.setMission(MonsterFactory.createMission(mPlayer));
 	
 			// Create a world  and a view of the world
-			mWorld = new World();
-			mWorld.placeRandomTrees();
-			mWorld.placeRandomCastles();
-			mWorld.placeRandomTreasureChests(mPlayer);
-			mWorld.placeWorthyOpponents(mPlayer, 10);
+			mWorld = World.createWorld(mPlayer);
 			mWorldView = new WorldView(mWorld);
 	
 			gLogView = new TextArea(5, 60);
 			gLogView.setEditable(false);
+			gLogView.setBackground(Color.black);
+			gLogView.setForeground(Color.orange);
 			
 			mWorldView.setSize(500, 200);		
 			add(mWorldView);
@@ -98,12 +100,10 @@ public class JCavernApplet extends Applet
 			
 			add(gLogView);
 			
-			// Put the player in the world
-			mWorld.place(mWorld.getRandomEmptyLocation(), mPlayer);
 		}
-		catch(ThingCollisionException tce)
+		catch(JCavernInternalError jcie)
 		{
-			System.out.println("JCaverApplet.init " + tce);
+			System.out.println("JCaverApplet.init internal error " + jcie);
 		}
 		catch(MalformedURLException mue)
 		{
