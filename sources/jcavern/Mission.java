@@ -8,6 +8,8 @@
 
 package jcavern;
 
+import java.io.*;
+
 import jcavern.ui.*;
 import jcavern.thing.*;
 import java.util.Observable;
@@ -19,7 +21,7 @@ import java.util.Observable;
  * @author	Bill Walker
  * @version	$Id$
  */
-public class Mission extends Observable
+public class Mission extends Observable implements Serializable
 {
 	/** * What kind of monster must be defeated? */
 	private Monster		mTarget;
