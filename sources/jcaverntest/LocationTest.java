@@ -9,6 +9,7 @@ import jcavern.*;
  * Tests functionality of Location.
  *
  * @author	Bill Walker
+ * @version	$Id$
  */
 public class LocationTest extends TestCase
 {	

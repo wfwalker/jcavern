@@ -13,6 +13,9 @@ import java.util.Observable;
 /**
  * A Mission represents the set of Monsters to be defeated
  * in order to complete a particular level.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
  */
 public class Mission extends Observable
 {

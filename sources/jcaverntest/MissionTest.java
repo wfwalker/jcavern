@@ -7,9 +7,10 @@ import java.net.*;
 import jcavern.*;
 
 /**
- * Tests functionality of Location.
+ * Tests functionality of Mission.
  *
  * @author	Bill Walker
+ * @version	$Id$
  */
 public class MissionTest extends TestCase
 {	
