@@ -54,7 +54,7 @@ public class WorldTest extends TestCase
 	/**
 	 * Tests whether two trees can be placed into the same location.
 	 */
-	public void testFindPlayer() throws NoSuchThingException
+	public void testFindPlayer() throws JCavernInternalError
 	{
 		Location	expectedLocation = new Location(5, 5);
 		Location	foundLocation = mWorld.getLocation(mPlayer);
@@ -65,7 +65,7 @@ public class WorldTest extends TestCase
 	/**
 	 * Tests whether two trees can be placed into the same location.
 	 */
-	public void testCollision() throws ThingCollisionException, NoSuchThingException
+	public void testCollision() throws ThingCollisionException, JCavernInternalError
 	{
 		Tree		aTree = new Tree();
 		Tree		anotherTree = new Tree();
@@ -97,7 +97,7 @@ public class WorldTest extends TestCase
 			mWorld.getLocation(aTree);
 			fail("testRetrieval exception");
 		}
-		catch(NoSuchThingException e)
+		catch(JCavernInternalError e)
 		{
 		}
 	}
@@ -114,7 +114,7 @@ public class WorldTest extends TestCase
 			mWorld.remove(aTree);
 			fail("testBogusRemoval exception");
 		}
-		catch(NoSuchThingException e)
+		catch(JCavernInternalError e)
 		{
 		}
 	}
@@ -122,16 +122,22 @@ public class WorldTest extends TestCase
 	/**
 	 * Tests whether you can attack with a tree that ain't there.
 	 */
-	public void testBogusAttacker()
+	public void testBogusAttacker() throws NonCombatantException
 	{
-		Tree		aTree = new Tree();
+		Player		aPlayer = new Player("bogus");
 		
 		try
 		{
-			mWorld.attack(aTree, Location.WEST);
+			aPlayer.attack(mWorld, Location.WEST);
 			fail("testBogusAttacker failed exception");
 		}
-		catch(NoSuchThingException e)
+		catch(JCavernInternalError e)
+		{
+		}
+		catch(IllegalLocationException ile)
+		{
+		}
+		catch(EmptyLocationException ile)
 		{
 		}
 	}
@@ -139,14 +145,20 @@ public class WorldTest extends TestCase
 	/**
 	 * Tests whether you can attack an empty square
 	 */
-	public void testAttackNothing()
+	public void testAttackNothing() throws NonCombatantException
 	{
 		try
 		{
-			mWorld.attack(mPlayer, Location.WEST);
+			mPlayer.attack(mWorld, Location.WEST);
 			fail("testAttackNothing failed exception");
 		}
-		catch(NoSuchThingException e)
+		catch(JCavernInternalError e)
+		{
+		}
+		catch(IllegalLocationException ile)
+		{
+		}
+		catch(EmptyLocationException ile)
 		{
 		}
 	}
@@ -154,7 +166,7 @@ public class WorldTest extends TestCase
 	/**
 	 * Tests whether you can attack and remove a tree.
 	 */
-	public void testAttackTree() throws NoSuchThingException, ThingCollisionException
+	public void testAttackTree() throws ThingCollisionException, NonCombatantException, EmptyLocationException, IllegalLocationException, JCavernInternalError
 	{
 		Tree		aTree = new Tree();
 		
@@ -162,15 +174,8 @@ public class WorldTest extends TestCase
 		Location	treeLocation = playerLocation.getNeighbor(Location.WEST);
 		
 		mWorld.place(treeLocation, aTree);		
-		mWorld.attack(mPlayer, Location.WEST);
+		mPlayer.attack(mWorld, Location.WEST);
 		
-		try
-		{
-			mWorld.getThing(treeLocation);
-			fail("testAttackTree, tree still there");
-		}
-		catch(NoSuchThingException nste)
-		{
-		}
+		assert("testAttackTree removes tree", mWorld.isEmpty(treeLocation));
 	}
 }

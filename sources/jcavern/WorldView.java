@@ -65,9 +65,17 @@ public class WorldView extends Canvas implements Observer
 				}
 			}
 		}
-		catch (NoSuchThingException nste)
+		catch (JCavernInternalError jcie)
 		{
-			System.out.println("Can't paint world view, " + nste);
+			System.out.println("Can't paint world view, " + jcie);
+		}
+		catch (EmptyLocationException ele)
+		{
+			System.out.println("Can't paint world view, internal error " + ele);
+		}
+		catch (IllegalLocationException ile)
+		{
+			System.out.println("Illegal location exception, " + ile);
 		}
 	}
 }
