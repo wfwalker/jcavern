@@ -9,6 +9,8 @@
 package jcavern.ui;
 
 import jcavern.*;
+import jcavern.thing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -56,9 +58,9 @@ public class LogView extends Canvas implements Observer
 		{
 			switch (anEvent.getEventCode())
 			{
-				case WorldEvent.ATTACKED_MISSED:
-				case WorldEvent.ATTACKED_HIT:
-				case WorldEvent.ATTACKED_KILLED:
+				case CombatEvent.ATTACKED_MISSED:
+				case CombatEvent.ATTACKED_HIT:
+				case CombatEvent.ATTACKED_KILLED:
 				case WorldEvent.INFO_MESSAGE:
 				case WorldEvent.ERROR_MESSAGE:
 					addLine(anEvent.toString());
@@ -102,14 +104,16 @@ public class LogView extends Canvas implements Observer
 		setBackground(Color.black);
 		setForeground(JCavernApplet.CavernOrange);
 
-		int y = g.getFontMetrics().getHeight();
 		int lineHeight = g.getFontMetrics().getHeight();
+		int y = lineHeight;
 		
 		mNumberOfLines = (int) Math.floor((double) getSize().height / lineHeight) - 1;
-		
-		for (int index = 0; index < mLogLines.size(); index++)
+				
+		for (int index = mLogLines.size() - 1; index >= 0; index--)
 		{
 			g.drawString((String) mLogLines.elementAt(index), 1, y); y += lineHeight;
-		}		
+		}
+		
+		g.drawLine(0, lineHeight + 2, getWidth(), lineHeight + 2);
 	}
 }
