@@ -84,7 +84,8 @@ public class World extends Observable
 			// Put the player in the world
 			place(getRandomEmptyLocation(), aPlayer);
 			
-			JCavernApplet.log("You will have " + castles + " magic castles to help you");
+			JCavernApplet.log(aPlayer.getName() + "'s mission is " + aPlayer.getMission());
+			JCavernApplet.log(aPlayer.getName() + " can seek safety in " + castles + " magic castles");
 		}
 		catch (ThingCollisionException tce)
 		{
@@ -192,7 +193,7 @@ public class World extends Observable
 		return emptyLocation;
 	}
 
-	public void combatantSufferedDamage(Combatant aCombatant)
+	public void thingChanged(Thing aThing)
 	{
 		setChanged();
 		notifyObservers();	
@@ -417,6 +418,19 @@ public class World extends Observable
 		}
 
 		return specialThings;
+	}
+	
+	public Vector getThings()
+	{
+		Enumeration	theThings = mThingsToLocations.keys();
+		Vector		allThings = new Vector();
+		
+		while (theThings.hasMoreElements())
+		{
+			allThings.addElement(theThings.nextElement());
+		}
+
+		return allThings;
 	}
 	
 	/**
