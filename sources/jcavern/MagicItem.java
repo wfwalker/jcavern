@@ -47,7 +47,9 @@ public class MagicItem extends Treasure
 					JCavernApplet.log(getName() + ": nothing happens"); break;
 					
 			case MAGIC_REVEAL_INVISIBILITY:
-					JCavernApplet.log(getName() + ": reveal invisibility"); break;
+					JCavernApplet.log(getName() + ": reveal invisibility");
+					doRevealInvisibility(aPlayer, aWorld);
+					break;
 					
 			case MAGIC_TELEPORTATION:
 					JCavernApplet.log(getName() + ": teleportation"); 
@@ -93,6 +95,23 @@ public class MagicItem extends Treasure
 		catch (ThingCollisionException tce)
 		{
 			throw new JCavernInternalError("can't teleport");
+		}
+	}
+	
+	private void doRevealInvisibility(Player aPlayer, World aWorld)
+	{
+		Vector	theThings = aWorld.getThings();
+		
+		for (int index = 0; index < theThings.size(); index++)
+		{
+			Thing	detectee = (Thing) theThings.elementAt(index);
+
+			if (detectee.getInvisible())
+			{
+				JCavernApplet.log("There is an invisible " + detectee.getName());
+				detectee.setInvisible(false);
+				aWorld.thingChanged(detectee);
+			}
 		}
 	}
 	
