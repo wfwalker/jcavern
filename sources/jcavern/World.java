@@ -51,6 +51,9 @@ public class World extends Observable
 		mThingsToLocations = new Hashtable();
 	}
 	
+	/**
+	 * Populate this world in a manner appropriate to the given player.
+	 */
 	public void populateFor(Player aPlayer) throws JCavernInternalError
 	{
 		try
@@ -81,7 +84,7 @@ public class World extends Observable
 			// Put the player in the world
 			place(getRandomEmptyLocation(), aPlayer);
 			
-			JCavernApplet.current().log("You will have " + castles + " magic castles to help you");
+			JCavernApplet.log("You will have " + castles + " magic castles to help you");
 		}
 		catch (ThingCollisionException tce)
 		{
@@ -189,6 +192,12 @@ public class World extends Observable
 		return emptyLocation;
 	}
 
+	public void combatantSufferedDamage(Combatant aCombatant)
+	{
+		setChanged();
+		notifyObservers();	
+	}
+
 	/**
 	 * Returns the bounds of this world.
 	 */
@@ -221,7 +230,7 @@ public class World extends Observable
 				throw new IllegalLocationException("Ranged attack hit nothing");
 			}
 			
-			JCavernApplet.current().log(attackeeLocation.toString());
+			JCavernApplet.log(attackeeLocation.toString());
 			attackeeLocation = attackeeLocation.getNeighbor(aDirection);
 		}
 		
@@ -285,7 +294,7 @@ public class World extends Observable
 		
 		if (isEmpty(newLocation)) // no collision on move
 		{
-			remove(oldLocation);
+			remove(aThing);
 			place(newLocation, aThing);
 		}
 		else // collision on move, find out what's currently there
@@ -391,6 +400,25 @@ public class World extends Observable
 		}
 	}
 	
+	public Vector getThings(Thing aPrototype)
+	{
+		Enumeration	theThings = mThingsToLocations.keys();
+		Vector		specialThings = new Vector();
+		Class		aClass = aPrototype.getClass();
+		
+		while (theThings.hasMoreElements())
+		{
+			Object aThing = theThings.nextElement();
+			
+			if (aThing.getClass() == aPrototype.getClass())
+			{
+				specialThings.addElement(aThing);
+			}
+		}
+
+		return specialThings;
+	}
+	
 	/**
 	 * Answers whether there is any thing at the given location.
 	 */
@@ -434,25 +462,6 @@ public class World extends Observable
 		}
 		
 		return (Location) mThingsToLocations.get(aThing);
-	}
-	
-	/**
-	 * Remove the thing at the given location from the world.
-	 */
-	public void remove(Location locationToRemove) throws JCavernInternalError
-	{
-		Thing	thingToRemove = (Thing) mLocationsToThings.get(locationToRemove);
-		
-		if (thingToRemove == null)
-		{
-			throw new JCavernInternalError("There's no " + thingToRemove + " in this world to remove");
-		}
-		
-		mLocationsToThings.remove(locationToRemove);
-		mThingsToLocations.remove(thingToRemove);
-
-		setChanged();
-		notifyObservers();
 	}
 	
 	/**
