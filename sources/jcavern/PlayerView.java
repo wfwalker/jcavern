@@ -21,7 +21,7 @@ public class PlayerView extends Canvas implements Observer
 		mModel = aPlayer;
 		
 		setBackground(Color.black);
-		setForeground(Color.orange);
+		setForeground(JCavernApplet.CavernOrange);
 	}
 	
 	public void update(Observable a, Object b)
@@ -35,6 +35,7 @@ public class PlayerView extends Canvas implements Observer
 
 		String statusString =
 			"Gold: " + mModel.getGold() +
+			" Arrows: " + mModel.getArrows() +
 			" Experience: " + mModel.getPoints();
 			
 			
