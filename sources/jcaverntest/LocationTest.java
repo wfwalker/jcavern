@@ -16,21 +16,46 @@ public class LocationTest extends TestCase
 {	
 	/**
 	 * Creates a suite of tests.
+	 *
+	 * @param	name	name of the suite of tests.
 	 */
 	public LocationTest(String name)
 	{
 		super(name);
 	}
 	
+	/**
+	 * Tests whether enforceMinimumOffset works correctly.
+	 */
 	public void testInset()
 	{
-		Rectangle	bounds = new Rectangle(0, 0, 20, 20);
-		Location	location = new Location(10, 20);
-		Location	desiredLocation = new Location(10, 15);
+		World		aWorld = new World();
 		
-		assert("inset 1", location.enforceMinimumInset(bounds, 5).equals(desiredLocation));
+		// world coordinates goes from 0 to 19
+		Location	location1 = new Location(10, 20);
+		Location	desiredLocation1 = new Location(10, 15);
+		
+		assert("inset 1", aWorld.enforceMinimumInset(location1, 4).equals(desiredLocation1));
+		
+		Location	location2 = new Location(20, 10);
+		Location	desiredLocation2 = new Location(15, 10);
+		
+		assert("inset 1", aWorld.enforceMinimumInset(location2, 4).equals(desiredLocation2));
+		
+		Location	location3 = new Location(10, 2);
+		Location	desiredLocation3 = new Location(10, 4);
+		
+		assert("inset 1", aWorld.enforceMinimumInset(location3, 4).equals(desiredLocation3));
+		
+		Location	location4 = new Location(2, 10);
+		Location	desiredLocation4 = new Location(4, 10);
+		
+		assert("inset 1", aWorld.enforceMinimumInset(location4, 4).equals(desiredLocation4));
 	}
 
+	/**
+	 * Tests whether opposite directions are really opposite of one another.
+	 */
 	public void testReciprocal()
 	{
 		Location zero = new Location(10, 10);
@@ -48,6 +73,9 @@ public class LocationTest extends TestCase
 		assert("northwest vs southeast", zero.getNeighbor(Location.NORTHWEST).getNeighbor(Location.SOUTHEAST).equals(zero));		
 	}
 	
+	/**
+	 * Tests whether Locations can correctly compute the direction toward each other.
+	 */
 	public void testNeighborToward()
 	{
 		Location zero = new Location(10, 10);
