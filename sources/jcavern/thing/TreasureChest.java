@@ -71,13 +71,6 @@ public class TreasureChest extends Thing
 	}
 	
 	/**
-	 * Returns the text-only appearance of this treasure chest.
-	 *
-	 * @return	a string appearance for this treasure chest
-	 */
-	public String getAppearance() { return "$$"; }
-	
-	/**
 	 * Returns a String-based representation of the treasure chest.
 	 *
 	 * @return	a String-based representation of the treasure chest.
