@@ -60,7 +60,7 @@ public class EndMissionCard extends AppletCard implements ActionListener
 		mMissionView.setSize(150, 200);		
 
 		// Create a world  and a view of the world
-		mWorldView = new WorldView(inApplet, mWorld);
+		mWorldView = new WorldView(inApplet, mWorld, inEvent.getLocation());
 		mWorldView.setSize(300, 300);		
 
 		// create a button pointing back to the index card
@@ -104,6 +104,24 @@ public class EndMissionCard extends AppletCard implements ActionListener
 		
 		mApplet.validate();
 	}
+
+	/**
+	 * Notifies this card that it was removed from view by the Applet.
+	 */
+	public void cardRemoved()
+	{
+		mWorld.deleteObserver(mWorldView);
+		
+		mWorldView.stopThread();
+		
+		mWorldView = null;
+		mPlayerView = null;
+		mMissionView = null;
+		mWorld = null;
+	}
+	
+
+
 
 	/**
 	 * Responds to ActionEvents from the OK Button by returning to the IndexCard.
