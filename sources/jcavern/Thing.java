@@ -1,24 +1,42 @@
 package jcavern;
 
 import java.util.Observable;
-import java.awt.Graphics;
+import java.awt.*;
 
 /**
  * Parent class for players, monsters, and trees.
  *
  * @author	Bill Walker
+ * @version	$Id$
  */
 public abstract class Thing extends Observable implements Cloneable
 {
 	/** * The name of this thing. */
 	private String		mName;
+	
+	/** * The name of the image to use for this thing. */
+	private String		mImageName;
 
 	/**
-	 * Creates a new thing for the given world and name.
+	 * Creates a new thing for the given name.
 	 */
 	public Thing(String aName)
 	{
 		mName = aName;
+	}
+	
+	/**
+	 * Creates a new thing for the given name.
+	 */
+	public Thing(String aName, String imageName)
+	{
+		mName = aName;
+		mImageName = imageName;
+	}
+	
+	public String getImageName()
+	{
+		return mImageName;
 	}
 	
 	public String toString()
@@ -43,7 +61,16 @@ public abstract class Thing extends Observable implements Cloneable
 	
 	public void paint(Graphics g, int plotX, int plotY)
 	{
-		g.drawString(getAppearance(), plotX, plotY);
+		if (mImageName == null)
+		{
+			g.drawString(getAppearance(), plotX, plotY);
+		}
+		else
+		{
+			Image theImage = JCavernApplet.current().getBoardImage(mImageName);
+		
+			g.drawImage(theImage, plotX - theImage.getWidth(null) / 2, plotY - theImage.getHeight(null) / 2, null);
+		}
 	}
 	
 	/**
