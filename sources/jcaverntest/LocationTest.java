@@ -20,6 +20,23 @@ public class LocationTest extends TestCase
 		super(name);
 	}
 
+	public void testReciprocal()
+	{
+		Location zero = new Location(10, 10);
+
+		assert("north vs south", zero.getNeighbor(Location.NORTH).getNeighbor(Location.SOUTH).equals(zero));
+		assert("south vs north", zero.getNeighbor(Location.SOUTH).getNeighbor(Location.NORTH).equals(zero));
+		
+		assert("northeast vs southwest", zero.getNeighbor(Location.NORTHEAST).getNeighbor(Location.SOUTHWEST).equals(zero));
+		assert("southwest vs northeast", zero.getNeighbor(Location.SOUTHWEST).getNeighbor(Location.NORTHEAST).equals(zero));
+		
+		assert("east vs west", zero.getNeighbor(Location.EAST).getNeighbor(Location.WEST).equals(zero));
+		assert("west vs east", zero.getNeighbor(Location.WEST).getNeighbor(Location.EAST).equals(zero));
+		
+		assert("southeast vs northwest", zero.getNeighbor(Location.SOUTHEAST).getNeighbor(Location.NORTHWEST).equals(zero));
+		assert("northwest vs southeast", zero.getNeighbor(Location.NORTHWEST).getNeighbor(Location.SOUTHEAST).equals(zero));		
+	}
+	
 	public void testNeighborToward()
 	{
 		Location zero = new Location(10, 10);
