@@ -13,7 +13,7 @@ import java.applet.*;
 /**
  * A Monster is a combatant that appears in the world.
  */
-public class Monster extends Thing implements Cloneable, Combatant
+public class Monster extends Combatant implements Cloneable
 {
 	private String	mAppearance;
 	private double	mPoints;
@@ -59,7 +59,28 @@ public class Monster extends Thing implements Cloneable, Combatant
 		
 	public int computeDamage()
 	{
-		return 1;
+		/*
+		dam := Q[i,j].m.points/8 + Random(3) + Q[i,j].m.worth/4
+		     - My_arm_points;
+		if dam < 0.0 then dam := 0.0;
+		exp := exp - dam;
+		Message(' The '+Q[i,j].m.name+' hits.',TRUE);
+		Plot_Stats(TRUE);
+		*/
+		
+		double	damage = 3 * Math.random() + (mPoints / 8) + (mWorth / 4);
+		
+		return (int) damage;
+	}
+	
+	public int computeRangedDamage()
+	{
+		return 0;
+	}
+	
+	public void decrementRangedAttackCount()
+	{
+	
 	}
 	
 	public void sufferDamage(int theDamage)
@@ -67,9 +88,8 @@ public class Monster extends Thing implements Cloneable, Combatant
 		mPoints -= theDamage;
 	}
 	
-	public void gainExperience(int theExperience)
+	public void gainExperience(Combatant theVictim)
 	{
-		mPoints += theExperience;
 	}
 	
 	public boolean isDead()
@@ -89,7 +109,14 @@ public class Monster extends Thing implements Cloneable, Combatant
 	
 	public String getAppearance()
 	{
-		return mAppearance;
+		if (! mInvisible)
+		{
+			return mAppearance;
+		}
+		else
+		{
+			return ".";
+		}
 	}
 	
 	public double getPoints()
