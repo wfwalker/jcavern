@@ -12,6 +12,13 @@ import java.util.*;
 import java.net.*;
 import java.io.*;
 
+/**
+ * Treasures (including Swords, Armour, and MagicItems) are found in TreasureChests, and are
+ * picked up and used by Players.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
+ */
 public abstract class Treasure implements Cloneable
 {
 	private static Vector	gTreasures;
