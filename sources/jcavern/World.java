@@ -41,6 +41,41 @@ public class World extends Observable
 		mLocationsToThings = new Hashtable();
 		mThingsToLocations = new Hashtable();
 	}
+
+	public static World createWorld(Player aPlayer) throws JCavernInternalError
+	{
+		try
+		{
+			// Create a world  and a view of the world
+			World aWorld = new World();
+		
+			// Place trees
+			aWorld.placeRandomTrees();
+			
+			// Place castles
+			aWorld.placeRandomCastles();
+			
+			// Place treasure chests
+			aWorld.placeRandomTreasureChests(aPlayer);
+			
+			// Place monsters
+			// orignally: Num_Monster := 3*Mis_quota + 2*Random(Mis_Quota);
+			int quota = aPlayer.getMission().getQuota();			
+			int desiredPopulation = (int) (3 * quota + 2 * Math.random() * quota);
+			
+			aWorld.placeRandom(aPlayer.getMission().getTarget(), quota);
+			aWorld.placeWorthyOpponents(aPlayer, desiredPopulation - quota);
+		
+			// Put the player in the world
+			aWorld.place(aWorld.getRandomEmptyLocation(), aPlayer);
+			
+			return aWorld;
+		}
+		catch (ThingCollisionException tce)
+		{
+			throw new JCavernInternalError("trouble creating a world " + tce);
+		}
+	}
 	
 	/**
 	 * Places random trees using the default fraction.
@@ -139,40 +174,6 @@ public class World extends Observable
 	{
 		return kBounds;
 	}
-	
-	/**
-	 * Processes an attack by the given combatant in the given direction.
-	public void attack(Combatant attacker, Thing attackee) throws NoSuchThingException
-	{
-		if ((attacker instanceof Player) && (attackee instanceof Tree))
-		{
-			remove(attackee);
-			JCavernApplet.log(attacker.getName() + " chopped down the tree");
-		}
-		else if (attackee instanceof Combatant)
-		{
-			Combatant 	theAttackee = (Combatant) attackee;
-			int			damage = attacker.computeDamage();
-			
-			theAttackee.sufferDamage(damage);
-			
-			if (theAttackee.isDead())
-			{
-				JCavernApplet.log(attacker.getName() + " killed the " + attackee.getName());
-				theAttacker.gainExperience(theAttackee);
-				remove(attackee);
-			}
-			else
-			{
-				JCavernApplet.log(attacker.getName() + " hit the " + attackee.getName() + " for " + damage);
-			}
-		}
-		else
-		{
-			throw IllegalArgumentExecption(attacker + " can't attack " + attackee);
-		}
-	}
-	 */
 	
 	/**
 	 * Processes an attack by the given combatant in the given direction.
