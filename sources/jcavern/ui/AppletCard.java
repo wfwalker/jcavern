@@ -33,7 +33,7 @@ public class AppletCard
 	 * @param	aLabel		a non-null String containing the text of a label
 	 * @return				a non-null Panel containing a Button and a Label
 	 */
-	protected Panel createLabelledButtonPanel(Button aButton, String aLabel)
+	protected Panel createLabelledButtonPanel(Component aButton, String aLabel)
 	{
 		return createLabelledButtonPanel(aButton, aLabel, aButton.isEnabled());
 	}
@@ -47,7 +47,7 @@ public class AppletCard
 	 * @param	isEnabled	<CODE>true</CODE> if the button should be enabled, <CODE>false</CODE> otherwise
 	 * @return				a non-null Panel containing a Button and a Label
 	 */
-	protected Panel createLabelledButtonPanel(Button aButton, String aLabel, boolean isEnabled)
+	protected Panel createLabelledButtonPanel(Component aButton, String aLabel, boolean isEnabled)
 	{
 		aButton.setEnabled(isEnabled);
 		aButton.setForeground(Color.black);
