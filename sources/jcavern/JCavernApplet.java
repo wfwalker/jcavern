@@ -10,6 +10,7 @@ package jcavern;
 
 import java.awt.*;
 import java.net.*;
+import java.util.Hashtable;
 import java.awt.event.*;
 import java.applet.*;
 
@@ -20,28 +21,38 @@ import java.applet.*;
  */
 public class JCavernApplet extends Applet
 {
+	public static final Color		CavernOrange = new Color(0xFF, 0x99, 0x00);
+	
 	/** * A view of the game world */
-	private WorldView			mWorldView;
+	private WorldView				mWorldView;
 	
 	/** * A view of the player statistics */
-	private PlayerView			mPlayerView;
+	private PlayerView				mPlayerView;
 	
 	/** * A view of the player statistics */
-	private MissionView			mMissionView;
+	private MissionView				mMissionView;
 	
 	/** * A model of the game world */
-	private World				mWorld;
+	private World					mWorld;
 	
 	/** * The representation of the player */
-	private Player				mPlayer;
+	private Player					mPlayer;
 	
-	private static TextArea		gLogView;
+	/** * A text view list of messages. */
+	private static TextArea			gLogView;
+	
+	/** * A table of messages */
+	private static Hashtable		gImages;
+
+	private static JCavernApplet	gApplet;
 
 	/**
 	 * Creates game world, player, viewers.
 	 */
 	public JCavernApplet()
 	{
+		gImages = new Hashtable();
+		gApplet = this;
 	}
 	
 	public static void log(String aString)
@@ -52,7 +63,17 @@ public class JCavernApplet extends Applet
 			gLogView.append("\n");
 		}
 	}
+	
+	public static JCavernApplet current()
+	{
+		return gApplet;
+	}
 
+	public Image getBoardImage(String aName)
+	{
+		return (Image) gImages.get(aName);
+	}
+	
 	/**
 	 * Installs KeyListener for keyboard commands.
 	 */
@@ -78,9 +99,17 @@ public class JCavernApplet extends Applet
 		System.out.println("jcavern applet document base " + getDocumentBase());
 
 		try
-		{
-			MonsterFactory.loadPrototypes(new URL(getDocumentBase(), "./monster.dat"));
-			Treasure.loadPrototypes(new URL(getDocumentBase(), "./treasure.dat"));
+		{	
+			// get data from server
+			
+			gImages.put("monster", getImage(new URL(getDocumentBase(), "bin/images/monster.gif")));
+			gImages.put("player", getImage(new URL(getDocumentBase(), "bin/images/player.gif")));
+			gImages.put("tree", getImage(new URL(getDocumentBase(), "bin/images/tree.gif")));
+			gImages.put("tree2", getImage(new URL(getDocumentBase(), "bin/images/tree2.gif")));
+			gImages.put("eyeball", getImage(new URL(getDocumentBase(), "bin/images/eyeball.gif")));
+
+			MonsterFactory.loadPrototypes(new URL(getDocumentBase(), "bin/monster.dat"));
+			Treasure.loadPrototypes(new URL(getDocumentBase(), "bin/treasure.dat"));
 	
 			// Create a player and a view of the player
 			mPlayer  = new Player("Bill");
@@ -90,15 +119,14 @@ public class JCavernApplet extends Applet
 	
 			// Create a world  and a view of the world
 			mWorld = new World();
-			mWorld.populateFor(mPlayer);
 			mWorldView = new WorldView(mWorld);
 	
-			gLogView = new TextArea("Welome to JCavern", 5, 60, TextArea.SCROLLBARS_NONE);
+			gLogView = new TextArea("Welome to JCavern\n", 5, 60, TextArea.SCROLLBARS_NONE);
 			gLogView.setEditable(false);
 			gLogView.setBackground(Color.black);
-			gLogView.setForeground(Color.orange);
+			gLogView.setForeground(CavernOrange);
 			
-			mWorldView.setSize(500, 220);		
+			mWorldView.setSize(500, 300);		
 			add(mWorldView);
 			mWorld.addObserver(mWorldView);
 			
@@ -111,7 +139,8 @@ public class JCavernApplet extends Applet
 			mPlayer.getMission().addObserver(mMissionView);
 			
 			add(gLogView);
-			
+
+			mWorld.populateFor(mPlayer);
 		}
 		catch(JCavernInternalError jcie)
 		{
