@@ -9,6 +9,7 @@
 package jcavern;
 
 import java.util.*;
+import java.net.*;
 import java.io.*;
 
 public class MonsterFactory
@@ -36,16 +37,20 @@ public class MonsterFactory
 		return (Monster) gMonsters[randomIndex].clone();
 	}
 	
-	public static void loadPrototypes(World aWorld)
+	public static void loadPrototypes(URL aURL )
 	{
+		System.out.println("loadPrototypes(" + aURL + ")");
+		
 		gMonstersByName = new Hashtable();
 		
-		InputStream		aStream = MonsterFactory.class.getResourceAsStream("/monster.dat");
-		BufferedReader	aReader = new BufferedReader(new InputStreamReader(aStream));
-		String			aMessageLine;
 		
 		try
 		{
+			InputStream		aStream = MonsterFactory.class.getResourceAsStream("/monster.dat");
+			//InputStream		aStream = aURL.openStream();
+			BufferedReader	aReader = new BufferedReader(new InputStreamReader(aStream));
+			String			aMessageLine;
+
 			while ((aMessageLine = aReader.readLine()) != null)
 			{
 				String				aName = aMessageLine.substring(0, 15).trim();
@@ -53,16 +58,20 @@ public class MonsterFactory
 				String				theNumbers = aMessageLine.substring(15);
 				StringTokenizer		aTokenizer = new StringTokenizer(theNumbers, " ");
 				
-				double				points = Double.parseDouble(aTokenizer.nextToken());
-				double				worth = Double.parseDouble(aTokenizer.nextToken());
-				boolean				invisible = Integer.parseInt(aTokenizer.nextToken()) < 0;
+				Double				points = Double.valueOf(aTokenizer.nextToken());
+				Double				worth = Double.valueOf(aTokenizer.nextToken());
+				Integer				invisible = Integer.valueOf(aTokenizer.nextToken());
 				
-				gMonstersByName.put(aName, new Monster(aName, aName.substring(0, 2), points, worth, invisible));
+				gMonstersByName.put(aName, new Monster(aName, aName.substring(0, 2), points.doubleValue(), worth.doubleValue(), invisible.intValue() < 0));
 			}
 		}
-		catch (IOException e)
+		catch (MalformedURLException mue)
 		{
-			System.out.println("IO Error reading monsters " + e);
+			System.out.println("IO Error reading monsters " + mue);
+		}
+		catch (IOException ioe)
+		{
+			System.out.println("IO Error reading monsters " + ioe);
 		}
 		
 		// Copy the list of monsters into an array
