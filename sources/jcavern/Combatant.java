@@ -9,6 +9,7 @@
 package jcavern;
 
 import java.awt.*;
+import jcavern.ui.*;
 
 /**
  * Represents a Thing that can participate in combat.
@@ -108,8 +109,21 @@ public abstract class Combatant extends Thing
 	
 	/**
 	 * Decrements the number of ranged attacks this Combatant can perform.
+	 * This simulates using up a supply of arrows.
 	 */
-	public abstract void decrementRangedAttackCount();
+	public void decrementRangedAttackCount()
+	{
+	
+	}
+	
+	/**
+	 * Decrements the number of attacks this Combatant can perform.
+	 * This simulates wearing out a sword.
+	 */
+	public void decrementAttackCount()
+	{
+	
+	}
 	
 	// Combatants can attack things
 	
@@ -203,7 +217,7 @@ public abstract class Combatant extends Thing
 					theBuffer.append(opponent.getKilledVerb() + " " + opponent.getNounPhrase()); break;
 		}
 		
-		JCavernWindow.log(theBuffer.toString());
+		MissionCard.log(theBuffer.toString());
 	}
 	
 	protected String getHitVerb()
@@ -304,12 +318,12 @@ public abstract class Combatant extends Thing
 		return mMaximumPoints;
 	}
 	
-	public void paint(Graphics g, int plotX, int plotY)
+	public void paint(Graphics g, int plotX, int plotY) throws JCavernInternalError
 	{
-		paint(g, plotX, plotY, true);
+		paint(g, plotX, plotY, false);
 	}
 	
-	public void paint(Graphics g, int plotX, int plotY, boolean drawGauge)
+	public void paint(Graphics g, int plotX, int plotY, boolean drawGauge) throws JCavernInternalError
 	{
 		final int gaugeThickness = 3;
 		final int gaugeLength = 32;
