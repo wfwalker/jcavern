@@ -9,7 +9,10 @@
 package jcavern;
 
 /**
- * Represents an attempt to create an illegal Location.
+ * Represents an internal error within JCavern.
+ *
+ * @author	Bill Walker
+ * @version	$Id$
  */
 public class JCavernInternalError extends Exception
 {
