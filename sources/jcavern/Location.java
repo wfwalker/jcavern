@@ -62,6 +62,23 @@ public class Location
 		return bounds.contains(mX, mY);
 	}
 	
+	/**
+	 * Returns a Location no closer to the bounds than the supplied inset.
+	 */
+	public Location enforceMinimumInset(Rectangle bounds, int inset)
+	{
+		// make sure newX,Y are no larger than the largest acceptable value
+		int newX = Math.min(mX, bounds.x + bounds.width - inset);
+		int newY = Math.min(mY, bounds.y + bounds.height - inset);
+		
+		// make sure newX, Y are no smaller than the smallest acceptable value
+		newX = Math.max(newX, bounds.x + inset);
+		newY = Math.max(newY, bounds.y + inset);
+		
+		//System.out.println(this + "enforceMinimumInset(" + bounds + ", " + inset + ") = " + newX + ", " + newY);
+		return new Location(newX, newY);
+	}
+	
 	public int getX()
 	{
 		return mX;
@@ -70,6 +87,16 @@ public class Location
 	public int getY()
 	{
 		return mY;
+	}
+	
+	/**
+	 * Computes the number of moves between Locations.
+	 * We use a modified Manhattan distance metric, with diagonal
+	 * moves allowed.
+	 */ 
+	public int distanceTo(Location aLocation)
+	{
+		return Math.max(Math.abs(aLocation.getX() - mX), Math.abs(aLocation.getY() - mY));
 	}
 	
 	public String toString()
