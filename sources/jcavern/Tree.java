@@ -58,6 +58,11 @@ public class Tree extends Combatant
 		return false;
 	}
 	
+	protected String getKilledVerb()
+	{
+		return "felled";
+	}
+	
 	public String getAppearance() { return "T"; }
 	
 	public void gainExperience(Combatant opponent) { }
