@@ -189,12 +189,36 @@ public abstract class Combatant extends Thing
 	
 	protected void reportResultAgainst(Combatant opponent, int outcome, int damage)
 	{
+		StringBuffer	theBuffer = new StringBuffer();
+		
+		theBuffer.append(getArticle() + " " + getName() + " ");
+		
 		switch (outcome)
 		{
-			case Combatant.MISS: JCavernApplet.log(getName() + " cannot attack " + opponent.getName()); break;
-			case Combatant.HIT: JCavernApplet.log(getName() + " hits " + opponent.getName() + " for " + damage); break;
-			case Combatant.KILL: JCavernApplet.log(getName() + " kills " + opponent.getName()); break;
+			case Combatant.MISS:
+					theBuffer.append("cannot attack " + opponent.getArticle() + " " + opponent.getName()); break;
+			case Combatant.HIT:
+					theBuffer.append(opponent.getHitVerb() + " " + opponent.getArticle() + opponent.getName() + " for " + damage); break;
+			case Combatant.KILL:
+					theBuffer.append(opponent.getKilledVerb() + " " + opponent.getArticle() + opponent.getName()); break;
 		}
+		
+		JCavernApplet.log(theBuffer.toString());
+	}
+	
+	protected String getHitVerb()
+	{
+		return "hit"; 
+	}
+	
+	protected String getKilledVerb()
+	{
+		return "killed";
+	}
+	
+	protected String getArticle()
+	{
+		return "the";
 	}
 
 	/**
@@ -270,12 +294,17 @@ public abstract class Combatant extends Thing
 	
 	public void paint(Graphics g, int plotX, int plotY)
 	{
+		paint(g, plotX, plotY, true);
+	}
+	
+	public void paint(Graphics g, int plotX, int plotY, boolean drawGauge)
+	{
 		final int gaugeThickness = 4;
 		final int gaugeLength = 32;
 		
 		super.paint(g, plotX, plotY);
 		
-		if (! getInvisible())
+		if (drawGauge && (! getInvisible()))
 		{
 			double percent = 1.0 * getPoints() / getMaximumPoints();
 			
