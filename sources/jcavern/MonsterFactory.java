@@ -99,10 +99,13 @@ public class MonsterFactory
 			{
 				StringTokenizer		aTokenizer = new StringTokenizer(aMessageLine, ",");
 				
-				String				aName = aTokenizer.nextToken().trim();				
+				String				aName = aTokenizer.nextToken().trim();
+				String				hitVerb = aTokenizer.nextToken().trim();			
+				String				killedVerb = aTokenizer.nextToken().trim();				
 				Double				points = Double.valueOf(aTokenizer.nextToken().trim());
 				Double				worth = Double.valueOf(aTokenizer.nextToken().trim());
 				Integer				invisible = Integer.valueOf(aTokenizer.nextToken().trim());
+				
 				String				imageName;
 				
 				if (aName.startsWith("T "))
@@ -118,6 +121,8 @@ public class MonsterFactory
 					new Monster(
 						aName,
 						imageName,
+						hitVerb,
+						killedVerb,
 						points.doubleValue(),
 						worth.doubleValue(),
 						invisible.intValue() < 0));
