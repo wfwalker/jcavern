@@ -84,8 +84,8 @@ public class World extends Observable
 			// Put the player in the world
 			place(getRandomEmptyLocation(), aPlayer);
 			
-			JCavernApplet.log(aPlayer.getName() + "'s mission is " + aPlayer.getMission());
-			JCavernApplet.log(aPlayer.getName() + " can seek safety in " + castles + " magic castles");
+			JCavernWindow.log(aPlayer.getName() + "'s mission is " + aPlayer.getMission());
+			JCavernWindow.log(aPlayer.getName() + " can seek safety in " + castles + " magic castles");
 		}
 		catch (ThingCollisionException tce)
 		{
@@ -241,7 +241,7 @@ public class World extends Observable
 				throw new IllegalLocationException("Ranged attack hit nothing");
 			}
 			
-			JCavernApplet.log(attackeeLocation.toString());
+			JCavernWindow.log(attackeeLocation.toString());
 			attackeeLocation = attackeeLocation.getNeighbor(aDirection);
 		}
 		

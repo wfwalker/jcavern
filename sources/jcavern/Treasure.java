@@ -35,13 +35,13 @@ public abstract class Treasure implements Cloneable
 	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
 	{
 		aPlayer.startUsing(this);
-		JCavernApplet.log(aPlayer.getName() + " begins using " + getName());
+		JCavernWindow.log(aPlayer.getName() + " begins using " + getName());
 	}
 	
 	public void stopUseBy(Player aPlayer, World aWorld)
 	{
 		aPlayer.stopUsing(this);
-		JCavernApplet.log(aPlayer.getName() + " stops using " + getName());
+		JCavernWindow.log(aPlayer.getName() + " stops using " + getName());
 	}
 	
 	public abstract Object clone();

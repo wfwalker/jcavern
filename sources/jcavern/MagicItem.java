@@ -54,28 +54,28 @@ public class MagicItem extends Treasure
 	
 	public void startUseBy(Player aPlayer, World aWorld) throws JCavernInternalError
 	{
-		JCavernApplet.log(aPlayer.getName() + " uses magic item " + getName());
+		JCavernWindow.log(aPlayer.getName() + " uses magic item " + getName());
 		
 		switch (mPower)
 		{
 			case MAGIC_NOTHING:
-					JCavernApplet.log(getName() + ": nothing happens"); break;
+					JCavernWindow.log(getName() + ": nothing happens"); break;
 					
 			case MAGIC_REVEAL_INVISIBILITY:
-					JCavernApplet.log(getName() + ": reveal invisibility");
+					JCavernWindow.log(getName() + ": reveal invisibility");
 					doRevealInvisibility(aPlayer, aWorld);
 					break;
 					
 			case MAGIC_TELEPORTATION:
-					JCavernApplet.log(getName() + ": teleportation"); 
+					JCavernWindow.log(getName() + ": teleportation"); 
 					doTeleportation(aPlayer, aWorld); break;
 					
 			case MAGIC_DETECT_TREASURE:
-					JCavernApplet.log(getName() + ": detect treasure"); 
+					JCavernWindow.log(getName() + ": detect treasure"); 
 					doDetectTreasure(aPlayer, aWorld); break;
 					
 			case MAGIC_DETECT_MAGIC_CASTLE:
-					JCavernApplet.log(getName() + ": detect magic castle"); 
+					JCavernWindow.log(getName() + ": detect magic castle"); 
 					doDetectMagicCastle(aPlayer, aWorld); break;
 			
 			default:
@@ -123,7 +123,7 @@ public class MagicItem extends Treasure
 
 			if (detectee.getInvisible())
 			{
-				JCavernApplet.log("There is an invisible " + detectee.getName());
+				JCavernWindow.log("There is an invisible " + detectee.getName());
 				detectee.setInvisible(false);
 				aWorld.thingChanged(detectee);
 			}
@@ -139,7 +139,7 @@ public class MagicItem extends Treasure
 			Thing	detectee = (Thing) theThings.elementAt(index);
 			int		direction = aWorld.getDirectionToward(seeker, detectee);
 			
-			JCavernApplet.log("There is a " +
+			JCavernWindow.log("There is a " +
 					aPrototype.getName() + " " +
 					aWorld.getDistanceBetween(seeker, detectee) + " moves " + 
 					Location.directionToString(direction) + " of " + seeker.getName());
