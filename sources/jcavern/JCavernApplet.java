@@ -9,6 +9,7 @@
 package jcavern;
 
 import java.awt.*;
+import java.net.*;
 import java.awt.event.*;
 import java.applet.*;
 
@@ -36,34 +37,8 @@ public class JCavernApplet extends Applet
 	/**
 	 * Creates game world, player, viewers.
 	 */
-	public JCavernApplet() throws ThingCollisionException
+	public JCavernApplet()
 	{
-		MonsterFactory.loadPrototypes(mWorld);
-
-		// Create a player and a view of the player
-		mPlayer  = new Player("Bill");
-		mPlayerView = new PlayerView(mPlayer);
-
-		// Create a world  and a view of the world
-		mWorld = new World();
-		mWorld.placeRandomTrees();
-		mWorld.placeWorthyOpponents(mPlayer, 10);
-		mWorldView = new WorldView(mWorld);
-
-		mLogView = new TextArea(5, 80);
-		
-		mWorldView.setSize(500, 500);		
-		add(mWorldView);
-		mWorld.addObserver(mWorldView);
-		
-		mPlayerView.setSize(500, 50);		
-		add(mPlayerView);
-		mPlayer.addObserver(mPlayerView);
-		
-		add(mLogView);
-		
-		// Put the player in the world
-		mWorld.place(mWorld.getRandomEmptyLocation(), mPlayer);
 	}
 
 	/**
@@ -82,8 +57,45 @@ public class JCavernApplet extends Applet
 	}
 
 	// Initialize the applet
-	public void init() 
+	public void init()
 	{
+		try
+		{
+			MonsterFactory.loadPrototypes(new URL(getDocumentBase(), "./monster.dat"));
+	
+			// Create a player and a view of the player
+			mPlayer  = new Player("Bill");
+			mPlayerView = new PlayerView(mPlayer);
+	
+			// Create a world  and a view of the world
+			mWorld = new World();
+			mWorld.placeRandomTrees();
+			mWorld.placeWorthyOpponents(mPlayer, 10);
+			mWorldView = new WorldView(mWorld);
+	
+			mLogView = new TextArea(5, 80);
+			
+			mWorldView.setSize(500, 500);		
+			add(mWorldView);
+			mWorld.addObserver(mWorldView);
+			
+			mPlayerView.setSize(500, 50);		
+			add(mPlayerView);
+			mPlayer.addObserver(mPlayerView);
+			
+			add(mLogView);
+			
+			// Put the player in the world
+			mWorld.place(mWorld.getRandomEmptyLocation(), mPlayer);
+		}
+		catch(ThingCollisionException tce)
+		{
+			System.out.println("JCaverApplet.init " + tce);
+		}
+		catch(MalformedURLException mue)
+		{
+			System.out.println("JCaverApplet.init " + mue);
+		}
 	}
 
 }
