@@ -111,9 +111,27 @@ public class CombatantTest extends TestCase
 		assert("testAttackTree removes tree", mWorld.isEmpty(treeLocation));
 	}
 	
+	/**
+	 * Tests whether you can attack and remove a tree without a sword!
+	 */
+	public void testAttackTreeWithoutSword() throws ThingCollisionException, NonCombatantException, EmptyLocationException, IllegalLocationException, JCavernInternalError
+	{
+		Tree		aTree = new Tree();
+		
+		Location	playerLocation = mWorld.getLocation(mPlayer);
+		Location	treeLocation = playerLocation.getNeighbor(Location.WEST);
+		
+		mPlayer.stopUsing(mPlayer.getInUseTreasureAt(0));
+		
+		mWorld.place(treeLocation, aTree);		
+		mPlayer.attack(mWorld, Location.WEST);
+		
+		assert("testAttackTreeWithoutSword removed tree", ! mWorld.isEmpty(treeLocation));
+	}
+	
 	public void testVulnerability()
 	{
-		Monster aMonster = new Monster("Bogus", "monster", "Bo", 1, 1, false);
+		Monster aMonster = new Monster("Bogus", "monster", 1, 1, false);
 		Tree	aTree = new Tree();
 		
 		assert("player attacks monster", mPlayer.canAttack(aMonster));
@@ -126,7 +144,7 @@ public class CombatantTest extends TestCase
 	
 	public void testPlayerInCastleVulnerability()
 	{
-		Monster aMonster = new Monster("Bogus", "monster", "Bo", 1, 1, false);
+		Monster aMonster = new Monster("Bogus", "monster", 1, 1, false);
 		Tree	aTree = new Tree();
 		
 		mPlayer.setCastle(new Castle());
