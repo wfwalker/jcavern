@@ -52,6 +52,8 @@ public class World extends Observable
 	 */
 	public void placeRandomTrees(double coverageFraction) throws ThingCollisionException
 	{
+		System.out.println("Place Random Trees");
+		
 		for (int xIndex = 0; xIndex < kBounds.width; xIndex++)
 		{
 			for (int yIndex = 0; yIndex < kBounds.height; yIndex++)
@@ -69,10 +71,14 @@ public class World extends Observable
 	 */
 	public void placeWorthyOpponents(Player aPlayer, int numberOfMonsters) throws ThingCollisionException
 	{
+		System.out.println("START placeWorthyOpponents");
+		
 		for (int index = 0; index < numberOfMonsters; index++)
 		{
 			place(getRandomEmptyLocation(), MonsterFactory.getWorthyOpponent(aPlayer));
 		}
+
+		System.out.println("STOP placeWorthyOpponents");
 	}
 	
 	/**
@@ -141,12 +147,68 @@ public class World extends Observable
 			if (theAttackee.isDead())
 			{
 				JCavernApplet.log(attacker.getName() + " killed the " + attackee.getName());
-				theAttacker.gainExperience(theAttackee.getWorth());
+				theAttacker.gainExperience(theAttackee);
 				remove(attackee);
 			}
 			else
 			{
 				JCavernApplet.log(attacker.getName() + " hit the " + attackee.getName() + " for " + damage);
+			}
+		}
+	}
+	
+	/**
+	 * Processes an attack by the given combatant in the given direction.
+	 */
+	public void rangedAttack(Thing attacker, int aDirection) throws NoSuchThingException, IllegalLocationException
+	{
+		//System.out.println("attack(" + attacker + ", " + Location.directionToString(aDirection) + ")");
+		
+		if (! mThingsToLocations.containsKey(attacker))
+		{
+			throw new NoSuchThingException("There's no " + attacker + " to attack");
+		}
+		
+		Combatant 	theAttacker = (Combatant) attacker;
+		
+		theAttacker.decrementRangedAttackCount();
+		
+		Location	attackerLocation = (Location) mThingsToLocations.get(attacker);
+		Location	attackeeLocation = attackerLocation.getNeighbor(aDirection);
+		
+		while (isEmpty(attackeeLocation))
+		{
+			if (! attackeeLocation.inBounds(kBounds))
+			{
+				throw new IllegalLocationException("Ranged attack hit nothing");
+			}
+			
+			JCavernApplet.log(attackeeLocation.toString());
+			attackeeLocation = attackeeLocation.getNeighbor(aDirection);
+		}
+		
+		Thing		attackee = getThing(attackeeLocation);
+		
+		if ((attacker instanceof Player) && (attackee instanceof Tree))
+		{
+			JCavernApplet.log(attacker.getName() + " shot a tree");
+		}
+		else if ((attacker instanceof Combatant) && (attackee instanceof Combatant))
+		{
+			Combatant 	theAttackee = (Combatant) attackee;
+			int			damage = theAttacker.computeRangedDamage();
+			
+			theAttackee.sufferDamage(damage);
+			
+			if (theAttackee.isDead())
+			{
+				JCavernApplet.log(attacker.getName() + " killed the " + attackee.getName());
+				theAttacker.gainExperience(theAttackee);
+				remove(attackee);
+			}
+			else
+			{
+				JCavernApplet.log(attacker.getName() + "'s arrow hit the " + attackee.getName() + " for " + damage);
 			}
 		}
 	}
