@@ -18,6 +18,16 @@ public class Treasure
 public class Sword extends Treasure
 {
 	private int		mStrength;
+	
+	public Sword(int strength)
+	{
+		mStrength = strength;
+	}
+	
+	public int getStrength()
+	{
+		return mStrength;
+	}
 }	
 
 public class Armour extends Treasure
