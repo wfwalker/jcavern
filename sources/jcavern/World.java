@@ -145,7 +145,7 @@ public class World extends Observable
 	/**
 	 * Places random trees according to the fraction passed in.
 	 */
-	public void placeRandom(Thing aThingPrototype, int numberOfThings) throws ThingCollisionException//, JCavernInternalError
+	public void placeRandom(Thing aThingPrototype, int numberOfThings) throws ThingCollisionException, JCavernInternalError
 	{
 		System.out.println("Place " + numberOfThings + " Random " + aThingPrototype);
 		
