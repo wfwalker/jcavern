@@ -20,10 +20,17 @@ import java.util.*;
  */
 public class WorldView extends Canvas implements Observer
 {
+	/** * Number of pixels between board pictures. */
 	private static final int	kSpacing = 40;
 	
+	/** * The World being viewed by this View. */
 	private World				mModel;
 	
+	/**
+	 * Creates a new WorldView for the given World.
+	 *
+	 * @param	aWorld	a non-null World being viewed.
+	 */
 	public WorldView(World aWorld)
 	{
 		System.out.println("Create WorldView");
@@ -34,11 +41,17 @@ public class WorldView extends Canvas implements Observer
 		setForeground(JCavernApplet.CavernOrange);
 	}
 	
+	/**
+	 * Receives update notification that the World being viewed has changed.
+	 */
 	public void update(Observable a, Object b)
 	{
 		repaint();
 	}
 	
+	/**
+	 * Paints a view of the world, centered around the player's current location.
+	 */
 	public void paint(Graphics g)
 	{
 		Player		thePlayer = mModel.getPlayer();
@@ -51,7 +64,7 @@ public class WorldView extends Canvas implements Observer
 		
 		try
 		{
-			Location	theLocation = mModel.getLocation(thePlayer);
+			Location	theLocation = mModel.getLocation(thePlayer).enforceMinimumInset(mModel.getBounds(), 3);
 		
 			for (int yIndex = -3; yIndex <= 3; yIndex++)
 			{
