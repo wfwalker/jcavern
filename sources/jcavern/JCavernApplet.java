@@ -9,6 +9,8 @@
 package jcavern;
 
 import jcavern.ui.*;
+import jcavern.thing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
@@ -27,7 +29,7 @@ public class JCavernApplet extends Applet
 	public static final Color		CavernOrange = new Color(0xFF, 0x66, 0x00);
 	
 	public static final String		MonsterImageNames[] = { "snail", "blob", "hoplite", "guy", "monster", "trex", "demon", "wraith", "rajah", "eyeball", "ugly", "darklord", "chavin", "wahoo", "gobbler", "scary", "jackolantern", "snake" };
-	public static final String		OtherImageNames[] = { "player", "chest", "tree", "tree2", "castle" };
+	public static final String		OtherImageNames[] = { "player", "chest", "tree", "tree2", "castle", "splat" };
 
 	/** * The current player. */
 	private Player					mCurrentPlayer;
@@ -48,13 +50,20 @@ public class JCavernApplet extends Applet
 	
 	public static void displayHomeCard()
 	{
-		if (current() != null)
+		try
 		{
-			current().privateDisplayHomeCard();
+			if (current() != null)
+			{
+				current().privateDisplayHomeCard();
+			}
+		}
+		catch (JCavernInternalError jcie)
+		{
+			System.out.println("can't display home card " + jcie);
 		}
 	}
 	
-	private void privateDisplayHomeCard()
+	private void privateDisplayHomeCard() throws JCavernInternalError
 	{
 		IndexCard anIndex = new IndexCard(current(), mCurrentPlayer);
 		anIndex.show();
