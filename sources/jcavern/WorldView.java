@@ -22,7 +22,8 @@ public class WorldView extends Canvas implements Observer
 		
 		mModel = aWorld;
 		
-		setBackground(Color.white);
+		setBackground(Color.black);
+		setForeground(Color.orange);
 	}
 	
 	public void update(Observable a, Object b)
@@ -42,8 +43,8 @@ public class WorldView extends Canvas implements Observer
 				for (int xIndex = -3; xIndex <= 3; xIndex++)
 				{
 					Location	aLocation = new Location(xIndex + theLocation.getX(), yIndex + theLocation.getY());
-					int			plotX = 20 * (xIndex + 3);
-					int			plotY = 20 + 20 * (yIndex + 3);
+					int			plotX = 30 + 30 * (xIndex + 3);
+					int			plotY = 30 + 30 * (yIndex + 3);
 					
 					if (aLocation.inBounds(mModel.getBounds()))
 					{
@@ -51,16 +52,12 @@ public class WorldView extends Canvas implements Observer
 						{
 							Thing theThing = mModel.getThing(aLocation);
 					
-							g.drawString(theThing.getAppearance(), plotX, plotY);
+							theThing.paint(g, plotX, plotY);
 						}
 						else
 						{
 							g.drawString(".", plotX, plotY);
 						}
-					}
-					else
-					{
-						g.drawString("*", plotX, plotY);
 					}
 				}
 			}
