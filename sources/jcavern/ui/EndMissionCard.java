@@ -5,11 +5,23 @@ import java.awt.*;
 import java.awt.event.*;
 import java.applet.*;
 
+/**
+ * Creates an AppletCard that informs the user about the end of a Mission.
+ */
 public class EndMissionCard extends AppletCard implements ActionListener
 {
+	/** * The message to be displayed to the user. */
 	Label	mMessage;
+	
+	/** * The button pressed by the user after reading the message. */
     Button	mOKButton;
-    
+
+    /**
+     * Creates a new EndMissionCard for the given Applet and message.
+     *
+     * @param	anApplet	a non-null Applet in which to display the message
+     * @param	aMessage	a non-null String containing a message to display
+     */
     public EndMissionCard(JCavernApplet anApplet, String aMessage)
     {
     	super(anApplet);
@@ -21,6 +33,9 @@ public class EndMissionCard extends AppletCard implements ActionListener
 		mOKButton.addActionListener(this);
     }
 
+	/**
+	 * Displays this AppletCard in its Applet.
+	 */
     public void show()
     {
     	mApplet.removeAll();
@@ -52,6 +67,11 @@ public class EndMissionCard extends AppletCard implements ActionListener
 		mApplet.validate();
     }
 
+	/**
+	 * Responds to ActionEvents from the OK Button by returning to the IndexCard.
+	 *
+	 * @param	event	a non-null ActionEvent.
+	 */
     public void actionPerformed(ActionEvent event)
     {
 		Object source = event.getSource();

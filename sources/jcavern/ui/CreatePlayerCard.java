@@ -5,11 +5,22 @@ import java.awt.*;
 import java.awt.event.*;
 import java.applet.*;
 
+/**
+ * This AppletCard allows the user to specify the name of a new Player.
+ */
 public class CreatePlayerCard extends AppletCard implements ActionListener
 {
+	/** * A field into which the user types the Player's name. */
     TextField		mField;
+    
+    /** * The Button pressed by the user after typing in a Player name. */
     Button			mOKButton;
 
+	/**
+	 * Creates a CreatePlayerCard for the given Applet.
+	 *
+	 * @param	anApplet	a non-null Applet.
+	 */
 	public CreatePlayerCard(JCavernApplet anApplet)
 	{
 		super(anApplet);
@@ -22,6 +33,9 @@ public class CreatePlayerCard extends AppletCard implements ActionListener
 		mOKButton.addActionListener(this);
 	}
 	
+	/** 
+	 * Shows this AppletCard in its Applet.
+	 */
     public void show()
     {
     	super.show();
@@ -52,6 +66,11 @@ public class CreatePlayerCard extends AppletCard implements ActionListener
 		mApplet.validate();
     }
 
+	/**
+	 * Responds to ActionEvents from the OK Button by creating a Player and returning to the IndexCard.
+	 *
+	 * @param	event	a non-null ActionEvent
+	 */
     public void actionPerformed(ActionEvent event)
     {
     	if (mField.getText().length() > 0)
@@ -59,10 +78,5 @@ public class CreatePlayerCard extends AppletCard implements ActionListener
 			mApplet.setPlayer(new Player(mField.getText()));
 			mApplet.displayHomeCard();
 		}
-    }
-    
-    public String getText()
-    {
-    	return mField.getText();
     }
 }
