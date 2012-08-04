@@ -5,13 +5,12 @@
 
 	<!-- locations of external tools -->
 
-	<property name="jdk_home" value="c:/jdk1.2.2" description="home directory of the java development kit"/>
+	<property name="jdk_home" value="/Library/Java/Home" description="home directory of the java development kit"/>
 
-	<property name="ant_home" value="c:/jakarta-ant" description="home directory of ant build system"/>
+	<property name="ant_home" value="/sw/lib/ant" description="home directory of ant build system"/>
 
 	<property name="xalan_home" value="c:/xalan" description="home directory of xalan engine for XML"/>
 
-	<property name="build.compiler" value="jikes" description="java compiler to use"/>
 	
 	<!-- folders within the jcavern module  -->
 
@@ -25,7 +24,7 @@
 	<taskdef
 		name="junit"
 		classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
-		classpath="${libraries}/junit.jar;c:/jakarta-ant/lib/optional.jar"/>
+		classpath="${libraries}/junit.jar;/sw/lib/ant/lib"/>
 
 	<!-- java classpaths -->
 	
@@ -147,10 +146,13 @@
 	<!-- targets for doing unit testing -->
 	
 	<target name="junit" depends="compile" description="Run unit tests using Swing test runner">
-		<java fork="true" classname="junit.swingui.TestRunner">
-			<arg line="jcavern.*"/>
-			<classpath refid="runpath"/>
-		</java>
+		<junit fork="true" haltonerror="true" printsummary="true">
+			<batchtest>
+				<fileset dir="${binaries}" includes="jcaverntest/*Test.class" />
+			</batchtest>
+			
+			<classpath refid="testpath" />
+		</junit>
 	</target>
 
 	<target name="junit-text" depends="compile" description="Run unit tests using text-only ui">
