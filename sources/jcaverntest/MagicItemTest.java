@@ -61,11 +61,11 @@ public class MagicItemTest extends TestCase
 		MagicItem	testItem = new MagicItem("revealio", MagicItem.MAGIC_REVEAL_INVISIBILITY);
 		mWorld.place(new Location(6, 6), testMonster);
 		
-		assert("hidden", testMonster.getInvisible() == true);
+		assertTrue("hidden", testMonster.getInvisible() == true);
 
 		testItem.startUseBy(mPlayer, mWorld);
 		
-		assert("revealed", testMonster.getInvisible() == false);
+		assertTrue("revealed", testMonster.getInvisible() == false);
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class MagicItemTest extends TestCase
 		
 		testItem.startUseBy(mPlayer, mWorld);
 
-		assert("player teleported out of castle", mPlayer.getCastle() == null);
+		assertTrue("player teleported out of castle", mPlayer.getCastle() == null);
 	}
 
 }

@@ -50,14 +50,14 @@ public class MissionTest extends TestCase
 		{
 			// System.out.println("MissionTest.testQuota() " + aMission);
 			
-			assert("mission not complete", ! aMission.getCompleted());
-			assert("mission name says not complete", aMission.toString().indexOf("completed") == -1);
+			assertTrue("mission not complete", ! aMission.getCompleted());
+			assertTrue("mission name says not complete", aMission.toString().indexOf("completed") == -1);
 			aMission.adjustQuota(mWorld, mPlayer, (Thing) aMission.getTarget().clone());
 		}
 			
 		// System.out.println("MissionTest.testQuota() " + aMission);
 
-		assert("mission complete", aMission.getCompleted());
-		assert("mission name says complete", aMission.toString().indexOf("completed") >= 0);
+		assertTrue("mission complete", aMission.getCompleted());
+		assertTrue("mission name says complete", aMission.toString().indexOf("completed") >= 0);
 	}
 }

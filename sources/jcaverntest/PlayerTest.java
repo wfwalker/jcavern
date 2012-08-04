@@ -72,19 +72,19 @@ public class PlayerTest extends TestCase
 		String		dataString = ThingUtils.byteArrayToDataString(theBytes);
 		byte[]		moreBytes = ThingUtils.dataStringToByteArray(dataString);
 		
-		assert("bytes the same length", theBytes.length == moreBytes.length);
+		assertTrue("bytes the same length", theBytes.length == moreBytes.length);
 
 		for (int index = 0; index < theBytes.length; index++)
 		{
-			assert("byte " + index + " the same", theBytes[index]== moreBytes[index]);
+			assertTrue("byte " + index + " the same", theBytes[index]== moreBytes[index]);
 		}
 		
 		Player newPlayer = (Player) ThingUtils.byteArrayToThing(moreBytes);
 
-		assert("rehydrated name matches", newPlayer.getName().equals(mPlayer.getName()));
-		assert("rehydrated points matches", newPlayer.getPoints() == mPlayer.getPoints());
-		assert("rehydrated gold matches", newPlayer.getGold() == mPlayer.getGold());
-		assert("rehydrated sword matches", newPlayer.getSword().getName().equals(mPlayer.getSword().getName()));
+		assertTrue("rehydrated name matches", newPlayer.getName().equals(mPlayer.getName()));
+		assertTrue("rehydrated points matches", newPlayer.getPoints() == mPlayer.getPoints());
+		assertTrue("rehydrated gold matches", newPlayer.getGold() == mPlayer.getGold());
+		assertTrue("rehydrated sword matches", newPlayer.getSword().getName().equals(mPlayer.getSword().getName()));
 	}
 	
 	/**
@@ -98,17 +98,17 @@ public class PlayerTest extends TestCase
 		
 		mPlayer.receiveItem(anItem);
 		
-		assert("testItems received item1 ", mPlayer.getUnusedItems().contains(anItem));
-		assert("testItems received item2 ", ! mPlayer.getInUseItems().contains(anItem));
+		assertTrue("testItems received item1 ", mPlayer.getUnusedItems().contains(anItem));
+		assertTrue("testItems received item2 ", ! mPlayer.getInUseItems().contains(anItem));
 		
 		mPlayer.startUsing(anItem);
 		
-		assert("testItems start using item1 ", ! mPlayer.getUnusedItems().contains(anItem));
-		assert("testItems start using item2 ", mPlayer.getInUseItems().contains(anItem));
+		assertTrue("testItems start using item1 ", ! mPlayer.getUnusedItems().contains(anItem));
+		assertTrue("testItems start using item2 ", mPlayer.getInUseItems().contains(anItem));
 		
 		mPlayer.stopUsing(anItem);
 		
-		assert("testItems stop using 1 ", mPlayer.getUnusedItems().contains(anItem));
-		assert("testItems stop using 2", ! mPlayer.getInUseItems().contains(anItem));
+		assertTrue("testItems stop using 1 ", mPlayer.getUnusedItems().contains(anItem));
+		assertTrue("testItems stop using 2", ! mPlayer.getInUseItems().contains(anItem));
 	}
 }

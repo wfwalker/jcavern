@@ -116,7 +116,7 @@ public class CombatantTest extends TestCase
 		mWorld.place(treeLocation, aTree);		
 		mPlayer.attack(mWorld, Location.WEST);
 		
-		assert("testAttackTree removes tree", mWorld.isEmpty(treeLocation));
+		assertTrue("testAttackTree removes tree", mWorld.isEmpty(treeLocation));
 	}
 	
 	/**
@@ -140,7 +140,7 @@ public class CombatantTest extends TestCase
 		mWorld.place(treeLocation, aTree);		
 		mPlayer.attack(mWorld, Location.WEST);
 		
-		assert("testAttackTreeWithoutSword removed tree", ! mWorld.isEmpty(treeLocation));
+		assertTrue("testAttackTreeWithoutSword removed tree", ! mWorld.isEmpty(treeLocation));
 	}
 	
 	/**
@@ -151,12 +151,12 @@ public class CombatantTest extends TestCase
 		Monster aMonster = new Monster("Bogus", "monster", "hit", "killed", 1, 1, false);
 		Tree	aTree = new Tree();
 		
-		assert("player attacks monster", mPlayer.canAttack(aMonster));
-		assert("player attacks tree", mPlayer.canAttack(aTree));
-		assert("monster attacks player", aMonster.canAttack(mPlayer));
-		assert("monster NOT attacks tree", ! aMonster.canAttack(aTree));
-		assert("tree NOT attacks player", ! aTree.canAttack(mPlayer));
-		assert("tree NOT attacks monster", ! aTree.canAttack(aMonster));
+		assertTrue("player attacks monster", mPlayer.canAttack(aMonster));
+		assertTrue("player attacks tree", mPlayer.canAttack(aTree));
+		assertTrue("monster attacks player", aMonster.canAttack(mPlayer));
+		assertTrue("monster NOT attacks tree", ! aMonster.canAttack(aTree));
+		assertTrue("tree NOT attacks player", ! aTree.canAttack(mPlayer));
+		assertTrue("tree NOT attacks monster", ! aTree.canAttack(aMonster));
 	}
 	
 	/**
@@ -169,8 +169,8 @@ public class CombatantTest extends TestCase
 		
 		mPlayer.setCastle(new Castle());
 		
-		assert("monster NOT attacks player", ! aMonster.canAttack(mPlayer));
-		assert("tree NOT attacks player", ! aTree.canAttack(mPlayer));
+		assertTrue("monster NOT attacks player", ! aMonster.canAttack(mPlayer));
+		assertTrue("tree NOT attacks player", ! aTree.canAttack(mPlayer));
 	}
 	
 	/**
@@ -194,26 +194,26 @@ public class CombatantTest extends TestCase
 		WorldEvent	monster2MissesMonster = CombatEvent.missed(null, anotherMonster, aMonster);
 		WorldEvent	monster2HitsMonster = CombatEvent.hit(null, anotherMonster, aMonster, 1);
 
-		assert("highlight monster when player hits monster", aMonster.getGraphicalThingView().shouldHighlight(playerHitsMonster));
-		assert("highlight player when player hits monster", mPlayer.getGraphicalThingView().shouldHighlight(playerHitsMonster));
+		assertTrue("highlight monster when player hits monster", aMonster.getGraphicalThingView().shouldHighlight(playerHitsMonster));
+		assertTrue("highlight player when player hits monster", mPlayer.getGraphicalThingView().shouldHighlight(playerHitsMonster));
 
-		assert("highlight tree when player hits tree", ! aTree.getGraphicalThingView().shouldHighlight(playerHitsTree));
-		assert("highlight player when player hits tree", mPlayer.getGraphicalThingView().shouldHighlight(playerHitsTree));
+		assertTrue("highlight tree when player hits tree", ! aTree.getGraphicalThingView().shouldHighlight(playerHitsTree));
+		assertTrue("highlight player when player hits tree", mPlayer.getGraphicalThingView().shouldHighlight(playerHitsTree));
 
-		assert("highlight tree when monster misses tree", ! aTree.getGraphicalThingView().shouldHighlight(monsterMissesTree));
-		assert("highlight monster when monster misses tree", ! aMonster.getGraphicalThingView().shouldHighlight(monsterMissesTree));
+		assertTrue("highlight tree when monster misses tree", ! aTree.getGraphicalThingView().shouldHighlight(monsterMissesTree));
+		assertTrue("highlight monster when monster misses tree", ! aMonster.getGraphicalThingView().shouldHighlight(monsterMissesTree));
 
-		assert("highlight monster when player misses monster", aMonster.getGraphicalThingView().shouldHighlight(playerMissesMonster));
-		assert("highlight player when player misses monster", mPlayer.getGraphicalThingView().shouldHighlight(playerMissesMonster));
+		assertTrue("highlight monster when player misses monster", aMonster.getGraphicalThingView().shouldHighlight(playerMissesMonster));
+		assertTrue("highlight player when player misses monster", mPlayer.getGraphicalThingView().shouldHighlight(playerMissesMonster));
 
-		assert("highlight monster when monster hits player", aMonster.getGraphicalThingView().shouldHighlight(monsterHitsPlayer));
-		assert("highlight player when monster hits player", mPlayer.getGraphicalThingView().shouldHighlight(monsterHitsPlayer));
+		assertTrue("highlight monster when monster hits player", aMonster.getGraphicalThingView().shouldHighlight(monsterHitsPlayer));
+		assertTrue("highlight player when monster hits player", mPlayer.getGraphicalThingView().shouldHighlight(monsterHitsPlayer));
 
-		assert("highlight monster when monster misses player", aMonster.getGraphicalThingView().shouldHighlight(monsterMissesPlayer));
-		assert("highlight player when monster misses player ", mPlayer.getGraphicalThingView().shouldHighlight(monsterMissesPlayer));
+		assertTrue("highlight monster when monster misses player", aMonster.getGraphicalThingView().shouldHighlight(monsterMissesPlayer));
+		assertTrue("highlight player when monster misses player ", mPlayer.getGraphicalThingView().shouldHighlight(monsterMissesPlayer));
 
-		assert("highlight player when monster misses monster2 ", ! mPlayer.getGraphicalThingView().shouldHighlight(monster2MissesMonster));
-		assert("highlight player when monster misses monster2 ", ! mPlayer.getGraphicalThingView().shouldHighlight(monster2HitsMonster));
+		assertTrue("highlight player when monster misses monster2 ", ! mPlayer.getGraphicalThingView().shouldHighlight(monster2MissesMonster));
+		assertTrue("highlight player when monster misses monster2 ", ! mPlayer.getGraphicalThingView().shouldHighlight(monster2HitsMonster));
 	}
 	
 }

@@ -35,22 +35,22 @@ public class LocationTest extends TestCase
 		Location	location1 = new Location(10, 20);
 		Location	desiredLocation1 = new Location(10, 15);
 		
-		assert("inset 1", aWorld.enforceMinimumInset(location1, 4).equals(desiredLocation1));
+		assertTrue("inset 1", aWorld.enforceMinimumInset(location1, 4).equals(desiredLocation1));
 		
 		Location	location2 = new Location(20, 10);
 		Location	desiredLocation2 = new Location(15, 10);
 		
-		assert("inset 1", aWorld.enforceMinimumInset(location2, 4).equals(desiredLocation2));
+		assertTrue("inset 1", aWorld.enforceMinimumInset(location2, 4).equals(desiredLocation2));
 		
 		Location	location3 = new Location(10, 2);
 		Location	desiredLocation3 = new Location(10, 4);
 		
-		assert("inset 1", aWorld.enforceMinimumInset(location3, 4).equals(desiredLocation3));
+		assertTrue("inset 1", aWorld.enforceMinimumInset(location3, 4).equals(desiredLocation3));
 		
 		Location	location4 = new Location(2, 10);
 		Location	desiredLocation4 = new Location(4, 10);
 		
-		assert("inset 1", aWorld.enforceMinimumInset(location4, 4).equals(desiredLocation4));
+		assertTrue("inset 1", aWorld.enforceMinimumInset(location4, 4).equals(desiredLocation4));
 	}
 
 	/**
@@ -60,17 +60,17 @@ public class LocationTest extends TestCase
 	{
 		Location zero = new Location(10, 10);
 
-		assert("north vs south", zero.getNeighbor(Location.NORTH).getNeighbor(Location.SOUTH).equals(zero));
-		assert("south vs north", zero.getNeighbor(Location.SOUTH).getNeighbor(Location.NORTH).equals(zero));
+		assertTrue("north vs south", zero.getNeighbor(Location.NORTH).getNeighbor(Location.SOUTH).equals(zero));
+		assertTrue("south vs north", zero.getNeighbor(Location.SOUTH).getNeighbor(Location.NORTH).equals(zero));
 		
-		assert("northeast vs southwest", zero.getNeighbor(Location.NORTHEAST).getNeighbor(Location.SOUTHWEST).equals(zero));
-		assert("southwest vs northeast", zero.getNeighbor(Location.SOUTHWEST).getNeighbor(Location.NORTHEAST).equals(zero));
+		assertTrue("northeast vs southwest", zero.getNeighbor(Location.NORTHEAST).getNeighbor(Location.SOUTHWEST).equals(zero));
+		assertTrue("southwest vs northeast", zero.getNeighbor(Location.SOUTHWEST).getNeighbor(Location.NORTHEAST).equals(zero));
 		
-		assert("east vs west", zero.getNeighbor(Location.EAST).getNeighbor(Location.WEST).equals(zero));
-		assert("west vs east", zero.getNeighbor(Location.WEST).getNeighbor(Location.EAST).equals(zero));
+		assertTrue("east vs west", zero.getNeighbor(Location.EAST).getNeighbor(Location.WEST).equals(zero));
+		assertTrue("west vs east", zero.getNeighbor(Location.WEST).getNeighbor(Location.EAST).equals(zero));
 		
-		assert("southeast vs northwest", zero.getNeighbor(Location.SOUTHEAST).getNeighbor(Location.NORTHWEST).equals(zero));
-		assert("northwest vs southeast", zero.getNeighbor(Location.NORTHWEST).getNeighbor(Location.SOUTHEAST).equals(zero));		
+		assertTrue("southeast vs northwest", zero.getNeighbor(Location.SOUTHEAST).getNeighbor(Location.NORTHWEST).equals(zero));
+		assertTrue("northwest vs southeast", zero.getNeighbor(Location.NORTHWEST).getNeighbor(Location.SOUTHEAST).equals(zero));		
 	}
 	
 	/**
@@ -80,16 +80,16 @@ public class LocationTest extends TestCase
 	{
 		Location zero = new Location(10, 10);
 		
-		assert("neighbor toward east", zero.getNeighborToward(new Location(20, 10)).equals(new Location(11, 10)));
-		assert("neighbor toward west", zero.getNeighborToward(new Location(0, 10)).equals(new Location(9, 10)));
+		assertTrue("neighbor toward east", zero.getNeighborToward(new Location(20, 10)).equals(new Location(11, 10)));
+		assertTrue("neighbor toward west", zero.getNeighborToward(new Location(0, 10)).equals(new Location(9, 10)));
 		
-		assert("neighbor toward north", zero.getNeighborToward(new Location(10, 0)).equals(new Location(10, 9)));
-		assert("neighbor toward south", zero.getNeighborToward(new Location(10, 20)).equals(new Location(10, 11)));
+		assertTrue("neighbor toward north", zero.getNeighborToward(new Location(10, 0)).equals(new Location(10, 9)));
+		assertTrue("neighbor toward south", zero.getNeighborToward(new Location(10, 20)).equals(new Location(10, 11)));
 		
-		assert("neighbor toward northeast", zero.getNeighborToward(new Location(20, 0)).equals(new Location(11, 9)));
-		assert("neighbor toward northwest", zero.getNeighborToward(new Location(0, 0)).equals(new Location(9, 9)));
+		assertTrue("neighbor toward northeast", zero.getNeighborToward(new Location(20, 0)).equals(new Location(11, 9)));
+		assertTrue("neighbor toward northwest", zero.getNeighborToward(new Location(0, 0)).equals(new Location(9, 9)));
 		
-		assert("neighbor toward southeast", zero.getNeighborToward(new Location(20, 20)).equals(new Location(11, 11)));
-		assert("neighbor toward southwest", zero.getNeighborToward(new Location(0, 20)).equals(new Location(9, 11)));
+		assertTrue("neighbor toward southeast", zero.getNeighborToward(new Location(20, 20)).equals(new Location(11, 11)));
+		assertTrue("neighbor toward southwest", zero.getNeighborToward(new Location(0, 20)).equals(new Location(9, 11)));
 	}
 }
