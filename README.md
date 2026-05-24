@@ -1,1 +1,1 @@
-Java version of Cavern and Glen, an adventure game inspired by Sorcerry on the PLATO mainframe system 
+Java version of Cavern and Glen, an adventure game inspired by Sorcery on the PLATO mainframe system 
