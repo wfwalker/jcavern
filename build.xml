@@ -70,7 +70,7 @@
 		name="compile"
 		depends="prepare"
 		description="compile java source as needed; copy data and image files into bin directory">
-		<javac srcdir="${sources}" destdir="${binaries}">
+		<javac srcdir="${sources}" destdir="${binaries}" includeantruntime="false">
 			<classpath refid="buildpath"/>
 		</javac>
 
@@ -81,6 +81,20 @@
 			<fileset dir="${images}" />
 		</copy>
 	</target>
+
+	<target name="jar" depends="compile">
+	    <!-- Create a distribution directory if it doesn't exist -->
+	    <mkdir dir="dist" />
+
+	    <!-- Package everything from your compiled bin folder into a JAR -->
+	    <jar destfile="dist/jcavern.jar" basedir="bin">
+	      <manifest>
+	        <attribute name="Main-Class" value="jcavern.JCavernApplet" />
+	      </manifest>
+	    </jar>
+	    <echo message="Jar package created successfully in dist/jcavern.jar" />
+	</target>
+
 	
 	<target name="runapplet" depends="compile" description="having compiled and copied over data and image files, run the applet">
 		<exec executable="appletviewer">
