@@ -24,10 +24,10 @@ public class IndexCard extends AppletCard
 	private Button					mNewPlayerButton;
 	
 	/** * The button for loading a player. */
-	private Button					mLoadPlayerButton;
+	// private Button					mLoadPlayerButton;
 	
 	/** * The button for saving a player. */
-	private Button					mSavePlayerButton;
+	// private Button					mSavePlayerButton;
 	
 	/** * The label for displaying status messages. */
 	private String					mLabel;
@@ -65,40 +65,40 @@ public class IndexCard extends AppletCard
 			mImage = mApplet.getBoardImage("player");
 		}
 		
-		// add the load-player button
-		mLoadPlayerButton = new JCavernButton("Load Player");
-		mLoadPlayerButton.setForeground(Color.black);
-		mLoadPlayerButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				System.out.println("Load Player ");
-			}
-		});
-		mLoadPlayerButton.setEnabled(false);
+		// // add the load-player button
+		// mLoadPlayerButton = new JCavernButton("Load Player");
+		// mLoadPlayerButton.setForeground(Color.black);
+		// mLoadPlayerButton.addActionListener(new ActionListener()
+		// {
+		// 	public void actionPerformed(ActionEvent e)
+		// 	{
+		// 		System.out.println("Load Player ");
+		// 	}
+		// });
+		// mLoadPlayerButton.setEnabled(false);
 		
-		mSavePlayerButton = new JCavernButton("Save Player");
-		mSavePlayerButton.setForeground(Color.black);
-		mSavePlayerButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				System.out.println("Save Player ");
+		// mSavePlayerButton = new JCavernButton("Save Player");
+		// mSavePlayerButton.setForeground(Color.black);
+		// mSavePlayerButton.addActionListener(new ActionListener()
+		// {
+		// 	public void actionPerformed(ActionEvent e)
+		// 	{
+		// 		System.out.println("Save Player ");
 				
-				/*try
-				{
-					Thing.fromDataString(mCurrentPlayer.getDataString());
-				}
-				catch (JCavernInternalError jcie)
-				{
-					System.out.println("could not save player " + jcie);
-				}*/
+		// 		/*try
+		// 		{
+		// 			Thing.fromDataString(mCurrentPlayer.getDataString());
+		// 		}
+		// 		catch (JCavernInternalError jcie)
+		// 		{
+		// 			System.out.println("could not save player " + jcie);
+		// 		}*/
 				
-				System.out.println("Done Save Player");
+		// 		System.out.println("Done Save Player");
 				
-			}
-		});
-		mSavePlayerButton.setEnabled((mCurrentPlayer != null) && (! mCurrentPlayer.isDead()));
+		// 	}
+		// });
+		// mSavePlayerButton.setEnabled((mCurrentPlayer != null) && (! mCurrentPlayer.isDead()));
 
 		mNewMissionButton = new JCavernButton("New Mission");
 		mNewMissionButton.setForeground(Color.black);
@@ -113,6 +113,7 @@ public class IndexCard extends AppletCard
 				window.show();
 			}
 		});
+
 		mNewMissionButton.setEnabled((mCurrentPlayer != null) && (! mCurrentPlayer.isDead()));
 		
 		// add the create-a-new-player button
@@ -140,8 +141,8 @@ public class IndexCard extends AppletCard
 		mApplet.setLayout(new GridLayout(8, 1));
 		
 		mApplet.add(createLabelledButtonPanel(new ImageCanvas(mImage), mLabel));
-		mApplet.add(createLabelledButtonPanel(mLoadPlayerButton, "Load player from database"));
-		mApplet.add(createLabelledButtonPanel(mSavePlayerButton, "Save player to database"));
+		// mApplet.add(createLabelledButtonPanel(mLoadPlayerButton, "Load player from database"));
+		// mApplet.add(createLabelledButtonPanel(mSavePlayerButton, "Save player to database"));
 		mApplet.add(createLabelledButtonPanel(mNewMissionButton, "Undertake a new mission"));
 		mApplet.add(createLabelledButtonPanel(mNewPlayerButton, "Create a new player"));
 				

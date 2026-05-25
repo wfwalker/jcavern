@@ -15,6 +15,7 @@
 	<!-- folders within the jcavern module  -->
 
 	<property name="binaries" value="bin" description="location of binaries"/>
+	<property name="dist" value="dist" description="location of distribution"/>
 	<property name="images" value="images" description="location of image files"/>
 	<property name="sources" value="sources" description="location of source code"/>
 	<property name="documentation" value="docs" description="location of HTML javadoc documentation"/>
@@ -64,6 +65,8 @@
 		name="clean"
 		description="remove bin directory, so that the next compile operation will recompile everything">
 		<delete dir="${binaries}" />
+		<delete dir="${dist}" />
+		<delete file="jcavern.jar" />
 	</target>
 	
 	<target
@@ -93,6 +96,7 @@
 	      </manifest>
 	    </jar>
 	    <echo message="Jar package created successfully in dist/jcavern.jar" />
+	    <copy file="dist/jcavern.jar" toFile="jcavern.jar" />
 	</target>
 
 	

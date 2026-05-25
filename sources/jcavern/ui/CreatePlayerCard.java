@@ -50,8 +50,8 @@ public class CreatePlayerCard extends AppletCard implements ActionListener
 			// in the same place as the "create a player" button
 			// in the IndexCard.
 			mApplet.add(createLabelledButtonPanel(new ImageCanvas(mApplet.getBoardImage("player")), "Create a new player"));
-			mApplet.add(createLabelledButtonPanel(new JCavernButton("Load Player"), "Load player from database", false));
-			mApplet.add(createLabelledButtonPanel(new JCavernButton("Save Player"), "Save player to database", false));
+			// mApplet.add(createLabelledButtonPanel(new JCavernButton("Load Player"), "Load player from database", false));
+			// mApplet.add(createLabelledButtonPanel(new JCavernButton("Save Player"), "Save player to database", false));
 			mApplet.add(createLabelledButtonPanel(new JCavernButton("New Mission"), "Undertake a new mission", false));
 			
 			//Create middle section.
